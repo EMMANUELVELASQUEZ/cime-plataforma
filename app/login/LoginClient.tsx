@@ -1,5 +1,6 @@
 "use client"
 import { useEffect, useRef, useState } from "react"
+import Image from "next/image"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
@@ -136,11 +137,7 @@ export default function LoginClient() {
       <div className="login-art">
         <canvas id="topo-canvas" ref={canvasRef} aria-hidden="true" />
         <div className="brand">
-          <div className="mark">
-            <svg width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <path d="M13 3l0 7l6 0l-8 11l0 -7l-6 0l8 -11" />
-            </svg>
-          </div>
+          <Image src="/logo.jpeg" alt="CIME Veracruz" width={52} height={52} style={{ borderRadius: 10, objectFit: "cover", flexShrink: 0 }} />
           <div>
             <div className="brand-name">CIME VERACRUZ</div>
             <div className="brand-sub">Colegio de Ingenieros Mecánicos y Electricistas</div>
