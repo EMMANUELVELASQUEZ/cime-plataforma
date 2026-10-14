@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
-import Link from "next/link"
+import NuevoCursoForm from "./NuevoCursoForm"
+import DeleteCursoButton from "./DeleteCursoButton"
 
 export const dynamic = "force-dynamic"
 
@@ -24,10 +25,7 @@ export default async function AdminCursosPage() {
           <p>Catálogo de cursos de actualización profesional.</p>
         </div>
         <div className="actions">
-          <button className="btn primary">
-            <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-            Nuevo curso
-          </button>
+          <NuevoCursoForm />
         </div>
       </div>
 
@@ -68,12 +66,12 @@ export default async function AdminCursosPage() {
                   </td>
                   <td><span className={`chip nodot ${ESTADO_CHIP[c.estado]}`}>{ESTADO_LABEL[c.estado]}</span></td>
                   <td style={{ textAlign: "right" }}>
-                    <button className="btn sm">Editar</button>
+                    <DeleteCursoButton id={c.id} titulo={c.titulo} />
                   </td>
                 </tr>
               ))}
               {cursos.length === 0 && (
-                <tr><td colSpan={10}><div className="empty">Sin cursos registrados aún<br /><button className="btn primary" style={{ marginTop: 12 }}>Agregar primer curso</button></div></td></tr>
+                <tr><td colSpan={10}><div className="empty">Sin cursos registrados aún<br /><span className="muted" style={{ fontSize: ".85rem" }}>Usa el botón "Nuevo curso" para agregar el primero.</span></div></td></tr>
               )}
             </tbody>
           </table>

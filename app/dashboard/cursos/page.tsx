@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-import Link from "next/link"
+import InscribirBtn from "./InscribirBtn"
 
 export const dynamic = "force-dynamic"
 
@@ -109,7 +109,7 @@ export default async function CursosPage() {
                         ? <span className="chip ok nodot">Inscrito</span>
                         : lleno
                           ? <span className="chip bad nodot">Cupo lleno</span>
-                          : <button className="btn sm volt">Inscribirme</button>}
+                          : <InscribirBtn cursoId={c.id} titulo={c.titulo} />}
                     </td>
                   </tr>
                 )
