@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id              String          @id @default(cuid())
+  numeroColegiado String?         @unique
+  nombre          String
+  correo          String          @unique
+  password        String
+  rol             Rol             @default(COLEGIADO)
+  especialidad    String?
+  ciudad          String?
+  cedula          String?
+  telefono        String?
+  estado          EstadoColegiado @default(VIGENTE)
+  alta            Int             @default(2024)
+  vigencia        String?
+  horas           Int             @default(0)
+  horasMeta       Int             @default(60)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  inscripciones InscripcionCurso[]
+  pagos         Pago[]
+}
+
+enum Rol {
+  ADMIN
+  COLEGIADO
+}
+
+enum EstadoColegiado {
+  VIGENTE
+  POR_RENOVAR
+  SUSPENDIDO
+}
+
+model Curso {
+  id          String      @id @default(cuid())
+  codigo      String      @unique
+  titulo      String
+  area        Area        @default(ELE)
+  horas       Int
+  modalidad   String
+  lugar       String
+  instructor  String
+  fechaInicio DateTime
+  fechaFin    DateTime
+  cupo        Int
+  precio      Float
+  estado      EstadoCurso @default(ABIERTO)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  modulos    ModuloCurso[]
+  inscritos  InscripcionCurso[]
+}
+
+enum Area {
+  ELE
+  MEC
+  SOL
+}
+
+enum EstadoCurso {
+  ABIERTO
+  EN_CURSO
+  LLENO
+  COMPLETADO
+}
+
+model ModuloCurso {
+  id      String @id @default(cuid())
+  cursoId String
+  titulo  String
+  orden   Int
+  curso   Curso  @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+}
+
+model InscripcionCurso {
+  id           String            @id @default(cuid())
+  usuarioId    String
+  cursoId      String
+  progreso     Int               @default(0)
+  moduloActual Int               @default(0)
+  calificacion Float?
+  folio        String?
+  estado       EstadoInscripcion @default(INSCRITO)
+  createdAt    DateTime          @default(now())
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  curso   Curso   @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+
+  @@unique([usuarioId, cursoId])
+}
+
+enum EstadoInscripcion {
+  INSCRITO
+  EN_CURSO
+  COMPLETADO
+}
+
+model Evento {
+  id        String   @id @default(cuid())
+  fecha     DateTime
+  tipo      String
+  titulo    String
+  hora      String
+  lugar     String
+  createdAt DateTime @default(now())
+}
+
+model Aviso {
+  id        String   @id @default(cuid())
+  tipo      String
+  categoria String
+  titulo    String
+  contenido String
+  fijado    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Pago {
+  id        String   @id @default(cuid())
+  usuarioId String
+  concepto  String
+  monto     Float
+  estado    String
+  folio     String   @unique
+  createdAt DateTime @default(now())
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+}
