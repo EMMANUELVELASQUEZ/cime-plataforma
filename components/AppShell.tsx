@@ -100,10 +100,27 @@ function initials(name: string) {
   return name.replace(/^(Ing\.|Lic\.|Dr\.|Mtro\.|Mtra\.)\s*/i, "").split(/\s+/).slice(0, 2).map(w => w[0] ?? "").join("").toUpperCase()
 }
 
+const TITLES: Record<string, string> = {
+  "/admin": "Panel del Colegio",
+  "/admin/colegiados": "Colegiados",
+  "/admin/colegiados/nuevo": "Alta de colegiado",
+  "/admin/cursos": "Cursos",
+  "/admin/eventos": "Eventos",
+  "/admin/avisos": "Avisos",
+  "/dashboard": "Inicio",
+  "/dashboard/cursos": "Mis cursos",
+  "/dashboard/calendario": "Calendario",
+  "/dashboard/constancias": "Constancias",
+  "/dashboard/avisos": "Avisos",
+  "/dashboard/directorio": "Directorio",
+  "/dashboard/pagos": "Pagos y cuotas",
+  "/dashboard/perfil": "Mi perfil",
+}
+
 interface AppShellProps {
   children: React.ReactNode
   user: { name?: string | null; email?: string | null; role?: string; numeroColegiado?: string | null }
-  pageTitle: string
+  pageTitle?: string
 }
 
 export default function AppShell({ children, user, pageTitle }: AppShellProps) {
@@ -115,6 +132,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
   const popRef = useRef<HTMLDivElement>(null)
 
   const isAdmin = user.role === "ADMIN"
+  const currentTitle = pageTitle ?? TITLES[pathname] ?? (Object.entries(TITLES).find(([k]) => pathname.startsWith(k + "/"))?.[1]) ?? "Portal CIME"
 
   useEffect(() => {
     const saved = localStorage.getItem("cime.theme")
@@ -248,7 +266,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
           <div className="crumb">
             <span className="muted">Portal</span>
             <IcoChevronRight />
-            <b>{pageTitle}</b>
+            <b>{currentTitle}</b>
           </div>
 
           <button className="icon-btn" onClick={toggleTheme} aria-label="Cambiar tema" style={{ marginLeft: "auto" }}>
