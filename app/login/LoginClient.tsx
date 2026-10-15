@@ -141,15 +141,7 @@ export default function LoginClient() {
         </div>
 
         <div className="login-hero">
-          <span className="eyebrow">Portal del Colegiado · 2026</span>
           <h1>Tu ejercicio profesional, <em>conectado.</em></h1>
-          <p>Credencial, cursos con valor curricular, calendario del Colegio y constancias. Un solo acceso para todos los colegiados del estado.</p>
-        </div>
-
-        <div className="topo-legend">
-          <span><i style={{ background: "#F0B429" }} />Nodo central · <b>Veracruz</b></span>
-          <span><b>{NODOS.length}</b> sedes</span>
-          <span><b>{ENL.length}</b> enlaces</span>
         </div>
       </div>
 
