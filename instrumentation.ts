@@ -4,7 +4,7 @@ export async function register() {
   // Run DB setup in background so the server starts immediately
   setTimeout(async () => {
     try {
-      const { execSync } = await import("child_process")
+      const { execSync } = await import(/* webpackIgnore: true */ "child_process")
 
       // Give Railway's internal network 8 seconds to be fully ready
       await new Promise(r => setTimeout(r, 8000))
