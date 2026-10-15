@@ -1,6 +1,5 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { signOut } from "next-auth/react"
@@ -207,7 +206,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
 
       <aside className={`sidebar ${sideOpen ? "open" : ""}`}>
         <div className="brand">
-          <Image src="/logo.jpeg" alt="CIME Veracruz" width={48} height={48} style={{ objectFit: "contain", flexShrink: 0 }} />
+          <img src="/logo.jpeg" alt="CIME Veracruz" style={{ width: 48, height: 48, objectFit: "contain", flexShrink: 0 }} />
           <div>
             <div className="brand-name">CIME VERACRUZ</div>
             <div className="brand-sub">Portal del Colegiado</div>
