@@ -119,9 +119,6 @@ export default function LoginClient() {
     router.push("/")
   }
 
-  function fillAdmin() { setIdentifier("administracion@cime-veracruz.mx"); setPassword("Admin2026!") }
-  function fillColegiado() { setIdentifier("0427"); setPassword("Cime2026!") }
-
   async function handleRecover(e: React.FormEvent) {
     e.preventDefault()
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(recoverEmail)) {
@@ -150,17 +147,10 @@ export default function LoginClient() {
           <p>Credencial, cursos con valor curricular, calendario del Colegio y constancias. Un solo acceso para todos los colegiados del estado.</p>
         </div>
 
-        <div style={{ display: "grid", gap: 14 }}>
-          <div className="topo-legend">
-            <span><i style={{ background: "#F0B429" }} />Nodo central · <b>Veracruz</b></span>
-            <span><b>{NODOS.length}</b> sedes y ciudades</span>
-            <span><b>{ENL.length}</b> enlaces</span>
-          </div>
-          <div className="login-stats">
-            <div><b>150+</b><span>Colegiados activos</span></div>
-            <div><b>10</b><span>Cursos en 2026</span></div>
-            <div><b>60 h</b><span>Actualización anual</span></div>
-          </div>
+        <div className="topo-legend">
+          <span><i style={{ background: "#F0B429" }} />Nodo central · <b>Veracruz</b></span>
+          <span><b>{NODOS.length}</b> sedes</span>
+          <span><b>{ENL.length}</b> enlaces</span>
         </div>
       </div>
 
@@ -238,21 +228,6 @@ export default function LoginClient() {
                 </button>
               </div>
 
-              {/* Demo box */}
-              <div style={{ border: "1px dashed var(--line)", borderRadius: "var(--r)", padding: "12px 14px", display: "grid", gap: 8, background: "var(--surface-2)" }}>
-                <div className="row-between">
-                  <span className="eyebrow">Cuentas de demostración</span>
-                  <span className="proto-tag">PROTOTIPO</span>
-                </div>
-                <div className="row-between" style={{ fontSize: ".82rem" }}>
-                  <span><b>Colegiado</b> · <code style={{ fontFamily: "var(--f-mono)", fontSize: ".78rem" }}>0427</code></span>
-                  <button type="button" className="btn sm" onClick={fillColegiado}>Usar</button>
-                </div>
-                <div className="row-between" style={{ fontSize: ".82rem" }}>
-                  <span><b>Administración</b> · <code style={{ fontFamily: "var(--f-mono)", fontSize: ".78rem" }}>admin</code></span>
-                  <button type="button" className="btn sm" onClick={fillAdmin}>Usar</button>
-                </div>
-              </div>
             </form>
           ) : (
             <form onSubmit={handleRecover} style={{ display: "grid", gap: 16 }} noValidate>

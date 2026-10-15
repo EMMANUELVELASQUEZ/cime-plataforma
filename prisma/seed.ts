@@ -4,35 +4,39 @@ import bcrypt from "bcryptjs"
 const prisma = new PrismaClient()
 
 async function main() {
-  const adminHash = await bcrypt.hash("Admin2026!", 12)
-  const colHash = await bcrypt.hash("Cime2026!", 12)
+  const adminHash = await bcrypt.hash("CimeVer@2026!", 12)
+  const colHash   = await bcrypt.hash("Colegiado@2026", 12)
 
+  // Administrador principal del Colegio
   await prisma.usuario.upsert({
     where: { correo: "administracion@cime-veracruz.mx" },
     update: {},
     create: {
       numeroColegiado: null,
-      nombre: "Lic. Andrea Villalobos Cruz",
+      nombre: "Administración CIME Veracruz",
       correo: "administracion@cime-veracruz.mx",
       password: adminHash,
       rol: Rol.ADMIN,
       estado: EstadoColegiado.VIGENTE,
+      telefono: "229 100 0000",
+      ciudad: "Xalapa",
     },
   })
 
+  // Colegiado de ejemplo para validación interna
   await prisma.usuario.upsert({
-    where: { correo: "ricardo.dominguez@ejemplo.mx" },
+    where: { correo: "ing.dominguez@cime-veracruz.mx" },
     update: {},
     create: {
-      numeroColegiado: "0427",
+      numeroColegiado: "0001",
       nombre: "Ing. Ricardo Domínguez Lara",
-      correo: "ricardo.dominguez@ejemplo.mx",
+      correo: "ing.dominguez@cime-veracruz.mx",
       password: colHash,
       rol: Rol.COLEGIADO,
       especialidad: "Ingeniería Mecánica Eléctrica",
-      ciudad: "Boca del Río",
+      ciudad: "Xalapa",
       cedula: "1234567",
-      telefono: "229 000 0000",
+      telefono: "229 100 0001",
       estado: EstadoColegiado.VIGENTE,
       alta: 2015,
       vigencia: "31 dic 2026",
