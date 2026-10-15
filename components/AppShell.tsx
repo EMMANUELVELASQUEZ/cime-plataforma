@@ -207,7 +207,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
 
       <aside className={`sidebar ${sideOpen ? "open" : ""}`}>
         <div className="brand">
-          <Image src="/logo.jpeg" alt="CIME Veracruz" width={44} height={44} style={{ borderRadius: 8, objectFit: "cover", flexShrink: 0 }} />
+          <Image src="/logo.jpeg" alt="CIME Veracruz" width={48} height={48} style={{ objectFit: "contain", flexShrink: 0 }} />
           <div>
             <div className="brand-name">CIME VERACRUZ</div>
             <div className="brand-sub">Portal del Colegiado</div>
