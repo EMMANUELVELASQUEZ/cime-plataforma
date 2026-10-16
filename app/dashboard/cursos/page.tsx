@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import InscribirBtn from "./InscribirBtn"
+import { GraduationCap, Check, Clock, MapPin, User, CalendarDays } from "lucide-react"
 
 export const dynamic = "force-dynamic"
 
@@ -9,18 +10,6 @@ const AREA_COLOR: Record<string, string> = { ELE: "#0ea5e9", MEC: "#10b981", SOL
 const AREA_BG: Record<string, string> = { ELE: "#0c2a3a", MEC: "#0a2a1f", SOL: "#2a1f0a" }
 
 const money = (n: number) => n.toLocaleString("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 })
-
-const CourseIcon = () => (
-  <svg width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-    <path d="M22 9l-10 -4l-10 4l10 4l10 -4v6" /><path d="M6 10.6v5.4a6 3 0 0 0 12 0v-5.4" />
-  </svg>
-)
-
-const CheckIcon = () => (
-  <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-    <path d="M20 6L9 17l-5-5" />
-  </svg>
-)
 
 export default async function CursosPage() {
   const session = await auth()
@@ -68,7 +57,7 @@ export default async function CursosPage() {
                 <div key={i.id} style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 12, overflow: "hidden" }}>
                   <div style={{ background: bg, borderBottom: `2px solid ${color}`, padding: "16px 20px", display: "flex", gap: 14, alignItems: "center" }}>
                     <div style={{ width: 44, height: 44, borderRadius: 10, background: color + "22", color, display: "grid", placeItems: "center", flexShrink: 0, border: `1px solid ${color}44` }}>
-                      <CourseIcon />
+                      <GraduationCap size={22} strokeWidth={1.75} />
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: ".72rem", color, fontWeight: 600, letterSpacing: ".06em", textTransform: "uppercase", marginBottom: 2 }}>{AREA_LABEL[c.area]}</div>
@@ -122,7 +111,7 @@ export default async function CursosPage() {
                   <div style={{ background: bg, padding: "20px 20px 16px", borderBottom: `2px solid ${color}` }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
                       <div style={{ width: 42, height: 42, borderRadius: 10, background: color + "22", color, display: "grid", placeItems: "center", border: `1px solid ${color}44` }}>
-                        <CourseIcon />
+                        <GraduationCap size={22} strokeWidth={1.75} />
                       </div>
                       <div style={{ display: "flex", gap: 6, flexWrap: "wrap", justifyContent: "flex-end" }}>
                         <span style={{ background: color + "22", color, fontSize: ".7rem", fontWeight: 700, padding: "3px 9px", borderRadius: 20, border: `1px solid ${color}44` }}>
@@ -130,7 +119,7 @@ export default async function CursosPage() {
                         </span>
                         {yaInscrito && (
                           <span style={{ background: "#10b98122", color: "#10b981", fontSize: ".7rem", fontWeight: 700, padding: "3px 9px", borderRadius: 20, display: "flex", alignItems: "center", gap: 3 }}>
-                            <CheckIcon /> Inscrito
+                            <Check size={12} strokeWidth={2.5} /> Inscrito
                           </span>
                         )}
                         {lleno && !yaInscrito && (
@@ -207,7 +196,7 @@ export default async function CursosPage() {
             {completados.map(i => (
               <div key={i.id} style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 12, padding: "16px 20px", display: "flex", gap: 14, alignItems: "center" }}>
                 <div style={{ width: 40, height: 40, borderRadius: 9, background: "#10b98122", color: "#10b981", display: "grid", placeItems: "center", flexShrink: 0, border: "1px solid #10b98133" }}>
-                  <CheckIcon />
+                  <Check size={16} strokeWidth={2} />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 600, fontSize: ".9rem", marginBottom: 2 }}>{i.curso.titulo}</div>
