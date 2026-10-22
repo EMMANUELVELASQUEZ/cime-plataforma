@@ -148,16 +148,28 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
         </nav>
 
         {!isAdmin && (
-          <div className="side-card">
-            <div className="row-between" style={{ fontSize: ".8rem" }}>
-              <span>Horas de actualización 2026</span>
+          <div className="side-card" style={{ background: "rgba(74,144,217,.08)", borderColor: "rgba(74,144,217,.2)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span className="avatar" style={{ width: 38, height: 38, fontSize: ".8rem", background: `hsl(${(user.name?.charCodeAt(0) ?? 0) * 47 % 360} 38% 34%)`, flexShrink: 0 }}>
+                {initials(user.name ?? "U")}
+              </span>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontWeight: 700, fontSize: ".8rem", color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {user.name?.split(" ").slice(0, 2).join(" ") ?? "Colegiado"}
+                </div>
+                <div style={{ fontSize: ".66rem", color: "rgba(255,255,255,.45)", marginTop: 1 }}>
+                  {user.numeroColegiado ? `CIME-VER-${user.numeroColegiado}` : "Colegiado"}
+                </div>
+              </div>
             </div>
-            <div className="row-between">
-              <b>40 <span style={{ fontSize: ".8rem", color: "#9FB3C8", fontWeight: 500 }}>/ 60 h</span></b>
-              <span style={{ fontSize: ".75rem" }}>67%</span>
+            <div style={{ marginTop: 4 }}>
+              <div className="row-between" style={{ fontSize: ".72rem", color: "rgba(255,255,255,.5)", marginBottom: 5 }}>
+                <span>Actualización 2026</span>
+                <span style={{ color: "#E8B84B", fontWeight: 700 }}>67%</span>
+              </div>
+              <div className="meter"><i style={{ width: "67%", background: "linear-gradient(90deg,#c89b2a,#f5c842)" }} /></div>
+              <span style={{ fontSize: ".68rem", color: "#8FA1B5", marginTop: 4, display: "block" }}>40/60 h · vence 31 dic</span>
             </div>
-            <div className="meter"><i style={{ width: "67%" }} /></div>
-            <span style={{ fontSize: ".75rem", color: "#8FA1B5" }}>Te faltan 20 h antes del 31 dic</span>
           </div>
         )}
 

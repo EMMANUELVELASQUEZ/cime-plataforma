@@ -720,8 +720,110 @@ dialog[open] { animation: dialogIn .18s cubic-bezier(.22,1,.36,1); }
 .axis { display: grid; grid-template-columns: minmax(110px,180px) minmax(0,1fr) 42px; gap: 10px; font: 500 .68rem var(--f-mono); color: var(--muted); }
 .axis div { display: flex; justify-content: space-between; }
 
+/* ─── LMS / Student Portal ──────────────────────────────────── */
+.lms-hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0B2341 0%, #163d78 50%, #0e2f60 100%);
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(74,144,217,.25);
+  padding: 28px 32px;
+  color: #fff;
+}
+.lms-hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle at 85% 50%, rgba(74,144,217,.22), transparent 55%),
+    linear-gradient(rgba(100,160,220,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(100,160,220,.04) 1px, transparent 1px);
+  background-size: auto, 32px 32px, 32px 32px;
+  pointer-events: none;
+}
+.lms-hero > * { position: relative; z-index: 1; }
+
+.lms-stat-bar { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
+.lms-stat {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r);
+  padding: 16px 18px;
+  display: grid;
+  gap: 4px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .15s;
+}
+.lms-stat:hover { box-shadow: var(--shadow); }
+.lms-stat .s-icon { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center; margin-bottom: 10px; }
+.lms-stat .s-label { font-size: .67rem; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); }
+.lms-stat .s-val { font-size: 1.65rem; font-weight: 800; line-height: 1.1; letter-spacing: -.04em; }
+.lms-stat .s-sub { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+
+.lms-course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 16px; }
+.lms-course {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .15s, transform .12s;
+}
+.lms-course:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.lms-course-banner {
+  height: 96px;
+  display: flex;
+  align-items: flex-end;
+  padding: 12px 16px;
+  position: relative;
+  overflow: hidden;
+}
+.lms-course-banner::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 20%, rgba(0,0,0,.6) 100%);
+}
+.lms-course-banner > * { position: relative; z-index: 1; }
+.lms-course-body { padding: 14px 16px; flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.lms-course-footer { padding: 10px 16px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--surface-2); }
+.lms-progress-label { display: flex; justify-content: space-between; font-size: .72rem; color: var(--muted); margin-bottom: 5px; }
+.lms-progress-track { height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.lms-progress-fill { height: 100%; border-radius: 99px; transition: width .5s ease; }
+
+.event-list { display: grid; gap: 0; }
+.event-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+  transition: background .1s;
+  cursor: pointer;
+}
+.event-item:last-child { border-bottom: 0; }
+.event-item:hover { background: var(--surface-2); }
+.event-dot {
+  width: 34px; height: 34px; min-width: 34px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.subject-tag {
+  display: inline-block;
+  font-size: .62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+}
+
 /* ─── Responsive ────────────────────────────────────────────── */
-@media (max-width: 1200px) { .g-4 { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 1200px) { .g-4, .lms-stat-bar { grid-template-columns: repeat(2, minmax(0,1fr)); } }
 @media (max-width: 1020px) { .g-dash { grid-template-columns: minmax(0,1fr); } .g-3 { grid-template-columns: repeat(2, minmax(0,1fr)); } }
 @media (max-width: 960px) {
   .app { grid-template-columns: minmax(0,1fr); }
