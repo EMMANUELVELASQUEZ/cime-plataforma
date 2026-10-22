@@ -3,104 +3,210 @@ import { useEffect, useRef, useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
-const NODOS: [string, number, number, number?, string?][] = [
-  ["Pánuco", 22.05, -98.18],
-  ["Tuxpan", 20.95, -97.40],
-  ["Poza Rica", 20.53, -97.46],
-  ["Xalapa", 19.54, -96.91, 0, "l"],
-  ["Veracruz", 19.18, -96.14, 1, "u"],
-  ["Boca del Río", 19.10, -96.10, 0, "d"],
-  ["Córdoba", 18.88, -96.93, 0, "d"],
-  ["Orizaba", 18.85, -97.10, 0, "l"],
-  ["Alvarado", 18.77, -95.76],
-  ["S.A. Tuxtla", 18.45, -95.21, 0, "u"],
-  ["Coatzacoalcos", 18.13, -94.46, 0, "l"],
-  ["Minatitlán", 17.99, -94.55, 0, "d"],
+// World nodes: [name, lat, lon, isCore?]
+const NODES: [string, number, number, boolean?][] = [
+  ["Veracruz",     19.18,  -96.14, true],
+  ["México",       19.43,  -99.13],
+  ["Monterrey",    25.67, -100.31],
+  ["Nueva York",   40.71,  -74.01],
+  ["Los Ángeles",  34.05, -118.24],
+  ["Toronto",      43.65,  -79.38],
+  ["São Paulo",   -23.55,  -46.63],
+  ["Londres",      51.51,   -0.13],
+  ["Madrid",       40.42,   -3.70],
+  ["París",        48.85,    2.35],
+  ["Berlín",       52.52,   13.40],
+  ["Moscú",        55.75,   37.62],
+  ["Dubai",        25.20,   55.27],
+  ["Mumbai",       19.08,   72.88],
+  ["Singapur",      1.35,  103.82],
+  ["Tokio",        35.69,  139.69],
+  ["Shanghai",     31.23,  121.47],
+  ["Sídney",      -33.87,  151.21],
+  ["Lagos",         6.45,    3.39],
+  ["El Cairo",     30.04,   31.24],
 ]
-const ENL: [number, number][] = [[0,1],[1,2],[2,3],[3,4],[4,5],[3,6],[6,7],[6,4],[4,8],[8,9],[9,10],[10,11],[5,8]]
+
+const CONN: [number, number][] = [
+  [0,1],[0,2],[0,3],[1,2],[2,3],[3,4],[3,5],[3,7],[1,6],[6,5],
+  [7,8],[7,9],[9,10],[10,11],[11,12],[12,13],[13,14],[14,15],
+  [15,16],[14,17],[7,18],[18,19],[12,19],[0,7],[1,7],
+]
+
+// Simplified continent polygons [lon, lat]
+const LAND: [number, number][][] = [
+  // North America
+  [[-168,72],[-140,60],[-130,54],[-124,49],[-117,32],[-110,22],[-90,16],[-83,10],[-75,9],[-62,12],[-65,18],[-80,24],[-90,30],[-97,26],[-105,20],[-115,32],[-120,39],[-124,46],[-132,54],[-140,61],[-165,62],[-168,72]],
+  // Greenland
+  [[-73,83],[-28,83],[-18,70],[-45,60],[-55,65],[-66,70],[-73,83]],
+  // South America
+  [[-75,11],[-62,11],[-50,0],[-35,-8],[-38,-23],[-50,-28],[-65,-38],[-67,-54],[-75,-50],[-80,-35],[-78,-8],[-75,11]],
+  // Europe
+  [[-10,36],[-5,38],[3,43],[8,44],[15,47],[30,43],[30,60],[25,65],[15,70],[0,62],[-8,58],[-10,52],[-5,44],[-10,36]],
+  // UK
+  [[-5,50],[-1,51],[0,53],[0,58],[-5,58],[-6,55],[-5,50]],
+  // Africa
+  [[-17,15],[-14,10],[-8,5],[2,5],[8,-2],[12,-16],[18,-30],[20,-35],[27,-35],[37,-22],[40,-10],[43,12],[43,18],[38,22],[32,31],[24,35],[10,37],[0,37],[-5,34],[-17,15]],
+  // Asia
+  [[28,41],[42,40],[50,25],[57,22],[65,22],[72,20],[78,8],[80,5],[100,3],[105,5],[110,1],[120,5],[128,2],[130,10],[132,35],[140,40],[140,50],[135,55],[120,50],[115,55],[100,55],[85,50],[80,44],[68,43],[58,44],[45,43],[35,38],[28,41]],
+  // Borneo
+  [[108,7],[118,7],[118,-4],[108,-4],[108,7]],
+  // Australia
+  [[114,-22],[120,-30],[126,-34],[132,-38],[140,-36],[149,-38],[152,-27],[152,-18],[140,-15],[130,-12],[122,-16],[114,-22]],
+  // Japan
+  [[130,31],[131,33],[130,36],[132,44],[136,44],[141,44],[144,42],[142,38],[136,35],[132,32],[130,31]],
+  // Scandinavia
+  [[5,58],[5,62],[8,63],[15,70],[20,70],[28,71],[30,65],[25,60],[20,56],[15,56],[5,58]],
+  // Iceland
+  [[-24,64],[-14,66],[-13,65],[-20,63],[-24,64]],
+]
 
 export default function LoginClient() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const rafRef = useRef(0)
-  const router = useRouter()
+  const rafRef    = useRef(0)
+  const router    = useRouter()
 
-  const [identifier, setIdentifier] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPass, setShowPass] = useState(false)
-  const [error, setError] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [mode, setMode] = useState<"login" | "recover">("login")
-  const [recoverEmail, setRecoverEmail] = useState("")
-  const [recoverMsg, setRecoverMsg] = useState("")
+  const [identifier,    setIdentifier]   = useState("")
+  const [password,      setPassword]     = useState("")
+  const [showPass,      setShowPass]     = useState(false)
+  const [error,         setError]        = useState("")
+  const [loading,       setLoading]      = useState(false)
+  const [mode,          setMode]         = useState<"login" | "recover">("login")
+  const [recoverEmail,  setRecoverEmail] = useState("")
+  const [recoverMsg,    setRecoverMsg]   = useState("")
 
   useEffect(() => {
     const cv = canvasRef.current
     if (!cv) return
     const ctx = cv.getContext("2d")!
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches
-    const pk = ENL.flatMap((e, i) => [
-      { e: i, t: Math.random(), v: 0.0018 + Math.random() * 0.0025, dir: 1 },
-      { e: i, t: Math.random(), v: 0.0015 + Math.random() * 0.002, dir: -1 },
+
+    const packets = CONN.flatMap((_, i) => [
+      { e: i, t: Math.random(), v: 0.0005 + Math.random() * 0.0009, dir: 1 as const },
+      { e: i, t: Math.random(), v: 0.0004 + Math.random() * 0.0007, dir: -1 as const },
     ])
 
-    function layout(w: number, h: number) {
-      const lats = NODOS.map(n => n[1]), lons = NODOS.map(n => n[2])
-      const a = Math.min(...lons), b = Math.max(...lons), c = Math.min(...lats), d = Math.max(...lats)
-      const narrow = w < 700
-      const padX = narrow ? w * 0.16 : Math.max(w * 0.42, 380)
-      const padR = narrow ? w * 0.2 : w * 0.05, padT = h * 0.1, padB = h * 0.12
-      const s = Math.min((w - padX - padR) / (b - a), (h - padT - padB) / (d - c) * 1.25)
-      const ox = padX + ((w - padX - padR) - (b - a) * s) / 2
-      const oy = padT + ((h - padT - padB) - (d - c) * s / 1.25) / 2
-      return NODOS.map(n => [ox + (n[2] - a) * s, oy + (d - n[1]) * s / 1.25] as [number, number])
+    function proj(lon: number, lat: number, w: number, h: number): [number, number] {
+      return [(lon + 180) / 360 * w, (90 - lat) / 180 * h]
     }
 
     function frame() {
       if (!cv) return
-      const dpr = Math.min(devicePixelRatio || 1, 2), w = cv.clientWidth, h = cv.clientHeight
+      const dpr = Math.min(devicePixelRatio || 1, 2)
+      const w = cv.clientWidth, h = cv.clientHeight
       if (!w || !h) { rafRef.current = requestAnimationFrame(frame); return }
       if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) {
-        cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr)
+        cv.width  = Math.round(w * dpr)
+        cv.height = Math.round(h * dpr)
       }
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h)
-      const P = layout(w, h), small = w < 700; ctx.globalAlpha = small ? 0.4 : 1
-      ctx.lineWidth = 1
-      ENL.forEach(([i, j]) => {
-        ctx.strokeStyle = "rgba(109,166,230,.38)"; ctx.beginPath()
-        ctx.moveTo(...P[i]); ctx.lineTo(...P[j]); ctx.stroke()
-      })
-      pk.forEach(p => {
-        if (!reduce) { p.t += p.v * p.dir; if (p.t > 1) p.t -= 1; if (p.t < 0) p.t += 1 }
-        const [i, j] = ENL[p.e]
-        const x = P[i][0] + (P[j][0] - P[i][0]) * p.t, y = P[i][1] + (P[j][1] - P[i][1]) * p.t
-        ctx.fillStyle = p.dir > 0 ? "#F0B429" : "#E8EEF5"; ctx.beginPath(); ctx.arc(x, y, 1.8, 0, 7); ctx.fill()
-      })
-      ctx.font = "500 11px 'IBM Plex Mono',ui-monospace,monospace"; ctx.textBaseline = "middle"
-      NODOS.forEach((n, k) => {
-        const [x, y] = P[k], core = n[3], s = core ? 16 : 10
-        ctx.fillStyle = "#0F2740"; ctx.strokeStyle = core ? "#F0B429" : "#9FB3C8"; ctx.lineWidth = core ? 2 : 1.2
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      ctx.clearRect(0, 0, w, h)
+
+      // ── Graticule ────────────────────────────────────
+      ctx.lineWidth = 0.5
+      for (let lat = -60; lat <= 60; lat += 30) {
+        const [, y] = proj(0, lat, w, h)
+        ctx.strokeStyle = lat === 0 ? "rgba(74,144,217,.2)" : "rgba(74,144,217,.08)"
+        ctx.lineWidth   = lat === 0 ? 1 : 0.5
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke()
+      }
+      for (let lon = -180; lon <= 180; lon += 30) {
+        const [x] = proj(lon, 0, w, h)
+        ctx.strokeStyle = "rgba(74,144,217,.07)"
+        ctx.lineWidth   = 0.5
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke()
+      }
+
+      // ── Continents ───────────────────────────────────
+      LAND.forEach(poly => {
         ctx.beginPath()
-        if ((ctx as any).roundRect) (ctx as any).roundRect(x - s / 2, y - s / 2, s, s, 3)
-        else ctx.rect(x - s / 2, y - s / 2, s, s)
-        ctx.fill(); ctx.stroke()
-        if (core) {
-          ctx.fillStyle = "#F0B429"; ctx.fillRect(x - 3.5, y - 3.5, 7, 7)
-          const r = 20 + (reduce ? 0 : (performance.now() / 55) % 18)
-          ctx.strokeStyle = `rgba(240,180,41,${(0.45 * (1 - (r - 20) / 18)).toFixed(2)})`
-          ctx.lineWidth = 1; ctx.strokeRect(x - r / 2, y - r / 2, r, r)
-        }
-        if (small) return
-        ctx.fillStyle = core ? "#FFFFFF" : "#9FB3C8"
-        const pos = n[4] || "r"
-        ctx.textAlign = pos === "l" ? "right" : pos === "r" ? "left" : "center"
-        ctx.fillText(n[0], pos === "l" ? x - s / 2 - 7 : pos === "r" ? x + s / 2 + 7 : x, pos === "u" ? y - s / 2 - 10 : pos === "d" ? y + s / 2 + 10 : y)
-        ctx.textAlign = "left"
+        poly.forEach(([lon, lat], i) => {
+          const [x, y] = proj(lon, lat, w, h)
+          i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+        })
+        ctx.closePath()
+        ctx.fillStyle   = "rgba(74,144,217,.09)"
+        ctx.strokeStyle = "rgba(74,144,217,.28)"
+        ctx.lineWidth   = 0.8
+        ctx.fill()
+        ctx.stroke()
       })
-      ctx.globalAlpha = 1
+
+      // ── Connection arcs ───────────────────────────────
+      ctx.setLineDash([3, 7])
+      ctx.lineWidth = 0.8
+      CONN.forEach(([i, j]) => {
+        const [x1, y1] = proj(NODES[i][2], NODES[i][1], w, h)
+        const [x2, y2] = proj(NODES[j][2], NODES[j][1], w, h)
+        if (Math.abs(x1 - x2) > w * 0.55) return
+        const mx = (x1 + x2) / 2
+        const my = (y1 + y2) / 2 - Math.abs(x2 - x1) * 0.12
+        ctx.strokeStyle = "rgba(109,166,230,.18)"
+        ctx.beginPath()
+        ctx.moveTo(x1, y1)
+        ctx.quadraticCurveTo(mx, my, x2, y2)
+        ctx.stroke()
+      })
+      ctx.setLineDash([])
+
+      // ── Animated packets ──────────────────────────────
+      packets.forEach(p => {
+        if (!reduce) {
+          p.t += p.v * p.dir
+          if (p.t > 1) p.t -= 1
+          if (p.t < 0) p.t += 1
+        }
+        const [i, j] = CONN[p.e]
+        const [x1, y1] = proj(NODES[i][2], NODES[i][1], w, h)
+        const [x2, y2] = proj(NODES[j][2], NODES[j][1], w, h)
+        if (Math.abs(x1 - x2) > w * 0.55) return
+        const mx = (x1 + x2) / 2
+        const my = (y1 + y2) / 2 - Math.abs(x2 - x1) * 0.12
+        const t  = p.t
+        const px = (1-t)*(1-t)*x1 + 2*(1-t)*t*mx + t*t*x2
+        const py = (1-t)*(1-t)*y1 + 2*(1-t)*t*my + t*t*y2
+        ctx.fillStyle = p.dir > 0 ? "#F0B429" : "#6DA6E6"
+        ctx.beginPath(); ctx.arc(px, py, 1.8, 0, 7); ctx.fill()
+      })
+
+      // ── Nodes ─────────────────────────────────────────
+      NODES.forEach(([, lat, lon, core]) => {
+        const [x, y] = proj(lon, lat, w, h)
+        const r = core ? 6 : 3.5
+
+        if (core) {
+          const now = performance.now()
+          const p1 = 18 + (reduce ? 0 : (now / 55) % 20)
+          const p2 = 10 + (reduce ? 0 : (now / 80) % 14)
+          ctx.lineWidth = 1.5
+          ctx.strokeStyle = `rgba(240,180,41,${(0.5*(1-(p1-18)/20)).toFixed(2)})`
+          ctx.beginPath(); ctx.arc(x, y, p1, 0, Math.PI*2); ctx.stroke()
+          ctx.strokeStyle = `rgba(240,180,41,${(0.35*(1-(p2-10)/14)).toFixed(2)})`
+          ctx.beginPath(); ctx.arc(x, y, p2, 0, Math.PI*2); ctx.stroke()
+        }
+
+        ctx.fillStyle   = "#07101D"
+        ctx.strokeStyle = core ? "#F0B429" : "rgba(109,166,230,.75)"
+        ctx.lineWidth   = core ? 2 : 1
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill(); ctx.stroke()
+        if (core) {
+          ctx.fillStyle = "#F0B429"
+          ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI*2); ctx.fill()
+        }
+      })
+
+      // ── Veracruz label ────────────────────────────────
+      const [vx, vy] = proj(NODES[0][2], NODES[0][1], w, h)
+      ctx.font      = "600 11px 'Inter',system-ui,sans-serif"
+      ctx.fillStyle = "#F0B429"
+      ctx.textAlign = "left"
+      ctx.fillText("Veracruz · CIME", vx + 12, vy + 4)
+
       if (!reduce) rafRef.current = requestAnimationFrame(frame)
     }
 
-    cancelAnimationFrame(rafRef.current); rafRef.current = requestAnimationFrame(frame)
+    cancelAnimationFrame(rafRef.current)
+    rafRef.current = requestAnimationFrame(frame)
     return () => cancelAnimationFrame(rafRef.current)
   }, [])
 
@@ -110,10 +216,7 @@ export default function LoginClient() {
     setLoading(true); setError("")
     const res = await signIn("credentials", { identifier: identifier.toLowerCase(), password, redirect: false })
     setLoading(false)
-    if (res?.error) {
-      setError("Número de colegiado o contraseña incorrectos.")
-      return
-    }
+    if (res?.error) { setError("Número de colegiado o contraseña incorrectos."); return }
     router.refresh()
     router.push("/")
   }
@@ -129,7 +232,7 @@ export default function LoginClient() {
 
   return (
     <div className="login">
-      {/* Panel izquierdo — mapa topológico */}
+      {/* Panel izquierdo — mapa mundial */}
       <div className="login-art">
         <canvas id="topo-canvas" ref={canvasRef} aria-hidden="true" />
         <div className="brand">
@@ -218,7 +321,6 @@ export default function LoginClient() {
                   {loading ? "Verificando…" : "Entrar al portal →"}
                 </button>
               </div>
-
             </form>
           ) : (
             <form onSubmit={handleRecover} style={{ display: "grid", gap: 16 }} noValidate>
