@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="650" viewBox="0 0 760 650">
+  <defs>
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="0.6" fill="#1e293b" opacity="0.7"/>
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="760" height="650" fill="#0d1117"/>
+  <rect width="760" height="650" fill="url(#dots)"/>
+
+  <!-- Title -->
+  <text x="380" y="26" text-anchor="middle" font-size="15" font-weight="700" fill="#e6edf3" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">Esquema de Base de Datos · CIME Veracruz</text>
+  <text x="380" y="42" text-anchor="middle" font-size="10" fill="#484f58" font-family="monospace">PostgreSQL · Prisma ORM · 7 tablas · 4 relaciones FK con CASCADE DELETE</text>
+
+  <!-- ═══ RELATIONSHIP LINES (behind tables) ═══ -->
+
+  <!-- 1. Usuario → InscripcionCurso (usuarioId) -->
+  <path d="M240,87 H260 V105 H280" fill="none" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4,2.5" opacity="0.85"/>
+  <circle cx="240" cy="87" r="3" fill="#6366f1"/>
+  <circle cx="280" cy="105" r="3" fill="#6366f1"/>
+  <rect x="243" y="80" width="13" height="12" fill="#161b22" rx="2"/>
+  <text x="249" y="90" text-anchor="middle" font-size="9" font-weight="700" fill="#a5b4fc" font-family="monospace">1</text>
+  <rect x="264" y="97" width="13" height="12" fill="#161b22" rx="2"/>
+  <text x="270" y="107" text-anchor="middle" font-size="9" font-weight="700" fill="#a5b4fc" font-family="monospace">N</text>
+
+  <!-- 2. Curso → InscripcionCurso (cursoId) -->
+  <path d="M525,87 H505 V123 H485" fill="none" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4,2.5" opacity="0.85"/>
+  <circle cx="525" cy="87" r="3" fill="#6366f1"/>
+  <circle cx="485" cy="123" r="3" fill="#6366f1"/>
+  <rect x="509" y="80" width="13" height="12" fill="#161b22" rx="2"/>
+  <text x="515" y="90" text-anchor="middle" font-size="9" font-weight="700" fill="#a5b4fc" font-family="monospace">1</text>
+  <rect x="469" y="115" width="13" height="12" fill="#161b22" rx="2"/>
+  <text x="475" y="125" text-anchor="middle" font-size="9" font-weight="700" fill="#a5b4fc" font-family="monospace">N</text>
+
+  <!-- 3. Curso → ModuloCurso (cursoId) same column, right side -->
+  <path d="M730,87 H748 V423 H730" fill="none" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4,2.5" opacity="0.85"/>
+  <circle cx="730" cy="87" r="3" fill="#6366f1"/>
+  <circle cx="730" cy="423" r="3" fill="#6366f1"/>
+  <rect x="733" y="80" width="13" height="12" fill="#161b22" rx="2"/>
+  <text x="739" y="90" text-anchor="middle" font-size="9" font-weight="700" fill="#a5b4fc" font-family="monospace">1</text>
+  <rect x="733" y="416" width="13" height="12" fill="#161b22" rx="2"/>
+  <text x="739" y="426" text-anchor="middle" font-size="9" font-weight="700" fill="#a5b4fc" font-family="monospace">N</text>
+
+  <!-- 4. Usuario → Pago (usuarioId) same column, left side -->
+  <path d="M35,87 H17 V459 H35" fill="none" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4,2.5" opacity="0.85"/>
+  <circle cx="35" cy="87" r="3" fill="#6366f1"/>
+  <circle cx="35" cy="459" r="3" fill="#6366f1"/>
+  <rect x="4" y="80" width="13" height="12" fill="#161b22" rx="2"/>
+  <text x="10" y="90" text-anchor="middle" font-size="9" font-weight="700" fill="#a5b4fc" font-family="monospace">1</text>
+  <rect x="4" y="452" width="13" height="12" fill="#161b22" rx="2"/>
+  <text x="10" y="462" text-anchor="middle" font-size="9" font-weight="700" fill="#a5b4fc" font-family="monospace">N</text>
+
+  <!-- ═══ TABLE: Usuario (C1=35, y=50, 17 rows, h=334) ═══ -->
+  <rect x="37" y="52" width="205" height="334" fill="#000" opacity="0.25" rx="6"/>
+  <rect x="35" y="50" width="205" height="334" fill="#161b22" stroke="#2d333b" stroke-width="1" rx="6"/>
+  <rect x="35" y="50" width="205" height="28" fill="#1a3256" rx="6"/>
+  <rect x="35" y="64" width="205" height="14" fill="#1a3256"/>
+  <text x="45" y="69" font-size="12" font-weight="700" fill="#93c5fd" font-family="sans-serif">Usuario</text>
+  <line x1="35" y1="78" x2="240" y2="78" stroke="#2d333b" stroke-width="1"/>
+  <!-- id PK row=0 y=78 -->
+  <rect x="35" y="78" width="205" height="18" fill="#f59e0b12"/>
+  <rect x="35" y="78" width="3" height="18" fill="#f59e0b"/>
+  <text x="44" y="91" font-size="11" fill="#fbbf24" font-family="sans-serif" font-weight="600">id</text>
+  <text x="232" y="91" text-anchor="end" font-size="9" fill="#b45309" font-family="monospace">PK · String</text>
+  <!-- numeroColegiado row=1 y=96 -->
+  <line x1="35" y1="96" x2="240" y2="96" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="109" font-size="11" fill="#8b949e" font-family="sans-serif">numeroColegiado</text>
+  <text x="232" y="109" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String?</text>
+  <!-- nombre row=2 y=114 -->
+  <line x1="35" y1="114" x2="240" y2="114" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="127" font-size="11" fill="#8b949e" font-family="sans-serif">nombre</text>
+  <text x="232" y="127" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- correo row=3 y=132 -->
+  <line x1="35" y1="132" x2="240" y2="132" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="145" font-size="11" fill="#8b949e" font-family="sans-serif">correo</text>
+  <text x="232" y="145" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- password row=4 y=150 -->
+  <line x1="35" y1="150" x2="240" y2="150" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="163" font-size="11" fill="#8b949e" font-family="sans-serif">password</text>
+  <text x="232" y="163" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- rol row=5 y=168 -->
+  <line x1="35" y1="168" x2="240" y2="168" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="181" font-size="11" fill="#8b949e" font-family="sans-serif">rol</text>
+  <text x="232" y="181" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">Rol</text>
+  <!-- especialidad row=6 y=186 -->
+  <line x1="35" y1="186" x2="240" y2="186" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="199" font-size="11" fill="#8b949e" font-family="sans-serif">especialidad</text>
+  <text x="232" y="199" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String?</text>
+  <!-- ciudad row=7 y=204 -->
+  <line x1="35" y1="204" x2="240" y2="204" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="217" font-size="11" fill="#8b949e" font-family="sans-serif">ciudad</text>
+  <text x="232" y="217" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String?</text>
+  <!-- cedula row=8 y=222 -->
+  <line x1="35" y1="222" x2="240" y2="222" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="235" font-size="11" fill="#8b949e" font-family="sans-serif">cedula</text>
+  <text x="232" y="235" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String?</text>
+  <!-- telefono row=9 y=240 -->
+  <line x1="35" y1="240" x2="240" y2="240" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="253" font-size="11" fill="#8b949e" font-family="sans-serif">telefono</text>
+  <text x="232" y="253" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String?</text>
+  <!-- estado row=10 y=258 -->
+  <line x1="35" y1="258" x2="240" y2="258" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="271" font-size="11" fill="#8b949e" font-family="sans-serif">estado</text>
+  <text x="232" y="271" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">EstadoColegiado</text>
+  <!-- alta row=11 y=276 -->
+  <line x1="35" y1="276" x2="240" y2="276" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="289" font-size="11" fill="#8b949e" font-family="sans-serif">alta</text>
+  <text x="232" y="289" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">Int</text>
+  <!-- vigencia row=12 y=294 -->
+  <line x1="35" y1="294" x2="240" y2="294" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="307" font-size="11" fill="#8b949e" font-family="sans-serif">vigencia</text>
+  <text x="232" y="307" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String?</text>
+  <!-- horas row=13 y=312 -->
+  <line x1="35" y1="312" x2="240" y2="312" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="325" font-size="11" fill="#8b949e" font-family="sans-serif">horas</text>
+  <text x="232" y="325" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">Int</text>
+  <!-- horasMeta row=14 y=330 -->
+  <line x1="35" y1="330" x2="240" y2="330" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="343" font-size="11" fill="#8b949e" font-family="sans-serif">horasMeta</text>
+  <text x="232" y="343" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">Int</text>
+  <!-- createdAt row=15 y=348 -->
+  <line x1="35" y1="348" x2="240" y2="348" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="361" font-size="11" fill="#8b949e" font-family="sans-serif">createdAt</text>
+  <text x="232" y="361" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">DateTime</text>
+  <!-- updatedAt row=16 y=366 -->
+  <line x1="35" y1="366" x2="240" y2="366" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="379" font-size="11" fill="#8b949e" font-family="sans-serif">updatedAt</text>
+  <text x="232" y="379" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">DateTime</text>
+
+  <!-- ═══ TABLE: Pago (C1=35, y=404, 7 rows, h=154) ═══ -->
+  <rect x="37" y="406" width="205" height="154" fill="#000" opacity="0.25" rx="6"/>
+  <rect x="35" y="404" width="205" height="154" fill="#161b22" stroke="#2d333b" stroke-width="1" rx="6"/>
+  <rect x="35" y="404" width="205" height="28" fill="#143322" rx="6"/>
+  <rect x="35" y="418" width="205" height="14" fill="#143322"/>
+  <text x="45" y="423" font-size="12" font-weight="700" fill="#6ee7b7" font-family="sans-serif">Pago</text>
+  <line x1="35" y1="432" x2="240" y2="432" stroke="#2d333b" stroke-width="1"/>
+  <!-- id PK row=0 y=432 -->
+  <rect x="35" y="432" width="205" height="18" fill="#f59e0b12"/>
+  <rect x="35" y="432" width="3" height="18" fill="#f59e0b"/>
+  <text x="44" y="445" font-size="11" fill="#fbbf24" font-family="sans-serif" font-weight="600">id</text>
+  <text x="232" y="445" text-anchor="end" font-size="9" fill="#b45309" font-family="monospace">PK · String</text>
+  <!-- usuarioId FK row=1 y=450 -->
+  <rect x="35" y="450" width="205" height="18" fill="#818cf812"/>
+  <rect x="35" y="450" width="3" height="18" fill="#818cf8"/>
+  <line x1="35" y1="450" x2="240" y2="450" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="463" font-size="11" fill="#818cf8" font-family="sans-serif">usuarioId</text>
+  <text x="232" y="463" text-anchor="end" font-size="9" fill="#4338ca" font-family="monospace">FK · String</text>
+  <!-- concepto row=2 y=468 -->
+  <line x1="35" y1="468" x2="240" y2="468" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="481" font-size="11" fill="#8b949e" font-family="sans-serif">concepto</text>
+  <text x="232" y="481" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- monto row=3 y=486 -->
+  <line x1="35" y1="486" x2="240" y2="486" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="499" font-size="11" fill="#8b949e" font-family="sans-serif">monto</text>
+  <text x="232" y="499" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">Float</text>
+  <!-- estado row=4 y=504 -->
+  <line x1="35" y1="504" x2="240" y2="504" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="517" font-size="11" fill="#8b949e" font-family="sans-serif">estado</text>
+  <text x="232" y="517" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- folio row=5 y=522 -->
+  <line x1="35" y1="522" x2="240" y2="522" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="535" font-size="11" fill="#8b949e" font-family="sans-serif">folio</text>
+  <text x="232" y="535" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- createdAt row=6 y=540 -->
+  <line x1="35" y1="540" x2="240" y2="540" stroke="#21262d" stroke-width="1"/>
+  <text x="44" y="553" font-size="11" fill="#8b949e" font-family="sans-serif">createdAt</text>
+  <text x="232" y="553" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">DateTime</text>
+
+  <!-- ═══ TABLE: InscripcionCurso (C2=280, y=50, 9 rows, h=190) ═══ -->
+  <rect x="282" y="52" width="205" height="190" fill="#000" opacity="0.25" rx="6"/>
+  <rect x="280" y="50" width="205" height="190" fill="#161b22" stroke="#2d333b" stroke-width="1" rx="6"/>
+  <rect x="280" y="50" width="205" height="28" fill="#2a1a4e" rx="6"/>
+  <rect x="280" y="64" width="205" height="14" fill="#2a1a4e"/>
+  <text x="290" y="69" font-size="12" font-weight="700" fill="#c4b5fd" font-family="sans-serif">InscripcionCurso</text>
+  <line x1="280" y1="78" x2="485" y2="78" stroke="#2d333b" stroke-width="1"/>
+  <!-- id PK row=0 y=78 -->
+  <rect x="280" y="78" width="205" height="18" fill="#f59e0b12"/>
+  <rect x="280" y="78" width="3" height="18" fill="#f59e0b"/>
+  <text x="289" y="91" font-size="11" fill="#fbbf24" font-family="sans-serif" font-weight="600">id</text>
+  <text x="477" y="91" text-anchor="end" font-size="9" fill="#b45309" font-family="monospace">PK · String</text>
+  <!-- usuarioId FK row=1 y=96 -->
+  <rect x="280" y="96" width="205" height="18" fill="#818cf812"/>
+  <rect x="280" y="96" width="3" height="18" fill="#818cf8"/>
+  <line x1="280" y1="96" x2="485" y2="96" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="109" font-size="11" fill="#818cf8" font-family="sans-serif">usuarioId</text>
+  <text x="477" y="109" text-anchor="end" font-size="9" fill="#4338ca" font-family="monospace">FK · String</text>
+  <!-- cursoId FK row=2 y=114 -->
+  <rect x="280" y="114" width="205" height="18" fill="#818cf812"/>
+  <rect x="280" y="114" width="3" height="18" fill="#818cf8"/>
+  <line x1="280" y1="114" x2="485" y2="114" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="127" font-size="11" fill="#818cf8" font-family="sans-serif">cursoId</text>
+  <text x="477" y="127" text-anchor="end" font-size="9" fill="#4338ca" font-family="monospace">FK · String</text>
+  <!-- progreso row=3 y=132 -->
+  <line x1="280" y1="132" x2="485" y2="132" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="145" font-size="11" fill="#8b949e" font-family="sans-serif">progreso</text>
+  <text x="477" y="145" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">Int</text>
+  <!-- moduloActual row=4 y=150 -->
+  <line x1="280" y1="150" x2="485" y2="150" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="163" font-size="11" fill="#8b949e" font-family="sans-serif">moduloActual</text>
+  <text x="477" y="163" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">Int</text>
+  <!-- calificacion row=5 y=168 -->
+  <line x1="280" y1="168" x2="485" y2="168" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="181" font-size="11" fill="#8b949e" font-family="sans-serif">calificacion</text>
+  <text x="477" y="181" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">Float?</text>
+  <!-- folio row=6 y=186 -->
+  <line x1="280" y1="186" x2="485" y2="186" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="199" font-size="11" fill="#8b949e" font-family="sans-serif">folio</text>
+  <text x="477" y="199" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String?</text>
+  <!-- estado row=7 y=204 -->
+  <line x1="280" y1="204" x2="485" y2="204" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="217" font-size="11" fill="#8b949e" font-family="sans-serif">estado</text>
+  <text x="477" y="217" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">EstadoInscripcion</text>
+  <!-- createdAt row=8 y=222 -->
+  <line x1="280" y1="222" x2="485" y2="222" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="235" font-size="11" fill="#8b949e" font-family="sans-serif">createdAt</text>
+  <text x="477" y="235" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">DateTime</text>
+
+  <!-- ═══ TABLE: Evento (C2=280, y=260, 7 rows, h=154) ═══ -->
+  <rect x="282" y="262" width="205" height="154" fill="#000" opacity="0.25" rx="6"/>
+  <rect x="280" y="260" width="205" height="154" fill="#161b22" stroke="#2d333b" stroke-width="1" rx="6"/>
+  <rect x="280" y="260" width="205" height="28" fill="#2e1c0a" rx="6"/>
+  <rect x="280" y="274" width="205" height="14" fill="#2e1c0a"/>
+  <text x="290" y="279" font-size="12" font-weight="700" fill="#fdba74" font-family="sans-serif">Evento</text>
+  <line x1="280" y1="288" x2="485" y2="288" stroke="#2d333b" stroke-width="1"/>
+  <!-- id PK y=288 -->
+  <rect x="280" y="288" width="205" height="18" fill="#f59e0b12"/>
+  <rect x="280" y="288" width="3" height="18" fill="#f59e0b"/>
+  <text x="289" y="301" font-size="11" fill="#fbbf24" font-family="sans-serif" font-weight="600">id</text>
+  <text x="477" y="301" text-anchor="end" font-size="9" fill="#b45309" font-family="monospace">PK · String</text>
+  <!-- fecha y=306 -->
+  <line x1="280" y1="306" x2="485" y2="306" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="319" font-size="11" fill="#8b949e" font-family="sans-serif">fecha</text>
+  <text x="477" y="319" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">DateTime</text>
+  <!-- tipo y=324 -->
+  <line x1="280" y1="324" x2="485" y2="324" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="337" font-size="11" fill="#8b949e" font-family="sans-serif">tipo</text>
+  <text x="477" y="337" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- titulo y=342 -->
+  <line x1="280" y1="342" x2="485" y2="342" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="355" font-size="11" fill="#8b949e" font-family="sans-serif">titulo</text>
+  <text x="477" y="355" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- hora y=360 -->
+  <line x1="280" y1="360" x2="485" y2="360" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="373" font-size="11" fill="#8b949e" font-family="sans-serif">hora</text>
+  <text x="477" y="373" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- lugar y=378 -->
+  <line x1="280" y1="378" x2="485" y2="378" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="391" font-size="11" fill="#8b949e" font-family="sans-serif">lugar</text>
+  <text x="477" y="391" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- createdAt y=396 -->
+  <line x1="280" y1="396" x2="485" y2="396" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="409" font-size="11" fill="#8b949e" font-family="sans-serif">createdAt</text>
+  <text x="477" y="409" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">DateTime</text>
+
+  <!-- ═══ TABLE: Aviso (C2=280, y=434, 7 rows, h=154) ═══ -->
+  <rect x="282" y="436" width="205" height="154" fill="#000" opacity="0.25" rx="6"/>
+  <rect x="280" y="434" width="205" height="154" fill="#161b22" stroke="#2d333b" stroke-width="1" rx="6"/>
+  <rect x="280" y="434" width="205" height="28" fill="#0c2a22" rx="6"/>
+  <rect x="280" y="448" width="205" height="14" fill="#0c2a22"/>
+  <text x="290" y="453" font-size="12" font-weight="700" fill="#6ee7b7" font-family="sans-serif">Aviso</text>
+  <line x1="280" y1="462" x2="485" y2="462" stroke="#2d333b" stroke-width="1"/>
+  <!-- id PK y=462 -->
+  <rect x="280" y="462" width="205" height="18" fill="#f59e0b12"/>
+  <rect x="280" y="462" width="3" height="18" fill="#f59e0b"/>
+  <text x="289" y="475" font-size="11" fill="#fbbf24" font-family="sans-serif" font-weight="600">id</text>
+  <text x="477" y="475" text-anchor="end" font-size="9" fill="#b45309" font-family="monospace">PK · String</text>
+  <!-- tipo y=480 -->
+  <line x1="280" y1="480" x2="485" y2="480" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="493" font-size="11" fill="#8b949e" font-family="sans-serif">tipo</text>
+  <text x="477" y="493" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- categoria y=498 -->
+  <line x1="280" y1="498" x2="485" y2="498" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="511" font-size="11" fill="#8b949e" font-family="sans-serif">categoria</text>
+  <text x="477" y="511" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- titulo y=516 -->
+  <line x1="280" y1="516" x2="485" y2="516" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="529" font-size="11" fill="#8b949e" font-family="sans-serif">titulo</text>
+  <text x="477" y="529" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- contenido y=534 -->
+  <line x1="280" y1="534" x2="485" y2="534" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="547" font-size="11" fill="#8b949e" font-family="sans-serif">contenido</text>
+  <text x="477" y="547" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- fijado y=552 -->
+  <line x1="280" y1="552" x2="485" y2="552" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="565" font-size="11" fill="#8b949e" font-family="sans-serif">fijado</text>
+  <text x="477" y="565" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">Boolean</text>
+  <!-- createdAt y=570 -->
+  <line x1="280" y1="570" x2="485" y2="570" stroke="#21262d" stroke-width="1"/>
+  <text x="289" y="583" font-size="11" fill="#8b949e" font-family="sans-serif">createdAt</text>
+  <text x="477" y="583" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">DateTime</text>
+
+  <!-- ═══ TABLE: Curso (C3=525, y=50, 15 rows, h=298) ═══ -->
+  <rect x="527" y="52" width="205" height="298" fill="#000" opacity="0.25" rx="6"/>
+  <rect x="525" y="50" width="205" height="298" fill="#161b22" stroke="#2d333b" stroke-width="1" rx="6"/>
+  <rect x="525" y="50" width="205" height="28" fill="#1a2e52" rx="6"/>
+  <rect x="525" y="64" width="205" height="14" fill="#1a2e52"/>
+  <text x="535" y="69" font-size="12" font-weight="700" fill="#93c5fd" font-family="sans-serif">Curso</text>
+  <line x1="525" y1="78" x2="730" y2="78" stroke="#2d333b" stroke-width="1"/>
+  <!-- id PK y=78 -->
+  <rect x="525" y="78" width="205" height="18" fill="#f59e0b12"/>
+  <rect x="525" y="78" width="3" height="18" fill="#f59e0b"/>
+  <text x="534" y="91" font-size="11" fill="#fbbf24" font-family="sans-serif" font-weight="600">id</text>
+  <text x="722" y="91" text-anchor="end" font-size="9" fill="#b45309" font-family="monospace">PK · String</text>
+  <!-- codigo y=96 -->
+  <line x1="525" y1="96" x2="730" y2="96" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="109" font-size="11" fill="#8b949e" font-family="sans-serif">codigo</text>
+  <text x="722" y="109" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- titulo y=114 -->
+  <line x1="525" y1="114" x2="730" y2="114" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="127" font-size="11" fill="#8b949e" font-family="sans-serif">titulo</text>
+  <text x="722" y="127" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- area y=132 -->
+  <line x1="525" y1="132" x2="730" y2="132" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="145" font-size="11" fill="#8b949e" font-family="sans-serif">area</text>
+  <text x="722" y="145" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">Area</text>
+  <!-- horas y=150 -->
+  <line x1="525" y1="150" x2="730" y2="150" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="163" font-size="11" fill="#8b949e" font-family="sans-serif">horas</text>
+  <text x="722" y="163" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">Int</text>
+  <!-- modalidad y=168 -->
+  <line x1="525" y1="168" x2="730" y2="168" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="181" font-size="11" fill="#8b949e" font-family="sans-serif">modalidad</text>
+  <text x="722" y="181" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- lugar y=186 -->
+  <line x1="525" y1="186" x2="730" y2="186" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="199" font-size="11" fill="#8b949e" font-family="sans-serif">lugar</text>
+  <text x="722" y="199" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- instructor y=204 -->
+  <line x1="525" y1="204" x2="730" y2="204" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="217" font-size="11" fill="#8b949e" font-family="sans-serif">instructor</text>
+  <text x="722" y="217" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- fechaInicio y=222 -->
+  <line x1="525" y1="222" x2="730" y2="222" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="235" font-size="11" fill="#8b949e" font-family="sans-serif">fechaInicio</text>
+  <text x="722" y="235" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">DateTime</text>
+  <!-- fechaFin y=240 -->
+  <line x1="525" y1="240" x2="730" y2="240" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="253" font-size="11" fill="#8b949e" font-family="sans-serif">fechaFin</text>
+  <text x="722" y="253" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">DateTime</text>
+  <!-- cupo y=258 -->
+  <line x1="525" y1="258" x2="730" y2="258" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="271" font-size="11" fill="#8b949e" font-family="sans-serif">cupo</text>
+  <text x="722" y="271" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">Int</text>
+  <!-- precio y=276 -->
+  <line x1="525" y1="276" x2="730" y2="276" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="289" font-size="11" fill="#8b949e" font-family="sans-serif">precio</text>
+  <text x="722" y="289" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">Float</text>
+  <!-- estado y=294 -->
+  <line x1="525" y1="294" x2="730" y2="294" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="307" font-size="11" fill="#8b949e" font-family="sans-serif">estado</text>
+  <text x="722" y="307" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">EstadoCurso</text>
+  <!-- createdAt y=312 -->
+  <line x1="525" y1="312" x2="730" y2="312" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="325" font-size="11" fill="#8b949e" font-family="sans-serif">createdAt</text>
+  <text x="722" y="325" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">DateTime</text>
+  <!-- updatedAt y=330 -->
+  <line x1="525" y1="330" x2="730" y2="330" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="343" font-size="11" fill="#8b949e" font-family="sans-serif">updatedAt</text>
+  <text x="722" y="343" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">DateTime</text>
+
+  <!-- ═══ TABLE: ModuloCurso (C3=525, y=368, 4 rows, h=100) ═══ -->
+  <rect x="527" y="370" width="205" height="100" fill="#000" opacity="0.25" rx="6"/>
+  <rect x="525" y="368" width="205" height="100" fill="#161b22" stroke="#2d333b" stroke-width="1" rx="6"/>
+  <rect x="525" y="368" width="205" height="28" fill="#1a2e52" rx="6"/>
+  <rect x="525" y="382" width="205" height="14" fill="#1a2e52"/>
+  <text x="535" y="387" font-size="12" font-weight="700" fill="#93c5fd" font-family="sans-serif">ModuloCurso</text>
+  <line x1="525" y1="396" x2="730" y2="396" stroke="#2d333b" stroke-width="1"/>
+  <!-- id PK y=396 -->
+  <rect x="525" y="396" width="205" height="18" fill="#f59e0b12"/>
+  <rect x="525" y="396" width="3" height="18" fill="#f59e0b"/>
+  <text x="534" y="409" font-size="11" fill="#fbbf24" font-family="sans-serif" font-weight="600">id</text>
+  <text x="722" y="409" text-anchor="end" font-size="9" fill="#b45309" font-family="monospace">PK · String</text>
+  <!-- cursoId FK y=414 -->
+  <rect x="525" y="414" width="205" height="18" fill="#818cf812"/>
+  <rect x="525" y="414" width="3" height="18" fill="#818cf8"/>
+  <line x1="525" y1="414" x2="730" y2="414" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="427" font-size="11" fill="#818cf8" font-family="sans-serif">cursoId</text>
+  <text x="722" y="427" text-anchor="end" font-size="9" fill="#4338ca" font-family="monospace">FK · String</text>
+  <!-- titulo y=432 -->
+  <line x1="525" y1="432" x2="730" y2="432" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="445" font-size="11" fill="#8b949e" font-family="sans-serif">titulo</text>
+  <text x="722" y="445" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">String</text>
+  <!-- orden y=450 -->
+  <line x1="525" y1="450" x2="730" y2="450" stroke="#21262d" stroke-width="1"/>
+  <text x="534" y="463" font-size="11" fill="#8b949e" font-family="sans-serif">orden</text>
+  <text x="722" y="463" text-anchor="end" font-size="9" fill="#484f58" font-family="monospace">Int</text>
+
+  <!-- ═══ LEGEND ═══ -->
+  <rect x="35" y="607" width="690" height="30" fill="#161b22" stroke="#2d333b" stroke-width="1" rx="5"/>
+  <!-- PK -->
+  <rect x="48" y="615" width="12" height="14" fill="#f59e0b12" stroke="#f59e0b44" stroke-width="1" rx="2"/>
+  <rect x="48" y="615" width="3" height="14" fill="#f59e0b" rx="1"/>
+  <text x="65" y="625" font-size="10" fill="#f59e0b" font-family="sans-serif" font-weight="600">PK — Clave primaria (CUID)</text>
+  <!-- FK -->
+  <rect x="225" y="615" width="12" height="14" fill="#818cf812" stroke="#818cf844" stroke-width="1" rx="2"/>
+  <rect x="225" y="615" width="3" height="14" fill="#818cf8" rx="1"/>
+  <text x="242" y="625" font-size="10" fill="#818cf8" font-family="sans-serif" font-weight="600">FK — Foránea con CASCADE DELETE</text>
+  <!-- Rel -->
+  <line x1="430" y1="622" x2="460" y2="622" stroke="#6366f1" stroke-width="1.5" stroke-dasharray="4,2.5"/>
+  <circle cx="430" cy="622" r="2.5" fill="#6366f1"/>
+  <circle cx="460" cy="622" r="2.5" fill="#6366f1"/>
+  <text x="465" y="625" font-size="10" fill="#a5b4fc" font-family="sans-serif" font-weight="600">Relación 1:N</text>
+  <!-- Enums -->
+  <text x="555" y="625" font-size="9" fill="#484f58" font-family="monospace">Rol · EstadoColegiado · Area · EstadoCurso · EstadoInscripcion</text>
+
+</svg>
