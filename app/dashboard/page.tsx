@@ -34,7 +34,7 @@ export default async function DashboardPage() {
   const inscripciones = await prisma.inscripcionCurso.findMany({
     where: { usuarioId: userId },
     include: { curso: { include: { modulos: true } } },
-    orderBy: { updatedAt: "desc" },
+    orderBy: { createdAt: "desc" },
   })
 
   const enCurso   = inscripciones.filter(i => i.estado !== "COMPLETADO")

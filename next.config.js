@@ -4,6 +4,11 @@ const nextConfig = {
     serverActions: { allowedOrigins: ["*"] },
     instrumentationHook: true,
   },
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
+    ],
+  },
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback = { ...config.resolve.fallback, child_process: false }

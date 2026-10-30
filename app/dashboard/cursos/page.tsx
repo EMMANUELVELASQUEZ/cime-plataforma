@@ -93,9 +93,9 @@ export default async function CursosPage() {
                       <CalendarDays size={12} strokeWidth={2} />
                       Termina {new Date(c.fechaFin).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
                     </span>
-                    <button className="btn sm primary" style={{ fontSize: ".78rem", height: 30, padding: "0 12px" }}>
+                    <a href={`/dashboard/cursos/${i.curso.id}`} className="btn sm primary" style={{ fontSize: ".78rem", height: 30, padding: "0 12px" }}>
                       Continuar →
-                    </button>
+                    </a>
                   </div>
                 </div>
               )

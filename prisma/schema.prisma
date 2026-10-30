@@ -45,6 +45,8 @@ model Curso {
   id          String      @id @default(cuid())
   codigo      String      @unique
   titulo      String
+  descripcion String?
+  imagen      String?
   area        Area        @default(ELE)
   horas       Int
   modalidad   String
@@ -76,11 +78,57 @@ enum EstadoCurso {
 }
 
 model ModuloCurso {
-  id      String @id @default(cuid())
+  id      String    @id @default(cuid())
   cursoId String
   titulo  String
   orden   Int
-  curso   Curso  @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+  curso   Curso     @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+  lecciones Leccion[]
+}
+
+enum TipoRecurso {
+  VIDEO_LINK
+  DOCUMENTO
+  IMAGEN
+  TEXTO
+  LINK_EXTERNO
+}
+
+model Leccion {
+  id          String           @id @default(cuid())
+  moduloId    String
+  titulo      String
+  descripcion String?
+  orden       Int
+  modulo      ModuloCurso      @relation(fields: [moduloId], references: [id], onDelete: Cascade)
+  recursos    RecursoLeccion[]
+  completadas LeccionCompletada[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+}
+
+model RecursoLeccion {
+  id        String      @id @default(cuid())
+  leccionId String
+  tipo      TipoRecurso
+  titulo    String
+  url       String?
+  contenido String?
+  tamano    Int?
+  orden     Int         @default(0)
+  leccion   Leccion     @relation(fields: [leccionId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+}
+
+model LeccionCompletada {
+  id            String           @id @default(cuid())
+  inscripcionId String
+  leccionId     String
+  createdAt     DateTime         @default(now())
+  inscripcion   InscripcionCurso @relation(fields: [inscripcionId], references: [id], onDelete: Cascade)
+  leccion       Leccion          @relation(fields: [leccionId], references: [id], onDelete: Cascade)
+
+  @@unique([inscripcionId, leccionId])
 }
 
 model InscripcionCurso {
@@ -94,8 +142,9 @@ model InscripcionCurso {
   estado       EstadoInscripcion @default(INSCRITO)
   createdAt    DateTime          @default(now())
 
-  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-  curso   Curso   @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+  usuario             Usuario             @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  curso               Curso               @relation(fields: [cursoId], references: [id], onDelete: Cascade)
+  leccionesCompletadas LeccionCompletada[]
 
   @@unique([usuarioId, cursoId])
 }

@@ -852,3 +852,95 @@ dialog[open] { animation: dialogIn .18s cubic-bezier(.22,1,.36,1); }
   .hbar, .axis { grid-template-columns: minmax(80px,110px) minmax(0,1fr) 34px; gap: 8px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+/* ─── Course Viewer (LMS) ───────────────────────────────── */
+.viewer-wrap {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  height: calc(100dvh - 60px);
+  margin: -28px -28px -56px;
+  overflow: hidden;
+}
+.viewer-nav {
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+}
+.viewer-content {
+  overflow-y: auto;
+  padding: 28px 36px 56px;
+}
+
+/* ─── Course Editor (Admin) ─────────────────────────────── */
+.editor-module {
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+.editor-module-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+}
+.editor-lesson {
+  display: flex;
+  flex-direction: column;
+}
+.editor-lesson-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px 9px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--line);
+  transition: background .1s;
+}
+.editor-lesson-head:hover { background: var(--surface-2); }
+.editor-resource {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px 7px 40px;
+  border-bottom: 1px solid var(--line);
+  font-size: .82rem;
+  background: color-mix(in srgb, var(--surface-2) 40%, var(--surface));
+}
+.editor-resource-icon {
+  width: 28px; height: 28px;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+/* ─── Viewer responsive ──────────────────────────────────── */
+@media (max-width: 860px) {
+  .viewer-wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .viewer-nav {
+    position: fixed;
+    left: 0; top: 60px; bottom: 0;
+    width: min(300px, 90vw);
+    z-index: 55;
+    transform: translateX(-105%);
+    transition: transform .24s cubic-bezier(.22,1,.36,1);
+    box-shadow: none;
+  }
+  .viewer-nav.open {
+    transform: none;
+    box-shadow: 24px 0 60px rgba(0,0,0,.4);
+  }
+  .viewer-content {
+    padding: 20px 18px 48px;
+  }
+  #sidebar-toggle { display: inline-flex !important; }
+}

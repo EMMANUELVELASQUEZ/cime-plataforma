@@ -65,7 +65,8 @@ export default async function AdminCursosPage() {
                     </div>
                   </td>
                   <td><span className={`chip nodot ${ESTADO_CHIP[c.estado]}`}>{ESTADO_LABEL[c.estado]}</span></td>
-                  <td style={{ textAlign: "right" }}>
+                  <td style={{ textAlign: "right", display: "flex", gap: 6, justifyContent: "flex-end" }}>
+                    <a href={`/admin/cursos/${c.id}`} className="btn sm">Contenido</a>
                     <DeleteCursoButton id={c.id} titulo={c.titulo} />
                   </td>
                 </tr>
