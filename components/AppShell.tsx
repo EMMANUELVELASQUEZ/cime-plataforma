@@ -35,7 +35,11 @@ const TITLES: Record<string, string> = {
 
 interface AppShellProps {
   children: React.ReactNode
-  user: { name?: string | null; email?: string | null; role?: string; numeroColegiado?: string | null }
+  user: {
+    name?: string | null; email?: string | null; role?: string
+    numeroColegiado?: string | null; horas?: number; horasMeta?: number
+    vigencia?: string | null; estado?: string; especialidad?: string | null
+  }
   pageTitle?: string
 }
 
@@ -147,31 +151,74 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
           ))}
         </nav>
 
-        {!isAdmin && (
-          <div className="side-card" style={{ background: "rgba(74,144,217,.08)", borderColor: "rgba(74,144,217,.2)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <span className="avatar" style={{ width: 38, height: 38, fontSize: ".8rem", background: `hsl(${(user.name?.charCodeAt(0) ?? 0) * 47 % 360} 38% 34%)`, flexShrink: 0 }}>
-                {initials(user.name ?? "U")}
-              </span>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontWeight: 700, fontSize: ".8rem", color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                  {user.name?.split(" ").slice(0, 2).join(" ") ?? "Colegiado"}
+        {!isAdmin && (() => {
+          const horas     = user.horas     ?? 0
+          const horasMeta = user.horasMeta ?? 60
+          const pct       = Math.min(100, Math.round((horas / horasMeta) * 100))
+          const faltanH   = Math.max(0, horasMeta - horas)
+          const estadoColor = user.estado === "VIGENTE" ? "#3DB87A" : user.estado === "POR_RENOVAR" ? "#D4A033" : "#E06060"
+          const circ = 2 * Math.PI * 18
+          return (
+            <div className="side-card" style={{ background: "rgba(74,144,217,.06)", borderColor: "rgba(74,144,217,.18)", gap: 12 }}>
+              {/* Identity */}
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ position: "relative", flexShrink: 0 }}>
+                  <span className="avatar" style={{ width: 40, height: 40, fontSize: ".82rem", background: `hsl(${(user.name?.charCodeAt(0) ?? 0) * 47 % 360} 50% 30%)`, border: "2px solid rgba(255,255,255,.12)" }}>
+                    {initials(user.name ?? "U")}
+                  </span>
+                  <span style={{ position: "absolute", bottom: -1, right: -1, width: 10, height: 10, borderRadius: "50%", background: estadoColor, border: "2px solid #07101D" }} />
                 </div>
-                <div style={{ fontSize: ".66rem", color: "rgba(255,255,255,.45)", marginTop: 1 }}>
-                  {user.numeroColegiado ? `CIME-VER-${user.numeroColegiado}` : "Colegiado"}
+                <div style={{ minWidth: 0, flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: ".82rem", color: "#fff", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", letterSpacing: "-.01em" }}>
+                    {user.name?.split(" ").slice(0, 3).join(" ") ?? "Colegiado"}
+                  </div>
+                  <div style={{ fontSize: ".65rem", color: "rgba(255,255,255,.38)", marginTop: 1, fontFamily: "var(--f-mono)", letterSpacing: ".04em" }}>
+                    {user.numeroColegiado ? `CIME-VER-${user.numeroColegiado}` : "Sin número"}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div style={{ marginTop: 4 }}>
-              <div className="row-between" style={{ fontSize: ".72rem", color: "rgba(255,255,255,.5)", marginBottom: 5 }}>
-                <span>Actualización 2026</span>
-                <span style={{ color: "#E8B84B", fontWeight: 700 }}>67%</span>
+
+              {/* Divider */}
+              <div style={{ height: 1, background: "rgba(255,255,255,.07)", margin: "0 -2px" }} />
+
+              {/* Progress ring + stats */}
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ position: "relative", width: 44, height: 44, flexShrink: 0 }}>
+                  <svg width="44" height="44" viewBox="0 0 44 44" style={{ transform: "rotate(-90deg)" }}>
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="rgba(255,255,255,.1)" strokeWidth="4" />
+                    <circle cx="22" cy="22" r="18" fill="none" stroke="#C89B2A" strokeWidth="4"
+                      strokeLinecap="round"
+                      strokeDasharray={circ.toFixed(1)}
+                      strokeDashoffset={(circ * (1 - pct / 100)).toFixed(1)} />
+                  </svg>
+                  <div style={{ position: "absolute", inset: 0, display: "grid", placeContent: "center" }}>
+                    <span style={{ fontSize: ".6rem", fontWeight: 800, color: "#E8B84B", fontFamily: "var(--f-mono)" }}>{pct}%</span>
+                  </div>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: ".68rem", color: "rgba(255,255,255,.5)", marginBottom: 4 }}>Actualización profesional 2026</div>
+                  <div className="meter" style={{ height: 4 }}>
+                    <i style={{ width: `${pct}%`, background: pct >= 100 ? "#3DB87A" : "linear-gradient(90deg,#c89b2a,#f5c842)", transition: "width .8s ease" }} />
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".64rem", color: "rgba(255,255,255,.35)", marginTop: 4 }}>
+                    <span style={{ fontFamily: "var(--f-mono)" }}>{horas}/{horasMeta} h</span>
+                    <span>{faltanH > 0 ? `faltan ${faltanH}h` : "¡Meta alcanzada!"}</span>
+                  </div>
+                </div>
               </div>
-              <div className="meter"><i style={{ width: "67%", background: "linear-gradient(90deg,#c89b2a,#f5c842)" }} /></div>
-              <span style={{ fontSize: ".68rem", color: "#8FA1B5", marginTop: 4, display: "block" }}>40/60 h · vence 31 dic</span>
+
+              {/* Vigencia */}
+              {user.vigencia && (
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(255,255,255,.04)", borderRadius: 7, padding: "6px 10px", border: "1px solid rgba(255,255,255,.06)" }}>
+                  <span style={{ fontSize: ".65rem", color: "rgba(255,255,255,.4)" }}>Vigencia</span>
+                  <span style={{ fontSize: ".7rem", fontWeight: 700, color: estadoColor, fontFamily: "var(--f-mono)" }}>
+                    {user.vigencia}
+                  </span>
+                </div>
+              )}
             </div>
-          </div>
-        )}
+          )
+        })()}
 
         {isAdmin && (
           <div className="side-card">

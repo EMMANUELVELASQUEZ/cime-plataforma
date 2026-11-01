@@ -921,6 +921,72 @@ dialog[open] { animation: dialogIn .18s cubic-bezier(.22,1,.36,1); }
   flex: none;
 }
 
+/* ─── Dashboard Credential Hero ─────────────────────────── */
+.dash-credential {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  border: 1px solid rgba(74,144,217,.22);
+  background: linear-gradient(135deg, #071526 0%, #0d2647 40%, #091e3a 70%, #071526 100%);
+  padding: 32px 36px;
+  color: #fff;
+  box-shadow: 0 8px 40px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.dash-credential-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 105% 50%, rgba(74,144,217,.2), transparent 60%),
+    radial-gradient(ellipse 50% 80% at -10% 50%, rgba(200,155,42,.1), transparent 60%),
+    linear-gradient(rgba(100,160,220,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(100,160,220,.035) 1px, transparent 1px);
+  background-size: auto, auto, 40px 40px, 40px 40px;
+  pointer-events: none;
+}
+.dash-credential-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 36px;
+}
+.dash-cred-identity {
+  flex: 1;
+  min-width: 0;
+}
+.dash-cred-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+}
+.cred-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 6px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  font-size: .68rem;
+  font-weight: 600;
+  color: rgba(255,255,255,.7);
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+.dash-cred-ring {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+@media (max-width: 680px) {
+  .dash-credential { padding: 22px 20px; }
+  .dash-credential-inner { flex-direction: column-reverse; gap: 20px; }
+  .dash-cred-ring { flex-direction: row; gap: 16px; align-items: center; width: 100%; }
+}
+
 /* ─── Viewer responsive ──────────────────────────────────── */
 @media (max-width: 860px) {
   .viewer-wrap {
