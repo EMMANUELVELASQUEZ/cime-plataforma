@@ -528,15 +528,7 @@ export default async function DashboardPage() {
             { href: "/dashboard/calendario",   icon: <Calendar size={18} strokeWidth={1.5} />,        label: "Calendario",     sub: `${eventos.length} próximos`,        color: "#6366f1",      bg: "#6366f115" },
             { href: "/dashboard/pagos",        icon: <CreditCard size={18} strokeWidth={1.5} />,      label: "Pagos",          sub: pagosPend.length > 0 ? `${pagosPend.length} pendiente${pagosPend.length > 1?"s":""}` : "Al corriente", color: pagosPend.length > 0 ? "var(--warn)" : "var(--ok)", bg: pagosPend.length > 0 ? "var(--warn-bg)" : "var(--ok-bg)" },
           ].map(item => (
-            <Link key={item.href} href={item.href} style={{
-              display: "flex", alignItems: "center", gap: 12,
-              padding: "12px 14px", borderRadius: "var(--r)", textDecoration: "none",
-              border: "1px solid var(--line)", background: "var(--surface-2)",
-              transition: "box-shadow .15s, transform .1s",
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "var(--shadow)"; (e.currentTarget as HTMLElement).style.transform = "translateY(-1px)" }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "none"; (e.currentTarget as HTMLElement).style.transform = "none" }}
-            >
+            <Link key={item.href} href={item.href} className="quick-action">
               <div style={{ width: 38, height: 38, borderRadius: 9, background: item.bg, color: item.color, display: "grid", placeItems: "center", flexShrink: 0 }}>
                 {item.icon}
               </div>

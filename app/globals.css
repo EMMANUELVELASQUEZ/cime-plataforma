@@ -921,6 +921,24 @@ dialog[open] { animation: dialogIn .18s cubic-bezier(.22,1,.36,1); }
   flex: none;
 }
 
+/* ─── Quick Action Links ─────────────────────────────────── */
+.quick-action {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--r);
+  text-decoration: none;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  transition: box-shadow .15s, transform .1s;
+}
+.quick-action:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
 /* ─── Dashboard Credential Hero ─────────────────────────── */
 .dash-credential {
   position: relative;
