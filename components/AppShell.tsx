@@ -39,6 +39,7 @@ export interface AppShellUser {
   vigencia?:        string | null
   estado?:          string
   especialidad?:    string | null
+  cursosResumen?:   { titulo: string; horas: number; progreso: number; area: string; estado: string }[]
 }
 
 interface AppShellProps {
@@ -79,6 +80,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
   const [mobileOpen,setMobileOpen]= useState(false)
   const [userMenu,  setUserMenu]  = useState(false)
   const [theme,     setTheme]     = useState<string | null>(null)
+  const [mounted,   setMounted]   = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
   const isAdmin      = user.role === "ADMIN"
@@ -94,6 +96,11 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
     setTheme(active)
     document.documentElement.setAttribute("data-theme", active)
     document.documentElement.classList.toggle("dark", active === "dark")
+  }, [])
+
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 150)
+    return () => clearTimeout(t)
   }, [])
 
   useEffect(() => {
@@ -120,8 +127,11 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
   const pct       = Math.min(100, Math.round((horas / horasMeta) * 100))
   const faltanH   = Math.max(0, horasMeta - horas)
   const status    = STATUS[user.estado ?? "VIGENTE"] ?? STATUS.VIGENTE
-  const circ      = 2 * Math.PI * 18
+  const circ      = 2 * Math.PI * 20
   const hue       = avatarHue(user.name ?? "U")
+  const cursosResumen = user.cursosResumen
+
+  const AREA_COLOR: Record<string, string> = { ELE: "#4A90D9", MEC: "#9b6fe8", SOL: "#34d399" }
 
   const adminNav: NavGroup[] = [{
     group: "Administración",
@@ -228,69 +238,131 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
 
       {/* ── User / Stats card ─────────────────────────── */}
       {!isAdmin && !collapsed && (
-        <div className="relative mx-2.5 mb-3 p-3 rounded-xl border border-brand-500/[.18] bg-brand-500/[.07] flex flex-col gap-3 flex-shrink-0">
-          {/* Identity */}
-          <div className="flex items-center gap-2.5">
-            <div className="relative flex-shrink-0">
-              <div
-                className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-[.76rem] border-2 border-white/10"
-                style={{ background: `hsl(${hue} 45% 28%)` }}
-              >
-                {initials(user.name ?? "U")}
+        <div className="relative mx-2.5 mb-3 rounded-xl border border-brand-500/[.18] flex-shrink-0 overflow-hidden"
+          style={{ background: "rgba(7,15,28,.85)" }}>
+
+          {/* Ambient glow */}
+          <div className="absolute top-0 inset-x-0 h-20 pointer-events-none"
+            style={{ background: "radial-gradient(ellipse 120% 120% at 50% -10%, rgba(200,155,42,.08), transparent 70%)" }} />
+
+          <div className="relative p-3 flex flex-col gap-3">
+
+            {/* Identity */}
+            <div className="flex items-center gap-2.5">
+              <div className="relative flex-shrink-0">
+                <div className="w-9 h-9 rounded-full flex items-center justify-center text-white font-bold text-[.76rem] border-2 border-white/10"
+                  style={{ background: `hsl(${hue} 45% 28%)` }}>
+                  {initials(user.name ?? "U")}
+                </div>
+                <span className={cn("absolute -bottom-px -right-px w-[10px] h-[10px] rounded-full border-2 border-[#070F1C]", status.dot)} />
               </div>
-              <span className={cn("absolute -bottom-px -right-px w-[10px] h-[10px] rounded-full border-2 border-[#070F1C]", status.dot)} />
+              <div className="min-w-0 flex-1">
+                <div className="text-white font-semibold text-[.8rem] truncate leading-tight">
+                  {user.name?.split(" ").slice(0, 3).join(" ")}
+                </div>
+                <div className="text-white/34 font-mono text-[.62rem] tracking-[.04em] mt-[2px]">
+                  {user.numeroColegiado ? `CIME-VER-${user.numeroColegiado}` : "Sin número"}
+                </div>
+              </div>
             </div>
-            <div className="min-w-0 flex-1">
-              <div className="text-white font-semibold text-[.8rem] truncate leading-tight">
-                {user.name?.split(" ").slice(0, 3).join(" ")}
+
+            <div className="h-px bg-white/[.06]" />
+
+            {/* Animated ring + hours summary */}
+            <div className="flex items-center gap-3">
+              <div className="relative w-12 h-12 flex-shrink-0">
+                <svg width="48" height="48" viewBox="0 0 48 48" className="-rotate-90">
+                  <circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="4.5" />
+                  <circle cx="24" cy="24" r="20" fill="none"
+                    stroke={pct >= 100 ? "#34d399" : "#C89B2A"} strokeWidth="4.5"
+                    strokeLinecap="round"
+                    strokeDasharray={circ.toFixed(1)}
+                    strokeDashoffset={mounted ? (circ * (1 - pct / 100)).toFixed(1) : circ.toFixed(1)}
+                    style={{ transition: "stroke-dashoffset 1.2s cubic-bezier(0.4,0,.2,1), stroke .4s" }}
+                  />
+                </svg>
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                  <span className="text-[.58rem] font-mono font-bold leading-none"
+                    style={{ color: pct >= 100 ? "#34d399" : "#E8B84B" }}>
+                    {pct}%
+                  </span>
+                </div>
               </div>
-              <div className="text-white/34 font-mono text-[.62rem] tracking-[.04em] mt-[2px]">
-                {user.numeroColegiado ? `CIME-VER-${user.numeroColegiado}` : "Sin número"}
+
+              <div className="flex-1 min-w-0">
+                <p className="text-white/36 text-[.61rem] leading-tight">Actualización profesional</p>
+                <div className="flex items-baseline gap-1 mt-[3px]">
+                  <span className="font-mono font-bold text-white text-[.88rem]">{horas}</span>
+                  <span className="text-white/28 text-[.6rem]">/ {horasMeta} h</span>
+                </div>
+                <p className="text-[.6rem] mt-[2px]"
+                  style={{ color: faltanH > 0 ? "#C89B2A" : "#34d399" }}>
+                  {faltanH > 0 ? `Faltan ${faltanH}h para tu meta` : "¡Meta alcanzada!"}
+                </p>
               </div>
             </div>
+
+            {/* Course list */}
+            {cursosResumen !== undefined && (
+              <>
+                <div className="h-px bg-white/[.06]" />
+                {cursosResumen.length === 0 ? (
+                  <Link href="/dashboard/cursos"
+                    className="flex items-center gap-2 text-[.68rem] text-white/28 hover:text-white/55 transition-colors py-0.5">
+                    <GraduationCap size={13} strokeWidth={1.75} className="flex-shrink-0" />
+                    <span>Explorar cursos disponibles</span>
+                  </Link>
+                ) : (
+                  <div className="flex flex-col gap-[9px]">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[.59rem] font-bold uppercase tracking-[.11em] text-white/22">Mis cursos</p>
+                      {cursosResumen.length > 3 && (
+                        <span className="text-[.59rem] text-white/22 font-mono">+{cursosResumen.length - 3} más</span>
+                      )}
+                    </div>
+                    {cursosResumen.slice(0, 3).map((c, i) => {
+                      const color = AREA_COLOR[c.area] ?? "#C89B2A"
+                      const barDelay = `${0.25 + i * 0.12}s`
+                      return (
+                        <div key={i}>
+                          <div className="flex justify-between items-baseline mb-[4px]">
+                            <span className="text-[.63rem] text-white/50 truncate flex-1 pr-2" title={c.titulo}>
+                              {c.titulo.length > 22 ? c.titulo.slice(0, 22) + "…" : c.titulo}
+                            </span>
+                            <span className="text-[.6rem] font-mono font-bold flex-shrink-0"
+                              style={{ color: c.progreso === 0 ? "rgba(255,255,255,.2)" : color }}>
+                              {c.progreso}%
+                            </span>
+                          </div>
+                          <div className="h-[3px] rounded-full overflow-hidden"
+                            style={{ background: "rgba(255,255,255,.07)" }}>
+                            <div className="h-full rounded-full"
+                              style={{
+                                width: mounted ? `${Math.max(c.progreso, c.progreso === 0 ? 0 : 4)}%` : "0%",
+                                background: c.progreso === 0 ? "rgba(255,255,255,.12)" : color,
+                                boxShadow: c.progreso > 0 ? `0 0 6px ${color}55` : "none",
+                                transition: `width 0.9s cubic-bezier(0.4,0,.2,1) ${barDelay}`,
+                              }}
+                            />
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </>
+            )}
+
+            {user.vigencia && (
+              <>
+                <div className="h-px bg-white/[.06]" />
+                <div className="flex items-center justify-between">
+                  <span className="text-white/30 text-[.62rem]">Vigencia</span>
+                  <span className={cn("font-mono font-bold text-[.67rem]", status.text)}>{user.vigencia}</span>
+                </div>
+              </>
+            )}
           </div>
-
-          <div className="h-px bg-white/[.07]" />
-
-          {/* Ring + bar */}
-          <div className="flex items-center gap-2.5">
-            <div className="relative w-11 h-11 flex-shrink-0">
-              <svg width="44" height="44" viewBox="0 0 44 44" className="-rotate-90">
-                <circle cx="22" cy="22" r="18" fill="none" stroke="rgba(255,255,255,.1)" strokeWidth="4" />
-                <circle cx="22" cy="22" r="18" fill="none" stroke="#C89B2A" strokeWidth="4"
-                  strokeLinecap="round"
-                  strokeDasharray={circ.toFixed(1)}
-                  strokeDashoffset={(circ * (1 - pct / 100)).toFixed(1)}
-                />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-[.57rem] font-mono font-bold" style={{ color: "#E8B84B" }}>{pct}%</span>
-              </div>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-white/38 text-[.63rem] mb-1">Actualización profesional 2026</p>
-              <div className="h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,.1)" }}>
-                <div className="h-full rounded-full transition-all duration-700"
-                  style={{
-                    width: `${pct}%`,
-                    background: pct >= 100 ? "#3DB87A" : "linear-gradient(90deg,#c89b2a,#f5c842)",
-                  }}
-                />
-              </div>
-              <div className="flex justify-between text-[.61rem] text-white/28 mt-1 font-mono">
-                <span>{horas}/{horasMeta}h</span>
-                <span>{faltanH > 0 ? `faltan ${faltanH}h` : "¡Meta!"}</span>
-              </div>
-            </div>
-          </div>
-
-          {user.vigencia && (
-            <div className="flex items-center justify-between rounded-lg px-2.5 py-1.5 border border-white/[.06]"
-              style={{ background: "rgba(255,255,255,.04)" }}>
-              <span className="text-white/33 text-[.62rem]">Vigencia</span>
-              <span className={cn("font-mono font-bold text-[.67rem]", status.text)}>{user.vigencia}</span>
-            </div>
-          )}
         </div>
       )}
 

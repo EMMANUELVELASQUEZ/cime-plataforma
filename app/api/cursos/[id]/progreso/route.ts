@@ -36,5 +36,18 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     data: { progreso, estado },
   })
 
+  // Sync acredited hours on the user record
+  const todasInscripciones = await prisma.inscripcionCurso.findMany({
+    where: { usuarioId: userId },
+    include: { curso: { select: { horas: true } } },
+  })
+  const horasAcreditadas = Math.round(
+    todasInscripciones.reduce((sum, i) => sum + (i.curso.horas * i.progreso / 100), 0)
+  )
+  await prisma.usuario.update({
+    where: { id: userId },
+    data: { horas: horasAcreditadas },
+  })
+
   return NextResponse.json({ progreso, completadas, total: totalLecciones })
 }
