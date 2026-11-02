@@ -3,23 +3,18 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import {
   GraduationCap, Clock, Award, CreditCard, Calendar, Megaphone,
-  ChevronRight, BookOpen, Zap, Shield, TrendingUp, Star,
-  ArrowRight, CheckCircle2, AlertCircle, User, MapPin,
+  ChevronRight, BookOpen, Shield, TrendingUp,
+  ArrowRight, CheckCircle2, AlertCircle, User, MapPin, Star,
 } from "lucide-react"
 
 export const dynamic = "force-dynamic"
 
-const AREA_LABEL: Record<string, string> = { ELE: "Eléctrica", MEC: "Mecánica", SOL: "Solar/Renovable" }
-const AREA_COLOR: Record<string, string> = { ELE: "#0ea5e9", MEC: "#10b981", SOL: "#f59e0b" }
-const AREA_GRAD: Record<string, string>  = {
-  ELE: "linear-gradient(140deg,#052233 0%,#0e4a6e 100%)",
-  MEC: "linear-gradient(140deg,#05231a 0%,#0a5c3a 100%)",
-  SOL: "linear-gradient(140deg,#231a05 0%,#7a5000 100%)",
-}
+const AREA_LABEL: Record<string, string> = { ELE: "Eléctrica", MEC: "Mecánica", SOL: "Solar / Renovable" }
+const AREA_COLOR: Record<string, string> = { ELE: "#1B6FC8", MEC: "#7C3AED", SOL: "#0D9F6F" }
+const AREA_BG:    Record<string, string> = { ELE: "#EBF3FC",  MEC: "#F3EFFE", SOL: "#E6F5EE" }
 
 function daysUntil(dateStr: string | null | undefined): number | null {
   if (!dateStr) return null
-  // Supports "31 dic 2026" or ISO or "31/12/2026"
   const parsed = new Date(dateStr.replace(/(\d+)\s+(\w+)\s+(\d+)/, (_, d, m, y) => {
     const months: Record<string, string> = { ene:"01",feb:"02",mar:"03",abr:"04",may:"05",jun:"06",jul:"07",ago:"08",sep:"09",oct:"10",nov:"11",dic:"12" }
     return `${y}-${months[m.toLowerCase()] ?? "12"}-${d.padStart(2,"0")}`
@@ -29,6 +24,35 @@ function daysUntil(dateStr: string | null | undefined): number | null {
 }
 
 const money = (n: number) => n.toLocaleString("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 })
+
+// ─── Micro helpers ───────────────────────────────────────────────
+const Label = ({ children }: { children: React.ReactNode }) => (
+  <div style={{
+    fontSize: ".58rem", fontFamily: "var(--f-data)", fontWeight: 700,
+    letterSpacing: ".14em", textTransform: "uppercase", color: "var(--muted)",
+    marginBottom: 4,
+  }}>
+    {children}
+  </div>
+)
+
+const SectionRule = ({ label, action }: { label: string; action?: React.ReactNode }) => (
+  <div style={{
+    display: "flex", justifyContent: "space-between", alignItems: "center",
+    gap: 14, marginBottom: 14, paddingBottom: 12,
+    borderBottom: "1px solid var(--line)",
+  }}>
+    <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
+      <h2 style={{
+        fontFamily: "var(--f-display)", fontSize: "1.05rem",
+        fontWeight: 800, margin: 0, letterSpacing: "-.02em",
+      }}>
+        {label}
+      </h2>
+    </div>
+    {action}
+  </div>
+)
 
 export default async function DashboardPage() {
   const session = await auth()
@@ -76,7 +100,6 @@ export default async function DashboardPage() {
   const enCurso    = inscripciones.filter(i => i.estado !== "COMPLETADO")
   const completados = inscripciones.filter(i => i.estado === "COMPLETADO")
   const pct        = Math.min(100, Math.round((usuario.horas / usuario.horasMeta) * 100))
-  const circ       = 2 * Math.PI * 44
   const diasVig    = daysUntil(usuario.vigencia)
   const pagosPend  = pagos.filter(p => p.estado === "pendiente")
   const montoPend  = pagosPend.reduce((s, p) => s + p.monto, 0)
@@ -85,326 +108,535 @@ export default async function DashboardPage() {
   const hour  = now.getHours()
   const saludo = hour < 12 ? "Buenos días" : hour < 19 ? "Buenas tardes" : "Buenas noches"
 
-  const ESTC: Record<string, { cls: string; label: string; color: string }> = {
-    VIGENTE:    { cls: "ok",   label: "Vigente",    color: "#3DB87A" },
-    POR_RENOVAR:{ cls: "warn", label: "Por renovar", color: "#D4A033" },
-    SUSPENDIDO: { cls: "bad",  label: "Suspendido",  color: "#E06060" },
+  const ESTC: Record<string, { label: string; color: string; bg: string }> = {
+    VIGENTE:     { label: "Vigente",     color: "#1A7A4A", bg: "rgba(26,122,74,.15)"  },
+    POR_RENOVAR: { label: "Por renovar", color: "#C8960A", bg: "rgba(200,150,10,.15)" },
+    SUSPENDIDO:  { label: "Suspendido",  color: "#B03030", bg: "rgba(176,48,48,.15)"  },
   }
   const est = ESTC[usuario.estado] ?? ESTC.VIGENTE
 
+  const kpis = [
+    {
+      label: "Horas acreditadas",
+      val:   `${usuario.horas}`,
+      unit:  "h",
+      sub:   `${pct}% de ${usuario.horasMeta}h meta`,
+      color: "#C8B820",
+      icon:  <Clock size={12} strokeWidth={2} />,
+    },
+    {
+      label: "Cursos activos",
+      val:   String(enCurso.length),
+      unit:  "",
+      sub:   enCurso.length === 0 ? "Sin cursos en progreso" : "Inscritos en progreso",
+      color: "#1B4F91",
+      icon:  <BookOpen size={12} strokeWidth={2} />,
+    },
+    {
+      label: "Constancias",
+      val:   String(completados.length),
+      unit:  "",
+      sub:   completados.length === 1 ? "Curso acreditado" : "Cursos acreditados",
+      color: "#1A7A4A",
+      icon:  <Award size={12} strokeWidth={2} />,
+    },
+    montoPend > 0
+      ? { label: "Saldo pendiente", val: money(montoPend),  unit: "", sub: `${pagosPend.length} pago${pagosPend.length > 1 ? "s" : ""} por realizar`, color: "#906012", icon: <CreditCard size={12} strokeWidth={2} /> }
+      : { label: "Pagos",           val: "Al corriente",    unit: "", sub: "Sin adeudos pendientes",                                                   color: "#1A7A4A", icon: <CreditCard size={12} strokeWidth={2} /> },
+  ]
+
   return (
     <>
-      {/* ── CREDENTIAL HERO ──────────────────────────────────────── */}
-      <div className="dash-credential">
-        {/* Background decoration */}
-        <div className="dash-credential-bg" />
+      {/* ── CREDENTIAL HERO ─────────────────────────────────────── */}
+      <div style={{
+        background: "linear-gradient(165deg, #070A24 0%, #0D1540 52%, #080E2E 100%)",
+        position: "relative",
+        overflow: "hidden",
+        borderRadius: 4,
+        borderLeft: "3px solid #E5D330",
+      }}>
+        {/* Grid texture */}
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none",
+          backgroundImage:
+            "linear-gradient(rgba(229,211,48,.035) 1px, transparent 1px), " +
+            "linear-gradient(90deg, rgba(229,211,48,.025) 1px, transparent 1px)",
+          backgroundSize: "52px 52px",
+        }} />
+        {/* Radial glow */}
+        <div style={{
+          position: "absolute", inset: 0, pointerEvents: "none",
+          background: "radial-gradient(ellipse 60% 80% at 100% 50%, rgba(229,211,48,.04), transparent 65%)",
+        }} />
 
-        <div className="dash-credential-inner">
-          {/* Left: identity */}
-          <div className="dash-cred-identity">
-            <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 18 }}>
-              <div style={{
-                width: 64, height: 64, borderRadius: 16, flexShrink: 0,
-                background: `hsl(${(usuario.nombre.charCodeAt(0)) * 47 % 360} 45% 28%)`,
-                display: "grid", placeItems: "center",
-                border: "2px solid rgba(255,255,255,.15)",
-                boxShadow: "0 4px 20px rgba(0,0,0,.3)",
-                fontSize: "1.3rem", fontWeight: 800, color: "#fff",
-                letterSpacing: ".02em",
-              }}>
-                {usuario.nombre.replace(/^(Ing\.|Lic\.|Dr\.|Mtro\.|Mtra\.)\s*/i,"").split(/\s+/).slice(0,2).map(w => w[0]).join("").toUpperCase()}
-              </div>
-              <div>
-                <div style={{ fontSize: ".65rem", color: "rgba(255,255,255,.4)", letterSpacing: ".12em", textTransform: "uppercase", marginBottom: 4 }}>
-                  {saludo}
-                </div>
-                <h1 style={{ color: "#fff", fontSize: "clamp(1.25rem,2vw,1.65rem)", fontWeight: 800, letterSpacing: "-.03em", margin: 0, lineHeight: 1.15 }}>
-                  {usuario.nombre}
-                </h1>
-                {usuario.especialidad && (
-                  <div style={{ fontSize: ".78rem", color: "rgba(255,255,255,.55)", marginTop: 4 }}>
-                    {usuario.especialidad}
-                  </div>
-                )}
-              </div>
+        <div style={{
+          position: "relative",
+          display: "flex", gap: 0, alignItems: "stretch", flexWrap: "wrap",
+        }}>
+          {/* ─ Left: Identity ─ */}
+          <div style={{ flex: "1 1 340px", minWidth: 0, padding: "28px 32px 26px 36px" }}>
+            {/* Eyebrow */}
+            <div style={{
+              display: "flex", alignItems: "center", gap: 7,
+              fontSize: ".58rem", color: "rgba(229,211,48,.5)",
+              fontFamily: "var(--f-data)", letterSpacing: ".16em",
+              textTransform: "uppercase", marginBottom: 9,
+            }}>
+              <Shield size={8} strokeWidth={2.5} />
+              Colegio de Ingenieros Mecánicos y Electricistas de Veracruz
             </div>
 
-            {/* Credential details row */}
-            <div className="dash-cred-pills">
-              {usuario.numeroColegiado && (
-                <div className="cred-pill">
-                  <Shield size={11} strokeWidth={2.5} />
-                  CIME-VER-{usuario.numeroColegiado}
-                </div>
-              )}
-              {usuario.ciudad && (
-                <div className="cred-pill">
-                  <MapPin size={11} strokeWidth={2.5} />
-                  {usuario.ciudad}
-                </div>
-              )}
-              {usuario.alta && (
-                <div className="cred-pill">
-                  <Star size={11} strokeWidth={2.5} />
-                  Alta {usuario.alta}
-                </div>
-              )}
-              <span className={`chip ${est.cls}`} style={{ fontSize: ".68rem", height: 22 }}>
+            {/* Greeting */}
+            <div style={{
+              fontSize: ".62rem", color: "rgba(255,255,255,.22)",
+              fontFamily: "var(--f-data)", letterSpacing: ".06em", marginBottom: 5,
+            }}>
+              {saludo}
+            </div>
+
+            {/* Name — Playfair Display */}
+            <h1 style={{
+              fontFamily: "var(--f-display)",
+              fontSize: "clamp(1.45rem,2.5vw,2.05rem)",
+              fontWeight: 900,
+              color: "#ffffff",
+              letterSpacing: "-.03em",
+              lineHeight: 1.08,
+              margin: "0 0 5px",
+            }}>
+              {usuario.nombre}
+            </h1>
+
+            {usuario.especialidad && (
+              <div style={{
+                fontSize: ".76rem", color: "rgba(255,255,255,.4)",
+                fontFamily: "var(--f-data)", marginBottom: 16, letterSpacing: ".02em",
+              }}>
+                {usuario.especialidad}
+              </div>
+            )}
+
+            {/* Meta row */}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
+              <span style={{
+                display: "inline-flex", alignItems: "center", gap: 5,
+                padding: "2px 8px 2px 7px", borderRadius: 2,
+                background: est.bg, border: `1px solid ${est.color}44`,
+                color: est.color, fontSize: ".6rem", fontWeight: 700,
+                letterSpacing: ".1em", textTransform: "uppercase",
+                fontFamily: "var(--f-data)",
+              }}>
+                <span style={{ width: 4, height: 4, borderRadius: "50%", background: est.color, flexShrink: 0 }} />
                 {est.label}
               </span>
-            </div>
 
-            {/* Hours bar */}
-            <div style={{ marginTop: 20 }}>
-              <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".72rem", color: "rgba(255,255,255,.45)", marginBottom: 8 }}>
-                <span>Actualización profesional 2026</span>
-                <span style={{ fontFamily: "var(--f-mono)" }}>
-                  {usuario.horas} / {usuario.horasMeta} h
-                  {usuario.horasMeta > usuario.horas ? ` · faltan ${usuario.horasMeta - usuario.horas}h` : " · ¡Meta alcanzada!"}
+              {([
+                usuario.numeroColegiado && { text: `CIME-VER-${usuario.numeroColegiado}`, icon: <Shield size={9} strokeWidth={2.5} /> },
+                usuario.ciudad          && { text: usuario.ciudad,           icon: <MapPin size={9} strokeWidth={2.5} /> },
+                usuario.alta            && { text: `Alta ${usuario.alta}`,   icon: <Star   size={9} strokeWidth={2.5} /> },
+              ] as { text: string; icon: React.ReactNode }[]).filter(Boolean).map((item, i) => (
+                <span key={i} style={{
+                  display: "inline-flex", alignItems: "center", gap: 4,
+                  fontSize: ".62rem", color: "rgba(255,255,255,.28)",
+                  fontFamily: "var(--f-data)", letterSpacing: ".02em",
+                }}>
+                  {item.icon} {item.text}
                 </span>
-              </div>
-              <div style={{ height: 8, borderRadius: 99, background: "rgba(255,255,255,.1)", overflow: "hidden", position: "relative" }}>
-                <div style={{
-                  height: "100%", width: `${pct}%`,
-                  background: pct >= 100 ? "linear-gradient(90deg,#22c55e,#4ade80)" : "linear-gradient(90deg,#c89b2a,#f5c842,#fde68a)",
-                  borderRadius: 99, transition: "width 1s ease",
-                  boxShadow: "0 0 12px rgba(200,155,42,.5)",
-                }} />
-              </div>
-              <div style={{ display: "flex", gap: 16, marginTop: 10, flexWrap: "wrap" }}>
-                {[
-                  { label: "Acreditadas", val: `${usuario.horas}h`, color: "#f5c842" },
-                  { label: "Meta anual",  val: `${usuario.horasMeta}h`, color: "rgba(255,255,255,.4)" },
-                  { label: "Vigencia",    val: usuario.vigencia ?? "—", color: diasVig !== null && diasVig <= 30 ? "#E06060" : "rgba(255,255,255,.4)" },
-                ].map(item => (
-                  <div key={item.label} style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    <span style={{ fontSize: ".6rem", color: "rgba(255,255,255,.3)", textTransform: "uppercase", letterSpacing: ".08em" }}>{item.label}</span>
-                    <span style={{ fontSize: ".82rem", fontWeight: 700, color: item.color, fontFamily: "var(--f-mono)" }}>{item.val}</span>
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
 
-          {/* Right: progress ring */}
-          <div className="dash-cred-ring">
-            <div style={{ position: "relative", width: 120, height: 120 }}>
-              <svg width="120" height="120" viewBox="0 0 100 100" style={{ transform: "rotate(-90deg)" }}>
-                <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="6" />
-                <circle cx="50" cy="50" r="44" fill="none"
-                  stroke={pct >= 100 ? "#22c55e" : "#E8B84B"}
-                  strokeWidth="6" strokeLinecap="round"
-                  strokeDasharray={circ.toFixed(1)}
-                  strokeDashoffset={(circ * (1 - pct / 100)).toFixed(1)} />
-              </svg>
-              <div style={{ position: "absolute", inset: 0, display: "grid", placeContent: "center", textAlign: "center" }}>
-                <div style={{ fontSize: "1.9rem", fontWeight: 900, color: "#fff", letterSpacing: "-.04em", lineHeight: 1 }}>{pct}%</div>
-                <div style={{ fontSize: ".58rem", color: "rgba(255,255,255,.4)", marginTop: 4, textTransform: "uppercase", letterSpacing: ".08em" }}>completado</div>
-              </div>
+          {/* Vertical rule */}
+          <div style={{
+            width: 1, background: "rgba(255,255,255,.06)",
+            flexShrink: 0, alignSelf: "stretch",
+            margin: "20px 0",
+          }} />
+
+          {/* ─ Right: Progress metrics ─ */}
+          <div style={{
+            flex: "0 1 300px", minWidth: 220,
+            padding: "28px 36px 26px 32px",
+            display: "flex", flexDirection: "column", justifyContent: "space-between",
+            gap: 16,
+          }}>
+            <div style={{
+              fontSize: ".58rem", color: "rgba(255,255,255,.22)",
+              fontFamily: "var(--f-data)", letterSpacing: ".14em",
+              textTransform: "uppercase",
+            }}>
+              Actualización profesional 2026
             </div>
-            {diasVig !== null && (
-              <div style={{
-                marginTop: 14, textAlign: "center",
-                background: diasVig <= 30 ? "rgba(224,96,96,.15)" : "rgba(255,255,255,.06)",
-                border: `1px solid ${diasVig <= 30 ? "rgba(224,96,96,.3)" : "rgba(255,255,255,.1)"}`,
-                borderRadius: 8, padding: "6px 14px",
-              }}>
-                <div style={{ fontSize: ".6rem", color: "rgba(255,255,255,.35)", textTransform: "uppercase", letterSpacing: ".08em" }}>Vence en</div>
-                <div style={{ fontSize: "1rem", fontWeight: 800, color: diasVig <= 30 ? "#E06060" : "#E8B84B", fontFamily: "var(--f-mono)" }}>
-                  {diasVig} días
+
+            {/* Hours display */}
+            <div style={{ display: "flex", alignItems: "flex-end", gap: 16 }}>
+              <div>
+                <div style={{
+                  fontFamily: "var(--f-data)", fontSize: ".56rem",
+                  color: "rgba(255,255,255,.22)", letterSpacing: ".12em",
+                  textTransform: "uppercase", marginBottom: 2,
+                }}>
+                  Acreditadas
+                </div>
+                <div style={{
+                  fontFamily: "var(--f-data)",
+                  fontSize: "2.4rem", fontWeight: 700,
+                  color: "#E5D330", lineHeight: 1,
+                  letterSpacing: "-.04em",
+                }}>
+                  {usuario.horas}<span style={{ fontSize: "1.1rem", opacity: .65 }}>h</span>
                 </div>
               </div>
-            )}
+              <div style={{ paddingBottom: 5 }}>
+                <div style={{
+                  fontFamily: "var(--f-data)", fontSize: ".56rem",
+                  color: "rgba(255,255,255,.22)", letterSpacing: ".12em",
+                  textTransform: "uppercase", marginBottom: 2,
+                }}>
+                  Meta
+                </div>
+                <div style={{
+                  fontFamily: "var(--f-data)", fontWeight: 700,
+                  fontSize: "1.1rem", color: "rgba(255,255,255,.35)",
+                }}>
+                  {usuario.horasMeta}h
+                </div>
+              </div>
+              {diasVig !== null && (
+                <div style={{ paddingBottom: 5, marginLeft: "auto" }}>
+                  <div style={{
+                    fontFamily: "var(--f-data)", fontSize: ".56rem",
+                    color: "rgba(255,255,255,.22)", letterSpacing: ".12em",
+                    textTransform: "uppercase", marginBottom: 2, textAlign: "right",
+                  }}>
+                    Vence en
+                  </div>
+                  <div style={{
+                    fontFamily: "var(--f-data)", fontWeight: 700, fontSize: "1.1rem",
+                    color: diasVig <= 30 ? "#E06060" : diasVig <= 90 ? "#D4A033" : "rgba(255,255,255,.38)",
+                    textAlign: "right",
+                  }}>
+                    {diasVig}d
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Progress bar — flat, no radius */}
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                <span style={{
+                  fontFamily: "var(--f-data)", fontSize: ".58rem",
+                  color: "rgba(255,255,255,.2)", letterSpacing: ".08em", textTransform: "uppercase",
+                }}>
+                  Avance anual
+                </span>
+                <span style={{
+                  fontFamily: "var(--f-data)", fontSize: ".68rem", fontWeight: 700,
+                  color: pct >= 100 ? "#3DB87A" : "#E5D330",
+                }}>
+                  {pct}%
+                </span>
+              </div>
+              <div style={{ height: 4, background: "rgba(255,255,255,.07)" }}>
+                <div style={{
+                  height: "100%",
+                  width: `${pct}%`,
+                  background: pct >= 100
+                    ? "linear-gradient(90deg,#22c55e,#3db87a)"
+                    : "linear-gradient(90deg,#c8b820,#e5d330)",
+                  transition: "width 1.4s cubic-bezier(0.4,0,.2,1)",
+                }} />
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* ── KPI CARDS ────────────────────────────────────────────── */}
-      <div className="lms-stat-bar">
-        {[
-          {
-            label: "Horas acreditadas",
-            val:   `${usuario.horas}`,
-            unit:  "h",
-            sub:   `${pct}% de la meta ${usuario.horasMeta}h`,
-            color: "#C89B2A", bg: "rgba(200,155,42,.12)",
-            icon:  <Clock size={17} strokeWidth={1.75} />,
-          },
-          {
-            label: "Cursos activos",
-            val:   String(enCurso.length),
-            unit:  "",
-            sub:   enCurso.length === 0 ? "Sin cursos en progreso" : "Inscrito y en progreso",
-            color: "var(--brand)", bg: "var(--info-bg)",
-            icon:  <BookOpen size={17} strokeWidth={1.75} />,
-          },
-          {
-            label: "Constancias",
-            val:   String(completados.length),
-            unit:  "",
-            sub:   completados.length === 1 ? "Curso acreditado" : `Cursos acreditados`,
-            color: "var(--ok)", bg: "var(--ok-bg)",
-            icon:  <Award size={17} strokeWidth={1.75} />,
-          },
-          montoPend > 0 ? {
-            label: "Saldo pendiente",
-            val:   money(montoPend),
-            unit:  "",
-            sub:   `${pagosPend.length} pago${pagosPend.length > 1 ? "s" : ""} por realizar`,
-            color: "var(--warn)", bg: "var(--warn-bg)",
-            icon:  <CreditCard size={17} strokeWidth={1.75} />,
-          } : {
-            label: "Pagos",
-            val:   "Al corriente",
-            unit:  "",
-            sub:   "Sin adeudos pendientes",
-            color: "var(--ok)", bg: "var(--ok-bg)",
-            icon:  <CreditCard size={17} strokeWidth={1.75} />,
-          },
-        ].map(s => (
-          <div key={s.label} className="lms-stat" style={{ cursor: "default" }}>
-            <div className="s-icon" style={{ background: s.bg, color: s.color }}>{s.icon}</div>
-            <div className="s-label">{s.label}</div>
-            <div className="s-val" style={{ color: s.color, fontSize: s.val.length > 6 ? "1.2rem" : "1.65rem" }}>
-              {s.val}<span style={{ fontSize: ".9rem", opacity: .7 }}>{s.unit}</span>
+      {/* ── KPI STRIP ───────────────────────────────────────────── */}
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
+        border: "1px solid var(--line)",
+        borderRadius: 4,
+        overflow: "hidden",
+        background: "var(--surface)",
+        boxShadow: "0 1px 3px rgba(7,10,36,.06), 0 1px 2px rgba(7,10,36,.04)",
+      }}>
+        {kpis.map((kpi, i) => (
+          <div key={kpi.label} style={{
+            padding: "15px 18px 13px",
+            borderRight: i < kpis.length - 1 ? "1px solid var(--line)" : "none",
+            boxShadow: `inset 3px 0 0 0 ${kpi.color}`,
+            cursor: "default",
+          }}>
+            <div style={{
+              display: "flex", alignItems: "center", gap: 5,
+              fontSize: ".57rem", letterSpacing: ".13em",
+              textTransform: "uppercase", color: "var(--muted)",
+              fontFamily: "var(--f-data)", marginBottom: 9,
+            }}>
+              {kpi.icon} {kpi.label}
             </div>
-            <div className="s-sub">{s.sub}</div>
+            <div style={{
+              fontFamily: "var(--f-data)",
+              fontSize: kpi.val.length > 7 ? "1.2rem" : "1.85rem",
+              fontWeight: 700, letterSpacing: "-.03em",
+              lineHeight: 1, color: kpi.color, marginBottom: 5,
+            }}>
+              {kpi.val}<span style={{ fontSize: ".75em", opacity: .6 }}>{kpi.unit}</span>
+            </div>
+            <div style={{
+              fontSize: ".67rem", color: "var(--muted)",
+              fontFamily: "var(--f-data)",
+            }}>
+              {kpi.sub}
+            </div>
           </div>
         ))}
       </div>
 
-      {/* ── CURSOS EN PROGRESO ───────────────────────────────────── */}
+      {/* ── CURSOS EN PROGRESO ──────────────────────────────────── */}
       {enCurso.length > 0 ? (
         <section>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
-            <div>
-              <h2 style={{ fontSize: "1.05rem", fontWeight: 700, margin: 0 }}>Continúa donde lo dejaste</h2>
-              <p style={{ fontSize: ".78rem", margin: "3px 0 0", color: "var(--muted)" }}>
-                {enCurso.length} curso{enCurso.length > 1 ? "s" : ""} en progreso
-              </p>
-            </div>
-            <Link href="/dashboard/cursos" className="btn sm ghost" style={{ display: "flex", alignItems: "center", gap: 5 }}>
-              Ver catálogo <ChevronRight size={13} strokeWidth={2.5} />
-            </Link>
-          </div>
-          <div className="lms-course-grid">
-            {enCurso.slice(0, 3).map(i => {
-              const c     = i.curso
-              const color = AREA_COLOR[c.area] ?? "#6366f1"
-              const grad  = AREA_GRAD[c.area] ?? "linear-gradient(140deg,#1a1a2e,#6366f1)"
-              const p     = Math.round(i.progreso)
+          <SectionRule
+            label="Continúa donde lo dejaste"
+            action={
+              <Link href="/dashboard/cursos" className="btn sm ghost" style={{
+                fontFamily: "var(--f-data)", fontSize: ".7rem",
+                letterSpacing: ".05em", gap: 4,
+              }}>
+                Ver catálogo <ChevronRight size={12} strokeWidth={2.5} />
+              </Link>
+            }
+          />
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+            gap: 1,
+            border: "1px solid var(--line)",
+            borderRadius: 4,
+            overflow: "hidden",
+            background: "var(--line)",
+            boxShadow: "0 1px 3px rgba(7,10,36,.06)",
+          }}>
+            {enCurso.slice(0, 3).map(insc => {
+              const c     = insc.curso
+              const color = AREA_COLOR[c.area] ?? "#5754D0"
+              const bg    = AREA_BG[c.area]    ?? "#F0F0FF"
+              const p     = Math.round(insc.progreso)
               const totalMods = c.modulos.length
               return (
-                <div key={i.id} className="lms-course" style={{ position: "relative" }}>
-                  {/* Banner */}
-                  <div className="lms-course-banner" style={{ background: grad, height: 108 }}>
-                    <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", width: "100%", gap: 8 }}>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <span className="subject-tag" style={{ background: `${color}22`, color, borderColor: `${color}44`, marginBottom: 6, display: "inline-block" }}>
-                          {AREA_LABEL[c.area]}
-                        </span>
-                        <div style={{ fontSize: ".9rem", fontWeight: 700, color: "#fff", lineHeight: 1.3, paddingRight: 8 }}>{c.titulo}</div>
-                      </div>
-                      <div style={{ width: 38, height: 38, borderRadius: 9, background: `${color}22`, border: `1px solid ${color}44`, display: "grid", placeItems: "center", flexShrink: 0 }}>
-                        <GraduationCap size={18} strokeWidth={1.75} color={color} />
-                      </div>
-                    </div>
+                <article key={insc.id} style={{
+                  background: "var(--surface)",
+                  display: "flex", flexDirection: "column",
+                }}>
+                  {/* Top area stripe */}
+                  <div style={{ height: 3, background: color, flexShrink: 0 }} />
+
+                  {/* Header */}
+                  <div style={{ padding: "16px 18px 12px", flex: 1 }}>
+                    <span style={{
+                      display: "inline-flex", alignItems: "center",
+                      padding: "2px 7px", marginBottom: 10,
+                      background: bg, color,
+                      fontSize: ".58rem", fontWeight: 700,
+                      letterSpacing: ".1em", textTransform: "uppercase",
+                      fontFamily: "var(--f-data)", borderRadius: 2,
+                    }}>
+                      {AREA_LABEL[c.area]}
+                    </span>
+
+                    <h3 style={{
+                      fontFamily: "var(--f-display)",
+                      fontSize: ".97rem", fontWeight: 800,
+                      color: "var(--fg)", lineHeight: 1.25,
+                      margin: 0, letterSpacing: "-.01em",
+                    }}>
+                      {c.titulo}
+                    </h3>
                   </div>
 
-                  {/* Body */}
-                  <div className="lms-course-body">
-                    <div style={{ fontSize: ".75rem", color: "var(--muted)", display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-                      <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                        <User size={11} strokeWidth={2} />{c.instructor}
+                  {/* Meta row */}
+                  <div style={{
+                    padding: "0 18px 14px",
+                    display: "flex", alignItems: "center", gap: 14,
+                    fontSize: ".68rem", color: "var(--muted)",
+                    fontFamily: "var(--f-data)", letterSpacing: ".02em",
+                    borderBottom: "1px solid var(--line)",
+                  }}>
+                    <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                      <User size={10} strokeWidth={2} />
+                      {c.instructor}
+                    </span>
+                    <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                      <Clock size={10} strokeWidth={2} />
+                      {c.horas}h
+                    </span>
+                    {totalMods > 0 && (
+                      <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                        <BookOpen size={10} strokeWidth={2} />
+                        {totalMods} móds.
                       </span>
-                      <span>·</span>
-                      <span style={{ display: "flex", alignItems: "center", gap: 3 }}>
-                        <Clock size={11} strokeWidth={2} />{c.horas}h
+                    )}
+                  </div>
+
+                  {/* Progress */}
+                  <div style={{ padding: "12px 18px 14px" }}>
+                    <div style={{
+                      display: "flex", justifyContent: "space-between",
+                      alignItems: "baseline", marginBottom: 7,
+                    }}>
+                      <span style={{
+                        fontSize: ".58rem", color: "var(--muted)",
+                        fontFamily: "var(--f-data)", letterSpacing: ".1em",
+                        textTransform: "uppercase",
+                      }}>
+                        Avance
+                      </span>
+                      <span style={{
+                        fontFamily: "var(--f-data)", fontWeight: 700,
+                        fontSize: ".9rem", letterSpacing: "-.01em", color,
+                      }}>
+                        {p}<span style={{ fontSize: ".65rem", opacity: .6 }}>%</span>
                       </span>
                     </div>
-
-                    {/* Progress */}
-                    <div>
-                      <div className="lms-progress-label">
-                        <span style={{ color: "var(--muted)", fontSize: ".72rem" }}>
-                          {totalMods > 0 ? `${totalMods} módulo${totalMods > 1 ? "s" : ""}` : "Sin módulos aún"}
-                        </span>
-                        <b style={{ color, fontFamily: "var(--f-mono)", fontSize: ".78rem" }}>{p}%</b>
-                      </div>
-                      <div className="lms-progress-track" style={{ height: 7 }}>
-                        <div className="lms-progress-fill" style={{
-                          width: `${p}%`, background: color,
-                          boxShadow: p > 0 ? `0 0 8px ${color}66` : "none",
-                        }} />
-                      </div>
+                    <div style={{ height: 4, background: "var(--surface-2)" }}>
+                      <div style={{
+                        height: "100%", width: `${p}%`, background: color,
+                        transition: "width 1s ease",
+                        boxShadow: p > 5 ? `0 0 6px ${color}55` : "none",
+                      }} />
                     </div>
                   </div>
 
                   {/* Footer */}
-                  <div className="lms-course-footer">
-                    <span style={{ fontSize: ".72rem", color: "var(--muted)" }}>
-                      {new Date(c.fechaFin).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
+                  <div style={{
+                    padding: "9px 18px",
+                    borderTop: "1px solid var(--line)",
+                    display: "flex", justifyContent: "space-between", alignItems: "center",
+                    background: "var(--surface-2)", gap: 8,
+                  }}>
+                    <span style={{
+                      fontSize: ".64rem", color: "var(--muted)",
+                      fontFamily: "var(--f-data)", letterSpacing: ".03em",
+                    }}>
+                      {new Date(c.fechaFin).toLocaleDateString("es-MX", {
+                        day: "numeric", month: "short", year: "numeric",
+                      }).toUpperCase()}
                     </span>
-                    <Link
-                      href={`/dashboard/cursos/${c.id}`}
-                      className="btn sm primary"
-                      style={{ fontSize: ".78rem", height: 30, padding: "0 12px", gap: 4 }}
-                    >
-                      Continuar <ArrowRight size={13} strokeWidth={2.5} />
+                    <Link href={`/dashboard/cursos/${c.id}`} className="btn sm primary" style={{
+                      fontSize: ".7rem", height: 28, padding: "0 11px",
+                      borderRadius: 2, gap: 4, letterSpacing: ".02em",
+                      fontFamily: "var(--f-data)",
+                    }}>
+                      Continuar <ArrowRight size={11} strokeWidth={2.5} />
                     </Link>
                   </div>
-                </div>
+                </article>
               )
             })}
           </div>
         </section>
       ) : (
-        <div className="card" style={{ padding: "36px 28px", textAlign: "center" }}>
-          <div style={{ width: 56, height: 56, borderRadius: 14, background: "var(--info-bg)", border: "1px solid var(--info-ring)", display: "grid", placeItems: "center", margin: "0 auto 16px" }}>
-            <GraduationCap size={26} strokeWidth={1.5} style={{ color: "var(--brand)" }} />
+        <div style={{
+          background: "var(--surface)",
+          border: "1px solid var(--line)",
+          borderRadius: 4,
+          borderLeft: "3px solid var(--info)",
+          padding: "28px 24px",
+          display: "flex", alignItems: "center", gap: 20,
+          boxShadow: "0 1px 3px rgba(7,10,36,.06)",
+        }}>
+          <div style={{
+            width: 44, height: 44, flexShrink: 0,
+            background: "var(--info-bg)", border: "1px solid var(--info-ring)",
+            borderRadius: 3, display: "grid", placeItems: "center",
+          }}>
+            <GraduationCap size={22} strokeWidth={1.5} style={{ color: "var(--info)" }} />
           </div>
-          <h3 style={{ fontWeight: 700, marginBottom: 6, fontSize: "1rem" }}>Sin cursos activos</h3>
-          <p style={{ fontSize: ".85rem", color: "var(--muted)", marginBottom: 20, maxWidth: 380, margin: "0 auto 20px" }}>
-            Inscríbete a un curso del catálogo para comenzar a acumular horas de actualización profesional.
-          </p>
-          <Link href="/dashboard/cursos" className="btn primary" style={{ margin: "0 auto", display: "inline-flex" }}>
-            <BookOpen size={16} strokeWidth={1.75} /> Explorar catálogo
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h3 style={{
+              fontFamily: "var(--f-display)", fontSize: ".95rem",
+              fontWeight: 800, marginBottom: 3,
+            }}>
+              Sin cursos activos
+            </h3>
+            <p style={{ fontSize: ".8rem", margin: 0 }}>
+              Inscríbete al catálogo de cursos para acumular horas de actualización profesional.
+            </p>
+          </div>
+          <Link href="/dashboard/cursos" className="btn primary" style={{
+            borderRadius: 2, flexShrink: 0,
+            fontFamily: "var(--f-data)", letterSpacing: ".04em", fontSize: ".78rem",
+          }}>
+            <BookOpen size={14} strokeWidth={1.75} /> Catálogo
           </Link>
         </div>
       )}
 
-      {/* ── COMPLETADOS (si tiene) ───────────────────────────────── */}
+      {/* ── CURSOS COMPLETADOS ──────────────────────────────────── */}
       {completados.length > 0 && (
         <section>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
-            <h2 style={{ fontSize: "1rem", fontWeight: 700, margin: 0 }}>Cursos acreditados</h2>
-            <span className="chip nodot ok">{completados.length} constancia{completados.length > 1 ? "s" : ""}</span>
-          </div>
-          <div style={{ display: "grid", gap: 8 }}>
-            {completados.slice(0, 3).map(i => {
-              const color = AREA_COLOR[i.curso.area] ?? "#6366f1"
+          <SectionRule
+            label="Constancias obtenidas"
+            action={
+              <span className="chip nodot ok" style={{ fontFamily: "var(--f-data)", fontSize: ".62rem" }}>
+                {completados.length} acreditado{completados.length > 1 ? "s" : ""}
+              </span>
+            }
+          />
+          <div style={{
+            display: "grid", gap: 1,
+            border: "1px solid var(--line)", borderRadius: 4,
+            overflow: "hidden", background: "var(--line)",
+            boxShadow: "0 1px 3px rgba(7,10,36,.05)",
+          }}>
+            {completados.slice(0, 4).map(insc => {
+              const color = AREA_COLOR[insc.curso.area] ?? "#5754D0"
+              const bg    = AREA_BG[insc.curso.area]   ?? "#F0F0FF"
               return (
-                <div key={i.id} style={{
+                <div key={insc.id} style={{
                   display: "flex", alignItems: "center", gap: 14,
-                  background: "var(--surface)", border: "1px solid var(--line)",
-                  borderRadius: "var(--r)", padding: "14px 18px",
-                  boxShadow: "var(--shadow-sm)",
+                  background: "var(--surface)",
+                  padding: "12px 18px",
+                  borderLeft: `3px solid ${color}`,
                 }}>
-                  <div style={{ width: 40, height: 40, borderRadius: 10, background: "var(--ok-bg)", border: "1px solid var(--ok-ring)", display: "grid", placeItems: "center", flexShrink: 0 }}>
-                    <CheckCircle2 size={20} strokeWidth={1.75} style={{ color: "var(--ok)" }} />
+                  <div style={{
+                    width: 34, height: 34, borderRadius: 2, flexShrink: 0,
+                    background: "var(--ok-bg)", border: "1px solid var(--ok-ring)",
+                    display: "grid", placeItems: "center",
+                  }}>
+                    <CheckCircle2 size={16} strokeWidth={2} style={{ color: "var(--ok)" }} />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 600, fontSize: ".9rem", marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                      {i.curso.titulo}
+                    <div style={{
+                      fontWeight: 600, fontSize: ".88rem", marginBottom: 3,
+                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                    }}>
+                      {insc.curso.titulo}
                     </div>
-                    <div style={{ fontSize: ".74rem", color: "var(--muted)", display: "flex", gap: 8 }}>
-                      <span className="subject-tag" style={{ background: `${color}12`, color, borderColor: `${color}30` }}>{AREA_LABEL[i.curso.area]}</span>
-                      <span>{i.curso.horas} h acreditadas</span>
-                      {i.folio && <span>· Folio {i.folio}</span>}
+                    <div style={{
+                      display: "flex", alignItems: "center", gap: 10,
+                      fontSize: ".68rem", color: "var(--muted)",
+                      fontFamily: "var(--f-data)",
+                    }}>
+                      <span style={{
+                        padding: "1px 6px", background: bg, color,
+                        fontSize: ".58rem", fontWeight: 700, letterSpacing: ".1em",
+                        textTransform: "uppercase", borderRadius: 2,
+                      }}>
+                        {AREA_LABEL[insc.curso.area]}
+                      </span>
+                      <span>{insc.curso.horas}h acreditadas</span>
+                      {insc.folio && <span>· Folio {insc.folio}</span>}
                     </div>
                   </div>
-                  <Link href="/dashboard/constancias" className="btn sm" style={{ flexShrink: 0 }}>
-                    <Award size={13} strokeWidth={2} /> Constancia
+                  <Link href="/dashboard/constancias" className="btn sm" style={{
+                    flexShrink: 0, borderRadius: 2,
+                    fontFamily: "var(--f-data)", fontSize: ".68rem", letterSpacing: ".04em",
+                  }}>
+                    <Award size={12} strokeWidth={2} /> Constancia
                   </Link>
                 </div>
               )
@@ -413,52 +645,88 @@ export default async function DashboardPage() {
         </section>
       )}
 
-      {/* ── EVENTOS + AVISOS ─────────────────────────────────────── */}
+      {/* ── EVENTOS + AVISOS ────────────────────────────────────── */}
       <div className="grid g-dash">
+
         {/* Eventos */}
-        <div className="card">
+        <div className="card" style={{ borderRadius: 4 }}>
           <div className="card-h">
-            <h2 style={{ display: "flex", alignItems: "center", gap: 8, fontSize: ".95rem" }}>
-              <Calendar size={16} strokeWidth={1.75} style={{ color: "var(--brand)" }} />
+            <h2 style={{
+              display: "flex", alignItems: "center", gap: 8,
+              fontFamily: "var(--f-display)", fontSize: ".95rem",
+              fontWeight: 800, letterSpacing: "-.02em",
+            }}>
+              <Calendar size={14} strokeWidth={2} style={{ color: "var(--brand)" }} />
               Próximos eventos
             </h2>
-            <Link href="/dashboard/calendario" className="btn sm ghost">Ver todo</Link>
+            <Link href="/dashboard/calendario" className="btn sm ghost" style={{
+              fontFamily: "var(--f-data)", fontSize: ".68rem", letterSpacing: ".04em",
+            }}>
+              Ver todo
+            </Link>
           </div>
           {eventos.length === 0 ? (
             <div className="empty" style={{ padding: "28px 16px" }}>
-              <Calendar size={28} strokeWidth={1.25} />
+              <Calendar size={24} strokeWidth={1.25} />
               <span>Sin eventos próximos</span>
             </div>
           ) : (
-            <div className="event-list">
-              {eventos.map(ev => {
+            <div>
+              {eventos.map((ev, idx) => {
                 const fecha = new Date(ev.fecha)
-                const d = fecha.getDate()
+                const d   = fecha.getDate()
                 const mes = fecha.toLocaleDateString("es-MX", { month: "short" }).replace(".","").toUpperCase()
                 const TIPO_COLOR: Record<string, { color: string; bg: string }> = {
-                  Asamblea:    { color: "#6366f1", bg: "#6366f115" },
-                  Taller:      { color: "#0ea5e9", bg: "#0ea5e915" },
-                  Evaluación:  { color: "#10b981", bg: "#10b98115" },
-                  Cuota:       { color: "#f59e0b", bg: "#f59e0b15" },
-                  Conferencia: { color: "#8b5cf6", bg: "#8b5cf615" },
+                  Asamblea:    { color: "#6366f1", bg: "#6366f112" },
+                  Taller:      { color: "#0ea5e9", bg: "#0ea5e912" },
+                  Evaluación:  { color: "#10b981", bg: "#10b98112" },
+                  Cuota:       { color: "#f59e0b", bg: "#f59e0b12" },
+                  Conferencia: { color: "#8b5cf6", bg: "#8b5cf612" },
                 }
                 const tc = TIPO_COLOR[ev.tipo] ?? { color: "var(--brand)", bg: "var(--info-bg)" }
                 return (
-                  <div key={ev.id} className="event-item">
-                    <div style={{ width: 42, height: 42, borderRadius: 10, background: tc.bg, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flexShrink: 0, border: `1px solid ${tc.color}22` }}>
-                      <span style={{ fontSize: ".85rem", fontWeight: 800, color: tc.color, fontFamily: "var(--f-mono)", lineHeight: 1 }}>{d}</span>
-                      <span style={{ fontSize: ".55rem", color: tc.color, fontWeight: 700, letterSpacing: ".08em" }}>{mes}</span>
+                  <div key={ev.id} style={{
+                    display: "flex", alignItems: "center", gap: 14,
+                    padding: "12px 18px",
+                    borderBottom: idx < eventos.length - 1 ? "1px solid var(--line)" : "none",
+                  }}>
+                    {/* Date box */}
+                    <div style={{
+                      width: 40, height: 40, flexShrink: 0,
+                      background: tc.bg, borderRadius: 2,
+                      border: `1px solid ${tc.color}22`,
+                      display: "flex", flexDirection: "column",
+                      alignItems: "center", justifyContent: "center",
+                    }}>
+                      <span style={{
+                        fontFamily: "var(--f-data)", fontSize: ".9rem",
+                        fontWeight: 700, color: tc.color, lineHeight: 1,
+                      }}>{d}</span>
+                      <span style={{
+                        fontFamily: "var(--f-data)", fontSize: ".52rem",
+                        color: tc.color, fontWeight: 700, letterSpacing: ".1em",
+                      }}>{mes}</span>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 600, fontSize: ".85rem", marginBottom: 3, lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      <div style={{
+                        fontWeight: 600, fontSize: ".84rem", marginBottom: 3,
+                        overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                      }}>
                         {ev.titulo}
                       </div>
-                      <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                        <span className="subject-tag" style={{ background: tc.bg, color: tc.color, borderColor: `${tc.color}33` }}>{ev.tipo}</span>
-                        <span style={{ fontSize: ".71rem", color: "var(--muted)" }}>{ev.hora} · {ev.lugar}</span>
+                      <div style={{
+                        display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap",
+                        fontSize: ".68rem", color: "var(--muted)", fontFamily: "var(--f-data)",
+                      }}>
+                        <span style={{
+                          padding: "1px 6px", background: tc.bg, color: tc.color,
+                          fontSize: ".57rem", fontWeight: 700, letterSpacing: ".1em",
+                          textTransform: "uppercase", borderRadius: 2,
+                        }}>{ev.tipo}</span>
+                        <span>{ev.hora} · {ev.lugar}</span>
                       </div>
                     </div>
-                    <ChevronRight size={14} strokeWidth={1.75} style={{ color: "var(--muted)", flexShrink: 0 }} />
+                    <ChevronRight size={13} strokeWidth={1.75} style={{ color: "var(--muted)", flexShrink: 0 }} />
                   </div>
                 )
               })}
@@ -467,47 +735,82 @@ export default async function DashboardPage() {
         </div>
 
         {/* Avisos */}
-        <div className="card">
+        <div className="card" style={{ borderRadius: 4 }}>
           <div className="card-h">
-            <h2 style={{ display: "flex", alignItems: "center", gap: 8, fontSize: ".95rem" }}>
-              <Megaphone size={16} strokeWidth={1.75} style={{ color: "var(--warn)" }} />
+            <h2 style={{
+              display: "flex", alignItems: "center", gap: 8,
+              fontFamily: "var(--f-display)", fontSize: ".95rem",
+              fontWeight: 800, letterSpacing: "-.02em",
+            }}>
+              <Megaphone size={14} strokeWidth={2} style={{ color: "var(--warn)" }} />
               Avisos del colegio
             </h2>
-            <Link href="/dashboard/avisos" className="btn sm ghost">Ver todos</Link>
+            <Link href="/dashboard/avisos" className="btn sm ghost" style={{
+              fontFamily: "var(--f-data)", fontSize: ".68rem", letterSpacing: ".04em",
+            }}>
+              Ver todos
+            </Link>
           </div>
           {avisos.length === 0 ? (
             <div className="empty" style={{ padding: "28px 16px" }}>
-              <Megaphone size={28} strokeWidth={1.25} />
+              <Megaphone size={24} strokeWidth={1.25} />
               <span>Sin avisos recientes</span>
             </div>
           ) : (
-            <div className="event-list">
-              {avisos.map(av => {
+            <div>
+              {avisos.map((av, idx) => {
                 const AVISO_COLOR: Record<string, { color: string; bg: string }> = {
-                  Urgente:      { color: "var(--bad)",  bg: "var(--bad-bg)" },
+                  Urgente:      { color: "var(--bad)",  bg: "var(--bad-bg)"  },
                   Importante:   { color: "var(--warn)", bg: "var(--warn-bg)" },
                   Informativo:  { color: "var(--info)", bg: "var(--info-bg)" },
-                  Convocatoria: { color: "var(--ok)",   bg: "var(--ok-bg)" },
+                  Convocatoria: { color: "var(--ok)",   bg: "var(--ok-bg)"   },
                 }
                 const ac = AVISO_COLOR[av.tipo] ?? AVISO_COLOR.Informativo
-                const isUrgent = av.tipo === "Urgente" || av.fijado
                 return (
-                  <div key={av.id} className="event-item">
-                    <div className="event-dot" style={{ background: ac.bg, color: ac.color, border: `1px solid ${ac.color}22` }}>
-                      {isUrgent ? <AlertCircle size={14} strokeWidth={1.75} /> : <Megaphone size={14} strokeWidth={1.75} />}
+                  <div key={av.id} style={{
+                    display: "flex", alignItems: "flex-start", gap: 12,
+                    padding: "12px 18px",
+                    borderBottom: idx < avisos.length - 1 ? "1px solid var(--line)" : "none",
+                    borderLeft: av.fijado || av.tipo === "Urgente" ? `3px solid ${ac.color}` : "3px solid transparent",
+                  }}>
+                    <div style={{
+                      width: 28, height: 28, flexShrink: 0, marginTop: 1,
+                      background: ac.bg, borderRadius: 2,
+                      display: "grid", placeItems: "center",
+                    }}>
+                      {av.tipo === "Urgente" || av.fijado
+                        ? <AlertCircle size={13} strokeWidth={1.75} style={{ color: ac.color }} />
+                        : <Megaphone   size={13} strokeWidth={1.75} style={{ color: ac.color }} />
+                      }
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontWeight: 600, fontSize: ".85rem", lineHeight: 1.3, marginBottom: 3,
-                        overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical"
+                      <div style={{
+                        fontWeight: 600, fontSize: ".84rem", lineHeight: 1.3, marginBottom: 4,
+                        overflow: "hidden",
+                        display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
                       } as React.CSSProperties}>
                         {av.titulo}
                       </div>
-                      <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                        <span className="subject-tag" style={{ background: ac.bg, color: ac.color, borderColor: `${ac.color}30` }}>{av.tipo}</span>
-                        <span style={{ fontSize: ".7rem", color: "var(--muted)" }}>{av.categoria}</span>
+                      <div style={{
+                        display: "flex", gap: 7, alignItems: "center",
+                        fontSize: ".65rem", fontFamily: "var(--f-data)",
+                      }}>
+                        <span style={{
+                          padding: "1px 6px", background: ac.bg,
+                          color: ac.color, fontSize: ".57rem", fontWeight: 700,
+                          letterSpacing: ".1em", textTransform: "uppercase", borderRadius: 2,
+                        }}>{av.tipo}</span>
+                        <span style={{ color: "var(--muted)" }}>{av.categoria}</span>
+                        {av.fijado && (
+                          <span style={{
+                            fontFamily: "var(--f-data)", fontSize: ".57rem",
+                            color: "var(--warn)", fontWeight: 700, letterSpacing: ".1em",
+                          }}>
+                            FIJADO
+                          </span>
+                        )}
                       </div>
                     </div>
-                    {av.fijado && <span style={{ fontSize: ".62rem", color: "var(--warn)", fontWeight: 700, flexShrink: 0 }}>FIJADO</span>}
                   </div>
                 )
               })}
@@ -516,25 +819,60 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* ── ACCESOS RÁPIDOS ──────────────────────────────────────── */}
-      <div className="card card-b">
-        <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".1em", color: "var(--muted)", marginBottom: 14 }}>
+      {/* ── ACCESOS RÁPIDOS ─────────────────────────────────────── */}
+      <div style={{
+        background: "var(--surface)",
+        border: "1px solid var(--line)",
+        borderRadius: 4,
+        padding: "16px 20px",
+        boxShadow: "0 1px 3px rgba(7,10,36,.05)",
+      }}>
+        <div style={{
+          fontSize: ".58rem", fontFamily: "var(--f-data)", fontWeight: 700,
+          letterSpacing: ".15em", textTransform: "uppercase",
+          color: "var(--muted)", marginBottom: 14,
+        }}>
           Accesos rápidos
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(170px, 1fr))", gap: 10 }}>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(175px, 1fr))",
+          gap: 1,
+          border: "1px solid var(--line)",
+          borderRadius: 2, overflow: "hidden",
+          background: "var(--line)",
+        }}>
           {[
-            { href: "/dashboard/cursos",      icon: <GraduationCap size={18} strokeWidth={1.5} />, label: "Mis cursos",     sub: `${inscripciones.length} inscritos`, color: "var(--brand)", bg: "var(--info-bg)" },
-            { href: "/dashboard/constancias",  icon: <Award size={18} strokeWidth={1.5} />,          label: "Constancias",    sub: `${completados.length} obtenidas`,   color: "var(--ok)",    bg: "var(--ok-bg)" },
-            { href: "/dashboard/calendario",   icon: <Calendar size={18} strokeWidth={1.5} />,        label: "Calendario",     sub: `${eventos.length} próximos`,        color: "#6366f1",      bg: "#6366f115" },
-            { href: "/dashboard/pagos",        icon: <CreditCard size={18} strokeWidth={1.5} />,      label: "Pagos",          sub: pagosPend.length > 0 ? `${pagosPend.length} pendiente${pagosPend.length > 1?"s":""}` : "Al corriente", color: pagosPend.length > 0 ? "var(--warn)" : "var(--ok)", bg: pagosPend.length > 0 ? "var(--warn-bg)" : "var(--ok-bg)" },
+            { href: "/dashboard/cursos",     icon: <GraduationCap size={16} strokeWidth={1.75} />, label: "Mis cursos",   sub: `${inscripciones.length} inscritos`,                                                              color: "#1B4F91" },
+            { href: "/dashboard/constancias", icon: <Award         size={16} strokeWidth={1.75} />, label: "Constancias",  sub: `${completados.length} obtenidas`,                                                               color: "#1A7A4A" },
+            { href: "/dashboard/calendario",  icon: <Calendar      size={16} strokeWidth={1.75} />, label: "Calendario",   sub: `${eventos.length} próximos`,                                                                    color: "#6366f1" },
+            { href: "/dashboard/pagos",       icon: <CreditCard    size={16} strokeWidth={1.75} />, label: "Pagos",        sub: pagosPend.length > 0 ? `${pagosPend.length} pendiente${pagosPend.length > 1 ? "s" : ""}` : "Al corriente", color: pagosPend.length > 0 ? "#906012" : "#1A7A4A" },
           ].map(item => (
-            <Link key={item.href} href={item.href} className="quick-action">
-              <div style={{ width: 38, height: 38, borderRadius: 9, background: item.bg, color: item.color, display: "grid", placeItems: "center", flexShrink: 0 }}>
-                {item.icon}
-              </div>
+            <Link key={item.href} href={item.href} style={{
+              display: "flex", alignItems: "center", gap: 12,
+              padding: "13px 16px",
+              background: "var(--surface)",
+              textDecoration: "none",
+              transition: "background .1s",
+              boxShadow: `inset 3px 0 0 0 ${item.color}`,
+            }}
+              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--surface-2)" }}
+              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "var(--surface)" }}
+            >
+              <div style={{ color: item.color, flexShrink: 0 }}>{item.icon}</div>
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontWeight: 600, fontSize: ".84rem", color: "var(--fg)" }}>{item.label}</div>
-                <div style={{ fontSize: ".72rem", color: "var(--muted)", marginTop: 1 }}>{item.sub}</div>
+                <div style={{
+                  fontWeight: 600, fontSize: ".84rem",
+                  color: "var(--fg)", marginBottom: 1,
+                }}>
+                  {item.label}
+                </div>
+                <div style={{
+                  fontSize: ".68rem", color: "var(--muted)",
+                  fontFamily: "var(--f-data)", letterSpacing: ".02em",
+                }}>
+                  {item.sub}
+                </div>
               </div>
             </Link>
           ))}

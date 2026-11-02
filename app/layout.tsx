@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Inter, JetBrains_Mono } from "next/font/google"
+import { Inter, JetBrains_Mono, Playfair_Display, Barlow_Condensed } from "next/font/google"
 import "./globals.css"
 
 const inter = Inter({
@@ -15,6 +15,20 @@ const jetbrains = JetBrains_Mono({
   weight: ["400", "500", "700"],
 })
 
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-playfair",
+  display: "swap",
+  weight: ["700", "800", "900"],
+})
+
+const barlow = Barlow_Condensed({
+  subsets: ["latin"],
+  variable: "--font-barlow",
+  display: "swap",
+  weight: ["400", "600", "700"],
+})
+
 export const metadata: Metadata = {
   title: "Portal del Colegiado · CIME Veracruz",
   description: "Plataforma oficial del Colegio de Ingenieros Mecánicos y Electricistas de Veracruz",
@@ -23,7 +37,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${inter.variable} ${jetbrains.variable}`}>
+    <html lang="es" className={`${inter.variable} ${jetbrains.variable} ${playfair.variable} ${barlow.variable}`}>
       <body>{children}</body>
     </html>
   )

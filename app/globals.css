@@ -30,9 +30,10 @@
   --shadow-md: 0 4px 20px rgba(15,27,45,.10), 0 2px 6px rgba(15,27,45,.06);
   --shadow-lg: 0 12px 40px rgba(15,27,45,.14), 0 4px 12px rgba(15,27,45,.08);
 
-  --f-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --f-mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
-  --f-display: "Inter", system-ui, sans-serif;
+  --f-body:    "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:    "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+  --f-display: var(--font-playfair), Georgia, "Times New Roman", serif;
+  --f-data:    var(--font-barlow), "Arial Narrow", Helvetica, sans-serif;
 
   --r:    10px;
   --r-sm: 7px;
@@ -117,7 +118,7 @@ h1, h2, h3, h4 {
   color: var(--fg);
   font-weight: 700;
 }
-h1 { font-size: 1.6rem; font-weight: 800; }
+h1 { font-size: 1.6rem; font-weight: 900; }
 h2 { font-size: 1.1rem; font-weight: 700; }
 h3 { font-size: .95rem; font-weight: 600; }
 p { color: var(--fg-2); line-height: 1.6; }
