@@ -10,6 +10,15 @@ const ESPS = [
   "Ingeniería Electromecánica",
   "Ingeniería en Energías Renovables",
   "Ingeniería Industrial Eléctrica",
+  "Ingeniería en Sistemas Eléctricos de Potencia",
+  "Ingeniería en Automatización y Control",
+  "Ingeniería en Telecomunicaciones",
+  "Ingeniería Biomédica",
+  "Ingeniería en Robótica e Inteligencia Artificial",
+  "Ingeniería Civil",
+  "Ingeniería Industrial",
+  "Ingeniería Química",
+  "Ingeniería en Computación",
 ]
 const CIUDADES = ["Veracruz","Boca del Río","Xalapa","Coatzacoalcos","Córdoba","Orizaba","Poza Rica","Tuxpan","Minatitlán","Alvarado","Pánuco","San Andrés Tuxtla"]
 
@@ -116,10 +125,19 @@ export default function NuevoColegiadoForm() {
               </div>
               <div className="field">
                 <label htmlFor="especialidad">Especialidad</label>
-                <select className="input" id="especialidad" value={form.especialidad} onChange={e => set("especialidad", e.target.value)}>
-                  <option value="">Seleccionar especialidad</option>
-                  {ESPS.map(e => <option key={e} value={e}>{e}</option>)}
-                </select>
+                <input
+                  className="input"
+                  id="especialidad"
+                  list="esps-list"
+                  value={form.especialidad}
+                  onChange={e => set("especialidad", e.target.value)}
+                  placeholder="Escribe o selecciona la especialidad"
+                  autoComplete="off"
+                />
+                <datalist id="esps-list">
+                  {ESPS.map(e => <option key={e} value={e} />)}
+                </datalist>
+                <span className="hint">Puedes escribir cualquier especialidad o elegir una de las sugerencias.</span>
               </div>
               <div className="field">
                 <label htmlFor="ciudad">Ciudad</label>

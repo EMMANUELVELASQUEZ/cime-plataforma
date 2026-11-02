@@ -4,8 +4,21 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 
 const ESPS = [
-  "Ingeniería Eléctrica","Ingeniería Mecánica","Ingeniería Mecánica Eléctrica",
-  "Ingeniería Electromecánica","Ingeniería en Energías Renovables","Ingeniería Industrial Eléctrica",
+  "Ingeniería Eléctrica",
+  "Ingeniería Mecánica",
+  "Ingeniería Mecánica Eléctrica",
+  "Ingeniería Electromecánica",
+  "Ingeniería en Energías Renovables",
+  "Ingeniería Industrial Eléctrica",
+  "Ingeniería en Sistemas Eléctricos de Potencia",
+  "Ingeniería en Automatización y Control",
+  "Ingeniería en Telecomunicaciones",
+  "Ingeniería Biomédica",
+  "Ingeniería en Robótica e Inteligencia Artificial",
+  "Ingeniería Civil",
+  "Ingeniería Industrial",
+  "Ingeniería Química",
+  "Ingeniería en Computación",
 ]
 const CIUDADES = ["Veracruz","Boca del Río","Xalapa","Coatzacoalcos","Córdoba","Orizaba","Poza Rica","Tuxpan","Minatitlán","Alvarado","Pánuco","San Andrés Tuxtla"]
 
@@ -111,10 +124,18 @@ export default function EditarColegiadoForm({ colegiado }: { colegiado: Colegiad
               </div>
               <div className="field">
                 <label>Especialidad</label>
-                <select className="input" value={form.especialidad} onChange={e => set("especialidad", e.target.value)}>
-                  <option value="">Seleccionar</option>
-                  {ESPS.map(e => <option key={e} value={e}>{e}</option>)}
-                </select>
+                <input
+                  className="input"
+                  list="esps-list-edit"
+                  value={form.especialidad}
+                  onChange={e => set("especialidad", e.target.value)}
+                  placeholder="Escribe o selecciona la especialidad"
+                  autoComplete="off"
+                />
+                <datalist id="esps-list-edit">
+                  {ESPS.map(e => <option key={e} value={e} />)}
+                </datalist>
+                <span className="hint">Texto libre — puedes elegir una sugerencia o escribir otra especialidad.</span>
               </div>
               <div className="field">
                 <label>Ciudad</label>
