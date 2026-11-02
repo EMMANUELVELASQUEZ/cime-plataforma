@@ -8,7 +8,7 @@ import {
   LayoutDashboard, GraduationCap, Calendar, FileCheck, Megaphone,
   Users, CreditCard, User, Moon, Sun, LogOut, Menu, X,
   ChevronRight, ChevronDown, BarChart3, Bell,
-  PanelLeftClose, PanelLeftOpen,
+  PanelLeftClose, PanelLeftOpen, FolderOpen,
 } from "lucide-react"
 
 // ─── Helpers ────────────────────────────────────────────────────
@@ -55,6 +55,7 @@ const TITLES: Record<string, string> = {
   "/admin/cursos":           "Cursos",
   "/admin/eventos":          "Eventos",
   "/admin/avisos":           "Avisos",
+  "/admin/expedientes":      "Expedientes",
   "/dashboard":              "Inicio",
   "/dashboard/cursos":       "Mis cursos",
   "/dashboard/calendario":   "Calendario",
@@ -129,7 +130,8 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
       { href: "/admin/colegiados", icon: <Users         size={18} strokeWidth={1.75} />, label: "Colegiados" },
       { href: "/admin/cursos",     icon: <GraduationCap size={18} strokeWidth={1.75} />, label: "Cursos" },
       { href: "/admin/eventos",    icon: <Calendar      size={18} strokeWidth={1.75} />, label: "Eventos" },
-      { href: "/admin/avisos",     icon: <Megaphone     size={18} strokeWidth={1.75} />, label: "Avisos" },
+      { href: "/admin/avisos",       icon: <Megaphone   size={18} strokeWidth={1.75} />, label: "Avisos" },
+      { href: "/admin/expedientes",  icon: <FolderOpen  size={18} strokeWidth={1.75} />, label: "Expedientes" },
     ],
   }]
 

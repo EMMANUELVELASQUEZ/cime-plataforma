@@ -28,6 +28,7 @@ model Usuario {
 
   inscripciones InscripcionCurso[]
   pagos         Pago[]
+  expediente    Expediente?
 }
 
 enum Rol {
@@ -185,4 +186,44 @@ model Pago {
   createdAt DateTime @default(now())
 
   usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+}
+
+// ─── Expedientes ─────────────────────────────────────────────────
+
+enum EstadoExpediente {
+  ACTIVO
+  ARCHIVADO
+}
+
+enum TipoEntrada {
+  NOTA
+  INSTRUCCION
+  DOCUMENTO
+  OBSERVACION
+  REPORTE
+}
+
+model Expediente {
+  id            String           @id @default(cuid())
+  usuarioId     String           @unique
+  nombre        String
+  instrucciones String?
+  estado        EstadoExpediente @default(ACTIVO)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  usuario  Usuario            @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  entradas EntradaExpediente[]
+}
+
+model EntradaExpediente {
+  id           String      @id @default(cuid())
+  expedienteId String
+  tipo         TipoEntrada @default(NOTA)
+  titulo       String
+  contenido    String?
+  autor        String?
+  createdAt    DateTime    @default(now())
+
+  expediente Expediente @relation(fields: [expedienteId], references: [id], onDelete: Cascade)
 }

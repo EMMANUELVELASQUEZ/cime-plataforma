@@ -15,7 +15,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <AppShell user={user} pageTitle="Panel del Colegio">
+    <AppShell user={user}>
       {children}
     </AppShell>
   )
