@@ -219,209 +219,281 @@ function TicketModal({
   colegiado: ColegiadoData
   onClose: () => void
 }) {
-  const estadoCfg = ESTADO_CFG[pago.estado] ?? ESTADO_CFG.PENDIENTE
+  const NAV   = "#152D5F"
+  const GOLD  = "#C89B2A"
+
+  const estadoMap: Record<string, { label: string; bg: string; color: string; border: string }> = {
+    PAGADO:    { label: "PAGADO",    bg: "#ECFDF5", color: "#065F46", border: "#6EE7B7" },
+    PENDIENTE: { label: "PENDIENTE", bg: "#FFFBEB", color: "#92400E", border: "#FCD34D" },
+    VENCIDO:   { label: "VENCIDO",   bg: "#FEF2F2", color: "#991B1B", border: "#FCA5A5" },
+    CANCELADO: { label: "CANCELADO", bg: "#F9FAFB", color: "#6B7280", border: "#D1D5DB" },
+  }
+  const ec = estadoMap[pago.estado] ?? estadoMap.PENDIENTE
+
+  const issuedDate = new Date(pago.createdAt).toLocaleDateString("es-MX", {
+    day: "2-digit", month: "2-digit", year: "numeric",
+  })
+  const issuedLong = new Date(pago.createdAt).toLocaleDateString("es-MX", {
+    day: "numeric", month: "long", year: "numeric",
+  })
 
   return (
     <div
       style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 1000,
-        background: "rgba(0,0,0,.55)",
-        backdropFilter: "blur(4px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 16,
+        position: "fixed", inset: 0, zIndex: 1000,
+        background: "rgba(0,0,0,.7)", backdropFilter: "blur(6px)",
+        display: "flex", alignItems: "center", justifyContent: "center", padding: 16,
       }}
       onClick={onClose}
     >
-      <style>{`@media print { body > *:not(#ticket-print-root) { display:none!important } #ticket-print-root { display:block!important } }`}</style>
+      <style>{`
+        @media print {
+          body > *:not(#ticket-print-root) { display: none !important; }
+          #ticket-print-root { display: flex !important; position: static !important; padding: 0 !important; background: none !important; }
+          #ticket-print-root > div { box-shadow: none !important; border-radius: 0 !important; max-width: 100% !important; width: 100% !important; }
+        }
+      `}</style>
+
       <div
         id="ticket-print-root"
+        style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}
         onClick={(e) => e.stopPropagation()}
-        style={{
-          background: "white",
-          borderRadius: 14,
-          width: "100%",
-          maxWidth: 520,
-          overflow: "hidden",
-          boxShadow: "0 24px 80px rgba(0,0,0,.28)",
-        }}
       >
-        {/* Modal header */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", borderBottom: "1px solid #e5e7eb" }}>
-          <span style={{ fontSize: ".9rem", fontWeight: 700, color: "#1E3A8A" }}>Comprobante de Pago</span>
-          <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", color: "#6b7280", padding: 4 }}>
-            <X size={18} />
-          </button>
-        </div>
+        <div style={{
+          background: "white", borderRadius: 14, width: "100%", maxWidth: 540,
+          overflow: "hidden", boxShadow: "0 40px 120px rgba(0,0,0,.45)",
+          fontFamily: "'Segoe UI', system-ui, sans-serif",
+        }}>
 
-        {/* Ticket body */}
-        <div style={{ position: "relative" }}>
-          {/* Navy left accent */}
-          <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: 7, background: "#1E3A8A" }} />
+          {/* ── Header navy ─────────────────────────────────── */}
+          <div style={{ background: NAV, padding: "22px 28px 18px", position: "relative", overflow: "hidden" }}>
+            {/* Fondo textura sutil */}
+            <div style={{
+              position: "absolute", inset: 0, opacity: .06,
+              backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
+              backgroundSize: "18px 18px",
+            }} />
+            {/* Franja diagonal decorativa */}
+            <div style={{
+              position: "absolute", right: -20, top: 0, bottom: 0, width: 140,
+              background: "rgba(255,255,255,.04)", transform: "skewX(-10deg)",
+            }} />
 
-          <div style={{ padding: "24px 28px 24px 36px", fontFamily: "Calibri, sans-serif" }}>
-            {/* Institution */}
-            <div style={{ textAlign: "center", marginBottom: 20 }}>
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, marginBottom: 8 }}>
-                <img src="/logo.jpeg" alt="CIME" style={{ width: 44, height: 44, borderRadius: 8, objectFit: "cover" }} />
-                <div>
-                  <div style={{ fontSize: ".95rem", fontWeight: 800, color: "#1E3A8A", lineHeight: 1.2 }}>
-                    COLEGIO DE INGENIEROS MECÁNICOS Y ELECTRICISTAS
+            {/* Logo + nombre institución */}
+            <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 14, marginBottom: 18 }}>
+              <img
+                src="/logo.jpeg" alt="CIME"
+                style={{ width: 46, height: 46, borderRadius: 9, objectFit: "cover", border: "2px solid rgba(255,255,255,.18)", flexShrink: 0 }}
+              />
+              <div>
+                <div style={{ color: "white", fontWeight: 800, fontSize: ".92rem", lineHeight: 1.25, letterSpacing: ".01em" }}>
+                  COLEGIO DE INGENIEROS MECÁNICOS
+                </div>
+                <div style={{ color: "white", fontWeight: 800, fontSize: ".92rem", lineHeight: 1.25 }}>
+                  Y ELECTRICISTAS DE VERACRUZ A.C.
+                </div>
+                <div style={{ color: "rgba(255,255,255,.45)", fontSize: ".67rem", marginTop: 4, letterSpacing: ".05em" }}>
+                  Xalapa, Veracruz
+                </div>
+              </div>
+            </div>
+
+            {/* Separador */}
+            <div style={{ height: 1, background: "rgba(255,255,255,.12)", marginBottom: 14 }} />
+
+            {/* Título documento + folio */}
+            <div style={{ position: "relative", display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
+              <div>
+                <div style={{ color: "rgba(255,255,255,.45)", fontSize: ".58rem", letterSpacing: ".18em", textTransform: "uppercase", marginBottom: 4 }}>
+                  Documento oficial
+                </div>
+                <div style={{ color: "white", fontWeight: 800, fontSize: "1.05rem", letterSpacing: ".07em", textTransform: "uppercase" }}>
+                  Recibo de Pago
+                </div>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <div style={{ color: "rgba(255,255,255,.4)", fontSize: ".58rem", letterSpacing: ".14em", textTransform: "uppercase", marginBottom: 4 }}>
+                  Folio
+                </div>
+                <div style={{ color: GOLD, fontWeight: 800, fontSize: ".95rem", fontFamily: "monospace", letterSpacing: ".06em" }}>
+                  {pago.folio}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* ── Cuerpo ──────────────────────────────────────── */}
+          <div style={{ padding: "0 28px 24px" }}>
+
+            {/* Colegiado / Fecha */}
+            <div style={{
+              display: "grid", gridTemplateColumns: "1fr auto", gap: 20,
+              padding: "18px 0 16px", borderBottom: "1px solid #EEF2F7",
+            }}>
+              <div>
+                <div style={{ fontSize: ".58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".14em", color: "#94A3B8", marginBottom: 10 }}>
+                  Datos del colegiado
+                </div>
+                <table style={{ borderCollapse: "collapse", width: "100%" }}>
+                  <tbody>
+                    {[
+                      ["Nombre",        colegiado.nombre],
+                      ["No. Colegiado", colegiado.numeroColegiado ? `CIME-VER-${colegiado.numeroColegiado}` : "—"],
+                      ["Correo",        colegiado.correo],
+                    ].map(([label, val]) => (
+                      <tr key={label}>
+                        <td style={{ fontSize: ".8rem", color: "#64748B", paddingBottom: 5, paddingRight: 12, verticalAlign: "top", whiteSpace: "nowrap" }}>
+                          {label}
+                        </td>
+                        <td style={{
+                          fontSize: ".8rem", fontWeight: label === "Correo" ? 400 : 700,
+                          color: "#0F172A", paddingBottom: 5,
+                          fontFamily: label === "No. Colegiado" ? "monospace" : undefined,
+                        }}>
+                          {val}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div style={{ textAlign: "right", paddingLeft: 16, borderLeft: "1px solid #EEF2F7" }}>
+                <div style={{ fontSize: ".58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".14em", color: "#94A3B8", marginBottom: 8 }}>
+                  Expedido
+                </div>
+                <div style={{ fontSize: ".9rem", fontWeight: 800, color: "#0F172A", fontVariantNumeric: "tabular-nums" }}>
+                  {issuedDate}
+                </div>
+                <div style={{ marginTop: 14 }}>
+                  <div style={{ fontSize: ".58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".14em", color: "#94A3B8", marginBottom: 7 }}>
+                    Estado
                   </div>
-                  <div style={{ fontSize: ".75rem", color: "#6b7280", marginTop: 2 }}>DE VERACRUZ A.C.</div>
-                </div>
-              </div>
-              <div style={{ height: 1, background: "#e5e7eb", margin: "12px 0" }} />
-              <div style={{ fontSize: "1.05rem", fontWeight: 800, color: "#111827", letterSpacing: ".04em" }}>
-                COMPROBANTE DE PAGO
-              </div>
-              <div style={{ fontSize: ".82rem", color: "#1E3A8A", fontWeight: 700, marginTop: 4, fontFamily: "monospace" }}>
-                Folio: {pago.folio}
-              </div>
-              <div style={{ height: 1, background: "#e5e7eb", margin: "12px 0" }} />
-            </div>
-
-            {/* Colegiado data */}
-            <div style={{ marginBottom: 18 }}>
-              <div style={{ fontSize: ".66rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#9ca3af", marginBottom: 10 }}>
-                DATOS DEL COLEGIADO
-              </div>
-              <div style={{ display: "grid", gap: 6 }}>
-                <div style={{ display: "flex", gap: 8, fontSize: ".87rem" }}>
-                  <span style={{ color: "#6b7280", minWidth: 90 }}>Nombre:</span>
-                  <span style={{ fontWeight: 700, color: "#111827" }}>{colegiado.nombre}</span>
-                </div>
-                <div style={{ display: "flex", gap: 8, fontSize: ".87rem" }}>
-                  <span style={{ color: "#6b7280", minWidth: 90 }}>No. Colegiado:</span>
-                  <span style={{ fontFamily: "monospace", fontWeight: 700, color: "#111827" }}>
-                    {colegiado.numeroColegiado ? `CIME-VER-${colegiado.numeroColegiado}` : "Sin número"}
+                  <span style={{
+                    display: "inline-block",
+                    background: ec.bg, color: ec.color,
+                    border: `1px solid ${ec.border}`,
+                    borderRadius: 20, padding: "4px 11px",
+                    fontSize: ".7rem", fontWeight: 800, letterSpacing: ".04em",
+                  }}>
+                    {ec.label}
                   </span>
                 </div>
               </div>
             </div>
 
-            <div style={{ height: 1, background: "#e5e7eb", marginBottom: 18 }} />
-
-            {/* Payment detail */}
-            <div style={{ marginBottom: 18 }}>
-              <div style={{ fontSize: ".66rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#9ca3af", marginBottom: 10 }}>
-                DETALLE
+            {/* Tabla de concepto */}
+            <div style={{ marginTop: 18, marginBottom: 16 }}>
+              <div style={{
+                display: "grid", gridTemplateColumns: "1fr 110px",
+                background: "#F1F5FB", borderRadius: "6px 6px 0 0",
+                padding: "7px 12px",
+              }}>
+                <span style={{ fontSize: ".62rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#475569" }}>Concepto</span>
+                <span style={{ fontSize: ".62rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "#475569", textAlign: "right" }}>Importe</span>
               </div>
-              <div style={{ display: "grid", gap: 6 }}>
-                <div style={{ display: "flex", gap: 8, fontSize: ".87rem" }}>
-                  <span style={{ color: "#6b7280", minWidth: 90 }}>Concepto:</span>
-                  <span style={{ fontWeight: 600, color: "#111827" }}>{pago.concepto}</span>
+              <div style={{ border: "1px solid #E2E8F0", borderTop: "none", borderRadius: "0 0 6px 6px", overflow: "hidden" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 110px", padding: "14px 12px", alignItems: "start", borderBottom: "1px solid #EEF2F7" }}>
+                  <div>
+                    <div style={{ fontSize: ".875rem", fontWeight: 600, color: "#0F172A", lineHeight: 1.4 }}>
+                      {pago.concepto}
+                    </div>
+                    <div style={{ fontSize: ".72rem", color: "#94A3B8", marginTop: 5 }}>
+                      Registrado el {issuedLong}
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "right", fontFamily: "monospace", fontWeight: 700, fontSize: ".9rem", color: "#0F172A" }}>
+                    {fmt$(pago.monto)}
+                  </div>
                 </div>
-                <div style={{ display: "flex", gap: 8, fontSize: ".87rem", alignItems: "center" }}>
-                  <span style={{ color: "#6b7280", minWidth: 90 }}>Monto:</span>
-                  <span style={{ fontWeight: 700, color: "#111827", fontSize: "1rem" }}>{fmt$(pago.monto)} MXN</span>
-                  <span
-                    style={{
-                      marginLeft: 8,
-                      padding: "2px 10px",
-                      borderRadius: 20,
-                      background: estadoCfg.bg,
-                      color: estadoCfg.color,
-                      fontSize: ".75rem",
-                      fontWeight: 700,
-                    }}
-                  >
-                    {estadoCfg.label}
-                  </span>
-                </div>
-                <div style={{ display: "flex", gap: 8, fontSize: ".87rem" }}>
-                  <span style={{ color: "#6b7280", minWidth: 90 }}>Fecha reg.:</span>
-                  <span style={{ color: "#374151" }}>{fmtDate(pago.createdAt)}</span>
+                {/* Fila subtotal */}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 110px", padding: "8px 12px", background: "#F8FAFC" }}>
+                  <span style={{ fontSize: ".76rem", color: "#64748B" }}>Subtotal</span>
+                  <span style={{ textAlign: "right", fontFamily: "monospace", fontSize: ".76rem", color: "#64748B" }}>{fmt$(pago.monto)}</span>
                 </div>
               </div>
             </div>
 
             {/* Total */}
-            <div
-              style={{
-                borderTop: "2px solid #1E3A8A",
-                borderBottom: "2px solid #1E3A8A",
-                padding: "12px 0",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: 20,
-              }}
-            >
-              <span style={{ fontSize: ".9rem", fontWeight: 800, color: "#1E3A8A", textTransform: "uppercase", letterSpacing: ".06em" }}>TOTAL</span>
-              <span style={{ fontSize: "1.15rem", fontWeight: 800, color: "#1E3A8A", fontFamily: "monospace" }}>{fmt$(pago.monto)} MXN</span>
-            </div>
-
-            {/* Footer */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-              <div style={{ textAlign: "center" }}>
-                <div style={{ borderTop: "1px solid #374151", width: 180, marginBottom: 6 }} />
-                <div style={{ fontSize: ".76rem", color: "#6b7280" }}>Firma: Administración</div>
-              </div>
+            <div style={{
+              background: NAV, borderRadius: 8, padding: "13px 12px",
+              display: "grid", gridTemplateColumns: "1fr 110px",
+              alignItems: "center", marginBottom: 24,
+            }}>
+              <span style={{ color: "rgba(255,255,255,.65)", fontWeight: 700, fontSize: ".78rem", textTransform: "uppercase", letterSpacing: ".1em" }}>
+                Total a Pagar
+              </span>
               <div style={{ textAlign: "right" }}>
-                <div
-                  style={{
-                    width: 64,
-                    height: 64,
-                    border: "2px dashed #d1d5db",
-                    borderRadius: 8,
-                    display: "grid",
-                    placeItems: "center",
-                    color: "#9ca3af",
-                    fontSize: ".62rem",
-                    textAlign: "center",
-                    marginLeft: "auto",
-                  }}
-                >
-                  Sello<br />CIME
-                </div>
+                <span style={{ color: "white", fontWeight: 900, fontSize: "1.1rem", fontFamily: "monospace" }}>
+                  {fmt$(pago.monto)}
+                </span>
+                <span style={{ color: "rgba(255,255,255,.4)", fontSize: ".68rem", marginLeft: 5 }}>MXN</span>
               </div>
             </div>
 
-            <div style={{ marginTop: 16, textAlign: "center", fontSize: ".7rem", color: "#9ca3af", borderTop: "1px solid #f3f4f6", paddingTop: 10 }}>
-              CIME Veracruz A.C. · Xalapa, Veracruz · portal.cimeveracruz.mx
+            {/* Firma + sello */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", paddingTop: 16, borderTop: "1px solid #EEF2F7" }}>
+              <div>
+                <div style={{ width: 190, borderTop: "1px solid #334155", marginBottom: 6 }} />
+                <div style={{ fontSize: ".75rem", fontWeight: 700, color: "#334155" }}>Firma autorizada</div>
+                <div style={{ fontSize: ".7rem", color: "#94A3B8", marginTop: 2 }}>Administración · CIME Veracruz</div>
+              </div>
+
+              {/* Sello SVG circular */}
+              <svg width="78" height="78" viewBox="0 0 78 78">
+                <circle cx="39" cy="39" r="36" fill="none" stroke={NAV} strokeWidth="2.5"/>
+                <circle cx="39" cy="39" r="29" fill="none" stroke={NAV} strokeWidth="1" strokeDasharray="2.5 3"/>
+                <defs>
+                  <path id="arc-top" d="M 39,39 m -31,0 a 31,31 0 1,1 62,0"/>
+                  <path id="arc-bot" d="M 39,39 m -26,0 a 26,26 0 0,0 52,0"/>
+                </defs>
+                <text fill={NAV} fontSize="7.2" fontWeight="700" fontFamily="system-ui" letterSpacing="1.5">
+                  <textPath href="#arc-top" startOffset="13%">CIME VERACRUZ · A.C.</textPath>
+                </text>
+                <text fill={NAV} fontSize="6.5" fontFamily="system-ui" letterSpacing="1">
+                  <textPath href="#arc-bot" startOffset="17%">OFICIAL</textPath>
+                </text>
+                <text x="39" y="37" textAnchor="middle" fill={NAV} fontSize="11" fontWeight="900" fontFamily="system-ui">CIME</text>
+                <text x="39" y="49" textAnchor="middle" fill={NAV} fontSize="6.5" fontFamily="system-ui" letterSpacing="1.2">VERACRUZ</text>
+              </svg>
+            </div>
+
+            {/* Pie legal */}
+            <div style={{
+              marginTop: 16, paddingTop: 10, borderTop: "1px solid #EEF2F7",
+              textAlign: "center", fontSize: ".64rem", color: "#94A3B8", lineHeight: 1.6,
+            }}>
+              Este documento es un comprobante oficial emitido por CIME Veracruz A.C.<br/>
+              Xalapa, Veracruz · portal.cimeveracruz.mx
             </div>
           </div>
-        </div>
 
-        {/* Modal footer */}
-        <div style={{ display: "flex", gap: 10, padding: "14px 20px", borderTop: "1px solid #e5e7eb", background: "#f9fafb", justifyContent: "flex-end" }}>
-          <button
-            onClick={onClose}
-            style={{
-              padding: "8px 18px",
-              borderRadius: 8,
-              border: "1px solid #d1d5db",
-              background: "white",
-              cursor: "pointer",
-              fontSize: ".86rem",
-              fontWeight: 600,
-              color: "#374151",
-            }}
-          >
-            Cerrar
-          </button>
-          <button
-            onClick={() => window.print()}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 7,
-              padding: "8px 18px",
-              borderRadius: 8,
-              border: "none",
-              background: "#1E3A8A",
-              color: "white",
-              cursor: "pointer",
-              fontSize: ".86rem",
-              fontWeight: 600,
-            }}
-          >
-            <Printer size={15} /> Imprimir
-          </button>
+          {/* ── Pie de modal ──────────────────────────────────── */}
+          <div style={{
+            display: "flex", gap: 10, padding: "14px 28px",
+            borderTop: "1px solid #EEF2F7", background: "#F8FAFC", justifyContent: "flex-end",
+          }}>
+            <button
+              onClick={onClose}
+              style={{
+                padding: "8px 20px", borderRadius: 8,
+                border: "1px solid #E2E8F0", background: "white",
+                cursor: "pointer", fontSize: ".86rem", fontWeight: 600, color: "#374151",
+              }}
+            >
+              Cerrar
+            </button>
+            <button
+              onClick={() => window.print()}
+              style={{
+                display: "flex", alignItems: "center", gap: 7,
+                padding: "8px 20px", borderRadius: 8, border: "none",
+                background: NAV, color: "white", cursor: "pointer",
+                fontSize: ".86rem", fontWeight: 600,
+              }}
+            >
+              <Printer size={15} /> Imprimir PDF
+            </button>
+          </div>
         </div>
       </div>
     </div>
