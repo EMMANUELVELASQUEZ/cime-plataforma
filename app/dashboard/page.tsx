@@ -655,16 +655,13 @@ export default async function DashboardPage() {
                   accent: pagosPend.length > 0 ? "#F59E0B" : "#10B981",
                 },
               ].map(item => (
-                <Link key={item.href} href={item.href} style={{
+                <Link key={item.href} href={item.href} className="dash-quick-link" style={{
                   display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 12,
                   padding: "16px", textDecoration: "none",
                   background: "var(--surface)", border: "1px solid var(--line)",
                   borderRadius: 10, boxShadow: "var(--shadow-sm)",
                   borderTop: `3px solid ${item.accent}`,
-                  transition: "box-shadow .14s, transform .12s",
                 }}
-                  onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.boxShadow = "var(--shadow-md)"; el.style.transform = "translateY(-2px)" }}
-                  onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.boxShadow = "var(--shadow-sm)"; el.style.transform = "none" }}
                 >
                   <div style={{
                     width: 42, height: 42, borderRadius: 10, flexShrink: 0,
@@ -883,14 +880,11 @@ export default async function DashboardPage() {
                 {avisos.map((av, idx) => {
                   const dot = AVISO_DOT[av.tipo] ?? "#3B82F6"
                   return (
-                    <Link key={av.id} href="/dashboard/avisos" style={{
+                    <Link key={av.id} href="/dashboard/avisos" className="dash-aviso-row" style={{
                       display: "flex", alignItems: "flex-start", gap: 10, padding: "11px 18px",
                       borderBottom: idx < avisos.length - 1 ? "1px solid var(--line)" : undefined,
                       textDecoration: "none",
-                      transition: "background .12s",
                     }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--surface-2)" }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent" }}
                     >
                       {/* Dot indicator */}
                       <div style={{

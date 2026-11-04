@@ -1013,6 +1013,21 @@ dialog[open] { animation: dialogIn .18s cubic-bezier(.22,1,.36,1); }
   .dash-cred-ring { flex-direction: row; gap: 16px; align-items: center; width: 100%; }
 }
 
+/* ─── Dashboard hover utilities (Server Component safe) ─── */
+.dash-quick-link {
+  transition: box-shadow .14s, transform .12s;
+}
+.dash-quick-link:hover {
+  box-shadow: var(--shadow-md) !important;
+  transform: translateY(-2px);
+}
+.dash-aviso-row {
+  transition: background .12s;
+}
+.dash-aviso-row:hover {
+  background: var(--surface-2) !important;
+}
+
 /* ─── Viewer responsive ──────────────────────────────────── */
 @media (max-width: 860px) {
   .viewer-wrap {
