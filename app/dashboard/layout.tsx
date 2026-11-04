@@ -10,43 +10,44 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const userId = (session.user as any)?.id
 
-  const dbUser = await prisma.usuario.findUnique({
-    where: { id: userId },
-    select: {
-      horasMeta:    true,
-      vigencia:     true,
-      estado:       true,
-      especialidad: true,
-      inscripciones: {
-        select: {
-          progreso: true,
-          estado:   true,
-          createdAt: true,
-          curso: { select: { titulo: true, horas: true, area: true } },
+  const [dbUser, avisosCount] = await Promise.all([
+    prisma.usuario.findUnique({
+      where: { id: userId },
+      select: {
+        horasMeta:    true,
+        vigencia:     true,
+        estado:       true,
+        especialidad: true,
+        inscripciones: {
+          select: {
+            progreso:  true,
+            estado:    true,
+            createdAt: true,
+            curso: { select: { titulo: true, horas: true, area: true } },
+          },
+          orderBy: { createdAt: "desc" },
         },
-        orderBy: { createdAt: "desc" },
       },
-    },
-  })
+    }),
+    prisma.aviso.count(),
+  ])
 
   const inscripciones = dbUser?.inscripciones ?? []
 
-  // Derive acredited hours from actual course completion (progreso = 0-100 %)
   const horasAcreditadas = Math.round(
     inscripciones.reduce((sum, i) => sum + (i.curso.horas * i.progreso / 100), 0)
   )
 
-  // Sort: EN_CURSO first → INSCRITO → COMPLETADO
   const cursosResumen = [
     ...inscripciones.filter(i => i.estado === "EN_CURSO"),
     ...inscripciones.filter(i => i.estado === "INSCRITO"),
     ...inscripciones.filter(i => i.estado === "COMPLETADO"),
   ].map(i => ({
-    titulo:  i.curso.titulo,
-    horas:   i.curso.horas,
+    titulo:   i.curso.titulo,
+    horas:    i.curso.horas,
     progreso: i.progreso,
-    area:    i.curso.area as string,
-    estado:  i.estado   as string,
+    area:     i.curso.area as string,
+    estado:   i.estado    as string,
   }))
 
   const user: AppShellUser = {
@@ -55,11 +56,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
     role:            (session.user as any)?.role,
     numeroColegiado: (session.user as any)?.numeroColegiado,
     horas:           horasAcreditadas,
-    horasMeta:       dbUser?.horasMeta    ?? 60,
-    vigencia:        dbUser?.vigencia     ?? null,
-    estado:          dbUser?.estado       ?? "VIGENTE",
+    horasMeta:       dbUser?.horasMeta ?? 60,
+    vigencia:        dbUser?.vigencia  ?? null,
+    estado:          dbUser?.estado    ?? "VIGENTE",
     especialidad:    dbUser?.especialidad ?? null,
     cursosResumen,
+    avisosCount,
   }
 
   return (

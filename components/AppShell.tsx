@@ -40,6 +40,7 @@ export interface AppShellUser {
   estado?:          string
   especialidad?:    string | null
   cursosResumen?:   { titulo: string; horas: number; progreso: number; area: string; estado: string }[]
+  avisosCount?:     number
 }
 
 interface AppShellProps {
@@ -158,7 +159,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
     {
       group: "Colegio",
       items: [
-        { href: "/dashboard/avisos",     icon: <Bell      size={18} strokeWidth={1.75} />, label: "Avisos", badge: 5 },
+        { href: "/dashboard/avisos",     icon: <Bell      size={18} strokeWidth={1.75} />, label: "Avisos", badge: user.avisosCount || undefined },
         { href: "/dashboard/directorio", icon: <Users     size={18} strokeWidth={1.75} />, label: "Directorio" },
         { href: "/dashboard/pagos",      icon: <CreditCard size={18} strokeWidth={1.75} />, label: "Pagos y cuotas" },
       ],
