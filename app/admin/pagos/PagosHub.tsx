@@ -243,16 +243,16 @@ function TicketModal({
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<title>Recibo de Pago · ${pago.folio} · CIME Veracruz</title>
+<title>Recibo · ${pago.folio} · CIME Veracruz</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',Arial,sans-serif;background:#f1f5f9;display:flex;justify-content:center;padding:32px 16px;min-height:100vh}
-.ticket{background:white;width:540px;border-radius:12px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.18)}
+body{font-family:'Segoe UI',Arial,sans-serif;background:white}
+.ticket{background:white;width:100%;max-width:560px;margin:0 auto}
 .hdr{background:${NAV};padding:22px 28px 18px;position:relative;overflow:hidden}
 .hdr-dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.07) 1px,transparent 1px);background-size:18px 18px}
 .hdr-stripe{position:absolute;right:-20px;top:0;bottom:0;width:140px;background:rgba(255,255,255,.04);transform:skewX(-10deg)}
 .logo-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;position:relative}
-.logo{width:46px;height:46px;border-radius:9px;border:2px solid rgba(255,255,255,.18);object-fit:cover}
+.logo-sm{width:46px;height:46px;border-radius:9px;border:2px solid rgba(255,255,255,.18);object-fit:cover}
 .inst{color:white;font-weight:800;font-size:14.5px;line-height:1.3}
 .inst-city{color:rgba(255,255,255,.45);font-size:10px;margin-top:4px;letter-spacing:.05em}
 .sep{height:1px;background:rgba(255,255,255,.12);margin-bottom:14px}
@@ -282,28 +282,22 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f1f5f9;display:flex;jus
 .sub-row{display:grid;grid-template-columns:1fr 110px;padding:8px 12px;background:#F8FAFC}
 .sub-l{font-size:11.5px;color:#64748B}
 .sub-v{text-align:right;font-family:monospace;font-size:11.5px;color:#64748B}
-.total-row{background:${NAV};border-radius:8px;padding:13px 12px;display:grid;grid-template-columns:1fr 110px;align-items:center;margin-bottom:24px}
+.total-row{background:${NAV};border-radius:8px;padding:13px 12px;display:grid;grid-template-columns:1fr 110px;align-items:center;margin-bottom:22px}
 .total-l{color:rgba(255,255,255,.65);font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.1em}
 .total-v{text-align:right;color:white;font-weight:900;font-size:17px;font-family:monospace}
 .total-cur{color:rgba(255,255,255,.4);font-size:10.5px;margin-left:5px}
-.sign-row{display:flex;justify-content:space-between;align-items:flex-end;padding-top:16px;border-top:1px solid #EEF2F7}
-.sign-line{width:190px;border-top:1px solid #334155;margin-bottom:6px}
-.sign-name{font-size:11.5px;font-weight:700;color:#334155}
-.sign-sub{font-size:10.5px;color:#94A3B8;margin-top:2px}
-.legal{margin-top:16px;padding-top:10px;border-top:1px solid #EEF2F7;text-align:center;font-size:10px;color:#94A3B8;line-height:1.6}
-@media print{
-  body{background:white;padding:0;display:block}
-  .ticket{box-shadow:none;border-radius:0;width:100%}
-}
+.logo-footer{text-align:center;padding-top:16px;border-top:1px solid #EEF2F7;margin-bottom:16px}
+.logo-footer img{width:92px;height:92px;object-fit:contain}
+.legal{padding-top:10px;border-top:1px solid #EEF2F7;text-align:center;font-size:10px;color:#94A3B8;line-height:1.6}
+@media print{body{background:white}.ticket{max-width:100%}}
 </style>
 </head>
 <body>
 <div class="ticket">
   <div class="hdr">
-    <div class="hdr-dots"></div>
-    <div class="hdr-stripe"></div>
+    <div class="hdr-dots"></div><div class="hdr-stripe"></div>
     <div class="logo-row">
-      <img src="${origin}/logo.jpeg" alt="CIME" class="logo"/>
+      <img src="${origin}/logo.jpeg" alt="CIME" class="logo-sm"/>
       <div>
         <div class="inst">COLEGIO DE INGENIEROS MECÁNICOS</div>
         <div class="inst">Y ELECTRICISTAS DE VERACRUZ A.C.</div>
@@ -312,14 +306,8 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f1f5f9;display:flex;jus
     </div>
     <div class="sep"></div>
     <div class="doc-row">
-      <div>
-        <div class="doc-eyebrow">Documento oficial</div>
-        <div class="doc-title">Recibo de Pago</div>
-      </div>
-      <div style="text-align:right">
-        <div class="doc-eyebrow">Folio</div>
-        <div class="folio">${pago.folio}</div>
-      </div>
+      <div><div class="doc-eyebrow">Documento oficial</div><div class="doc-title">Recibo de Pago</div></div>
+      <div style="text-align:right"><div class="doc-eyebrow">Folio</div><div class="folio">${pago.folio}</div></div>
     </div>
   </div>
   <div class="body">
@@ -341,52 +329,20 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f1f5f9;display:flex;jus
         </div>
       </div>
     </div>
-    <div class="tbl-hdr">
-      <span class="th">Concepto</span>
-      <span class="th" style="text-align:right">Importe</span>
-    </div>
+    <div class="tbl-hdr"><span class="th">Concepto</span><span class="th" style="text-align:right">Importe</span></div>
     <div class="tbl-body">
       <div class="tbl-row">
-        <div>
-          <div class="cname">${pago.concepto}</div>
-          <div class="csub">Registrado el ${issuedLong}</div>
-        </div>
+        <div><div class="cname">${pago.concepto}</div><div class="csub">Registrado el ${issuedLong}</div></div>
         <div class="imp">${fmt$(pago.monto)}</div>
       </div>
-      <div class="sub-row">
-        <span class="sub-l">Subtotal</span>
-        <span class="sub-v">${fmt$(pago.monto)}</span>
-      </div>
+      <div class="sub-row"><span class="sub-l">Subtotal</span><span class="sub-v">${fmt$(pago.monto)}</span></div>
     </div>
     <div class="total-row">
       <span class="total-l">Total a Pagar</span>
-      <div style="text-align:right">
-        <span class="total-v">${fmt$(pago.monto)}</span>
-        <span class="total-cur">MXN</span>
-      </div>
+      <div style="text-align:right"><span class="total-v">${fmt$(pago.monto)}</span><span class="total-cur">MXN</span></div>
     </div>
-    <div class="sign-row">
-      <div>
-        <div class="sign-line"></div>
-        <div class="sign-name">Firma autorizada</div>
-        <div class="sign-sub">Administración · CIME Veracruz</div>
-      </div>
-      <svg width="78" height="78" viewBox="0 0 78 78">
-        <circle cx="39" cy="39" r="36" fill="none" stroke="${NAV}" stroke-width="2.5"/>
-        <circle cx="39" cy="39" r="29" fill="none" stroke="${NAV}" stroke-width="1" stroke-dasharray="2.5 3"/>
-        <defs>
-          <path id="p1" d="M39,39 m-31,0 a31,31 0 1,1 62,0"/>
-          <path id="p2" d="M39,39 m-26,0 a26,26 0 0,0 52,0"/>
-        </defs>
-        <text fill="${NAV}" font-size="7.2" font-weight="700" letter-spacing="1.5">
-          <textPath href="#p1" startOffset="13%">CIME VERACRUZ · A.C.</textPath>
-        </text>
-        <text fill="${NAV}" font-size="6.5" letter-spacing="1">
-          <textPath href="#p2" startOffset="17%">OFICIAL</textPath>
-        </text>
-        <text x="39" y="37" text-anchor="middle" fill="${NAV}" font-size="11" font-weight="900">CIME</text>
-        <text x="39" y="49" text-anchor="middle" fill="${NAV}" font-size="6.5" letter-spacing="1.2">VERACRUZ</text>
-      </svg>
+    <div class="logo-footer">
+      <img src="${origin}/logo.jpeg" alt="CIME Veracruz"/>
     </div>
     <div class="legal">
       Este documento es un comprobante oficial emitido por CIME Veracruz A.C.<br>
@@ -394,12 +350,31 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f1f5f9;display:flex;jus
     </div>
   </div>
 </div>
-<script>window.onload=function(){setTimeout(function(){window.print()},350)}</script>
 </body>
 </html>`
 
-    const win = window.open("", "_blank", "width=640,height=900,scrollbars=yes")
-    if (win) { win.document.write(html); win.document.close() }
+    // Usar iframe oculto — más confiable que window.open() para imprimir
+    const existing = document.getElementById("cime-print-frame")
+    if (existing) existing.remove()
+
+    const iframe = document.createElement("iframe")
+    iframe.id = "cime-print-frame"
+    iframe.style.cssText = "position:fixed;width:1px;height:1px;top:-9999px;left:-9999px;border:none;visibility:hidden"
+    document.body.appendChild(iframe)
+
+    iframe.onload = () => {
+      setTimeout(() => {
+        try {
+          iframe.contentWindow?.focus()
+          iframe.contentWindow?.print()
+        } finally {
+          setTimeout(() => { try { iframe.remove() } catch (_) {} }, 3000)
+        }
+      }, 450)
+    }
+
+    const doc = iframe.contentDocument || iframe.contentWindow?.document
+    if (doc) { doc.open(); doc.write(html); doc.close() }
   }
 
   return (
@@ -586,31 +561,9 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:#f1f5f9;display:flex;jus
               </div>
             </div>
 
-            {/* Firma + sello */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", paddingTop: 16, borderTop: "1px solid #EEF2F7" }}>
-              <div>
-                <div style={{ width: 190, borderTop: "1px solid #334155", marginBottom: 6 }} />
-                <div style={{ fontSize: ".75rem", fontWeight: 700, color: "#334155" }}>Firma autorizada</div>
-                <div style={{ fontSize: ".7rem", color: "#94A3B8", marginTop: 2 }}>Administración · CIME Veracruz</div>
-              </div>
-
-              {/* Sello SVG circular */}
-              <svg width="78" height="78" viewBox="0 0 78 78">
-                <circle cx="39" cy="39" r="36" fill="none" stroke={NAV} strokeWidth="2.5"/>
-                <circle cx="39" cy="39" r="29" fill="none" stroke={NAV} strokeWidth="1" strokeDasharray="2.5 3"/>
-                <defs>
-                  <path id="arc-top" d="M 39,39 m -31,0 a 31,31 0 1,1 62,0"/>
-                  <path id="arc-bot" d="M 39,39 m -26,0 a 26,26 0 0,0 52,0"/>
-                </defs>
-                <text fill={NAV} fontSize="7.2" fontWeight="700" fontFamily="system-ui" letterSpacing="1.5">
-                  <textPath href="#arc-top" startOffset="13%">CIME VERACRUZ · A.C.</textPath>
-                </text>
-                <text fill={NAV} fontSize="6.5" fontFamily="system-ui" letterSpacing="1">
-                  <textPath href="#arc-bot" startOffset="17%">OFICIAL</textPath>
-                </text>
-                <text x="39" y="37" textAnchor="middle" fill={NAV} fontSize="11" fontWeight="900" fontFamily="system-ui">CIME</text>
-                <text x="39" y="49" textAnchor="middle" fill={NAV} fontSize="6.5" fontFamily="system-ui" letterSpacing="1.2">VERACRUZ</text>
-              </svg>
+            {/* Logo institucional */}
+            <div style={{ textAlign: "center", paddingTop: 16, borderTop: "1px solid #EEF2F7" }}>
+              <img src="/logo.jpeg" alt="CIME Veracruz" style={{ width: 92, height: 92, objectFit: "contain" }} />
             </div>
 
             {/* Pie legal */}
