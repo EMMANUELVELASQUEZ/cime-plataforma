@@ -843,22 +843,16 @@ export default async function DashboardPage() {
           background: "var(--line)",
         }}>
           {[
-            { href: "/dashboard/cursos",     icon: <GraduationCap size={16} strokeWidth={1.75} />, label: "Mis cursos",   sub: `${inscripciones.length} inscritos`,                                                              color: "#1B4F91" },
-            { href: "/dashboard/constancias", icon: <Award         size={16} strokeWidth={1.75} />, label: "Constancias",  sub: `${completados.length} obtenidas`,                                                               color: "#1A7A4A" },
-            { href: "/dashboard/calendario",  icon: <Calendar      size={16} strokeWidth={1.75} />, label: "Calendario",   sub: `${eventos.length} próximos`,                                                                    color: "#6366f1" },
-            { href: "/dashboard/pagos",       icon: <CreditCard    size={16} strokeWidth={1.75} />, label: "Pagos",        sub: pagosPend.length > 0 ? `${pagosPend.length} pendiente${pagosPend.length > 1 ? "s" : ""}` : "Al corriente", color: pagosPend.length > 0 ? "#906012" : "#1A7A4A" },
+            { href: "/dashboard/cursos",      icon: <GraduationCap size={16} strokeWidth={1.75} />, label: "Mis cursos",  sub: `${inscripciones.length} inscritos`,                                                                       color: "#1B4F91" },
+            { href: "/dashboard/constancias", icon: <Award         size={16} strokeWidth={1.75} />, label: "Constancias", sub: `${completados.length} obtenidas`,                                                                        color: "#1A7A4A" },
+            { href: "/dashboard/calendario",  icon: <Calendar      size={16} strokeWidth={1.75} />, label: "Calendario",  sub: `${eventos.length} próximos`,                                                                             color: "#6366f1" },
+            { href: "/dashboard/pagos",       icon: <CreditCard    size={16} strokeWidth={1.75} />, label: "Pagos",       sub: pagosPend.length > 0 ? `${pagosPend.length} pendiente${pagosPend.length > 1 ? "s" : ""}` : "Al corriente", color: pagosPend.length > 0 ? "#906012" : "#1A7A4A" },
           ].map(item => (
-            <Link key={item.href} href={item.href} style={{
+            <Link key={item.href} href={item.href} className="ent-quick" style={{
               display: "flex", alignItems: "center", gap: 12,
               padding: "13px 16px",
-              background: "var(--surface)",
-              textDecoration: "none",
-              transition: "background .1s",
               boxShadow: `inset 3px 0 0 0 ${item.color}`,
-            }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--surface-2)" }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "var(--surface)" }}
-            >
+            }}>
               <div style={{ color: item.color, flexShrink: 0 }}>{item.icon}</div>
               <div style={{ minWidth: 0 }}>
                 <div style={{

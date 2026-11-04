@@ -923,6 +923,13 @@ dialog[open] { animation: dialogIn .18s cubic-bezier(.22,1,.36,1); }
 }
 
 /* ─── Quick Action Links ─────────────────────────────────── */
+.ent-quick {
+  background: var(--surface);
+  transition: background .1s;
+  text-decoration: none;
+}
+.ent-quick:hover { background: var(--surface-2); text-decoration: none; }
+
 .quick-action {
   display: flex;
   align-items: center;
