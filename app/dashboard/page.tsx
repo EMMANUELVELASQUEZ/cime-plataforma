@@ -166,28 +166,36 @@ export default async function DashboardPage() {
 
         {/* Top decorative banner */}
         <div style={{
-          height: 110,
+          height: 118,
           position: "relative",
           overflow: "hidden",
-          background: "linear-gradient(135deg, #1E3A8A 0%, #1E40AF 55%, #2563EB 100%)",
+          background: "linear-gradient(130deg, #040714 0%, #0D1035 40%, #1B2260 100%)",
         }}>
           {/* Dot-grid pattern */}
           <div style={{
             position: "absolute", inset: 0,
-            backgroundImage: "radial-gradient(circle, rgba(255,255,255,.14) 1px, transparent 1px)",
-            backgroundSize: "20px 20px",
+            backgroundImage: "radial-gradient(circle, rgba(255,255,255,.09) 1px, transparent 1px)",
+            backgroundSize: "22px 22px",
           }} />
-          {/* Diagonal light sweep */}
+          {/* Gold accent line at bottom */}
           <div style={{
-            position: "absolute", inset: 0,
-            background: "linear-gradient(135deg, transparent 45%, rgba(255,255,255,.07) 100%)",
+            position: "absolute", bottom: 0, left: 0, right: 0,
+            height: 2,
+            background: "linear-gradient(90deg, transparent 0%, #C8B820 30%, #EFE048 60%, transparent 100%)",
+            opacity: .6,
+          }} />
+          {/* Top-right gold glow */}
+          <div style={{
+            position: "absolute", top: -40, right: -40,
+            width: 180, height: 180, borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(200,184,32,.18) 0%, transparent 70%)",
           }} />
           {/* CIME watermark */}
           <div style={{
-            position: "absolute", right: 20, top: "50%", transform: "translateY(-50%)",
+            position: "absolute", right: 24, top: "50%", transform: "translateY(-50%)",
             fontFamily: "var(--font-montserrat), Montserrat, system-ui",
-            fontWeight: 800, fontSize: "5rem", letterSpacing: ".14em",
-            color: "rgba(255,255,255,.04)", userSelect: "none", pointerEvents: "none",
+            fontWeight: 900, fontSize: "4.8rem", letterSpacing: ".18em",
+            color: "rgba(200,184,32,.07)", userSelect: "none", pointerEvents: "none",
           }}>
             CIME
           </div>
@@ -195,7 +203,7 @@ export default async function DashboardPage() {
 
         {/* Profile info row */}
         <div style={{
-          background: "#1B4F91",
+          background: "linear-gradient(180deg, #131847 0%, #0D1035 100%)",
           padding: "0 28px 22px",
           display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: 16,
           marginTop: -44,
@@ -329,71 +337,81 @@ export default async function DashboardPage() {
         <div className="lg:col-span-8" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
 
           {/* KPI strip — 4 cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(148px, 1fr))", gap: 12 }}>
             {[
               {
                 label: "Horas acreditadas",
-                val: `${usuario.horas}h`,
-                sub: `${pct}% de ${usuario.horasMeta}h`,
-                iconBg: "#FEF3C7", iconColor: "#D97706",
-                icon: <Clock size={17} strokeWidth={2} />,
-                accent: "#F59E0B",
+                val: `${usuario.horas}`, unit: "h",
+                sub: `${pct}% de ${usuario.horasMeta}h meta`,
+                icon: <Clock size={20} strokeWidth={2} />,
+                accent: "#B45309",
+                cardBg: "linear-gradient(145deg,#FFFBEB,#FEF3C7)",
+                iconBg: "#FDE68A", iconColor: "#B45309", valColor: "#78350F",
               },
               {
                 label: "Cursos activos",
-                val: String(enCurso.length),
+                val: String(enCurso.length), unit: "",
                 sub: enCurso.length === 0 ? "Sin inscritos" : "En progreso",
-                iconBg: "#DBEAFE", iconColor: "#1D4ED8",
-                icon: <BookOpen size={17} strokeWidth={2} />,
-                accent: "#3B82F6",
+                icon: <BookOpen size={20} strokeWidth={2} />,
+                accent: "#1D4ED8",
+                cardBg: "linear-gradient(145deg,#EFF6FF,#DBEAFE)",
+                iconBg: "#BFDBFE", iconColor: "#1D4ED8", valColor: "#1E3A8A",
               },
               {
                 label: "Constancias",
-                val: String(completados.length),
+                val: String(completados.length), unit: "",
                 sub: completados.length === 1 ? "Acreditado" : "Acreditados",
-                iconBg: "#D1FAE5", iconColor: "#059669",
-                icon: <Award size={17} strokeWidth={2} />,
-                accent: "#10B981",
+                icon: <Award size={20} strokeWidth={2} />,
+                accent: "#059669",
+                cardBg: "linear-gradient(145deg,#ECFDF5,#D1FAE5)",
+                iconBg: "#A7F3D0", iconColor: "#059669", valColor: "#064E3B",
               },
               {
                 label: pagosPend.length > 0 ? "Pago pendiente" : "Pagos",
-                val: pagosPend.length > 0 ? `${pagosPend.length}` : "Al corriente",
+                val: pagosPend.length > 0 ? `${pagosPend.length}` : "✓", unit: "",
                 sub: pagosPend.length > 0 ? "Por realizar" : "Sin adeudos",
-                iconBg: pagosPend.length > 0 ? "#FEF3C7" : "#D1FAE5",
-                iconColor: pagosPend.length > 0 ? "#D97706" : "#059669",
-                icon: <CreditCard size={17} strokeWidth={2} />,
-                accent: pagosPend.length > 0 ? "#F59E0B" : "#10B981",
+                icon: <CreditCard size={20} strokeWidth={2} />,
+                accent: pagosPend.length > 0 ? "#B45309" : "#059669",
+                cardBg: pagosPend.length > 0
+                  ? "linear-gradient(145deg,#FFFBEB,#FEF3C7)"
+                  : "linear-gradient(145deg,#ECFDF5,#D1FAE5)",
+                iconBg:   pagosPend.length > 0 ? "#FDE68A" : "#A7F3D0",
+                iconColor:pagosPend.length > 0 ? "#B45309" : "#059669",
+                valColor: pagosPend.length > 0 ? "#78350F" : "#064E3B",
               },
             ].map(kpi => (
-              <Card key={kpi.label} style={{ padding: "14px 16px", borderTop: `3px solid ${kpi.accent}` }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 10 }}>
+              <div key={kpi.label} style={{
+                background: kpi.cardBg,
+                border: `1px solid ${kpi.accent}28`,
+                borderLeft: `4px solid ${kpi.accent}`,
+                borderRadius: 12, padding: "16px 14px",
+                display: "flex", flexDirection: "column", gap: 10,
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <span style={{
+                    fontFamily: "var(--f-data)", fontSize: ".63rem", fontWeight: 700,
+                    color: kpi.accent, letterSpacing: ".05em", textTransform: "uppercase", lineHeight: 1.3,
+                  }}>{kpi.label}</span>
                   <div style={{
-                    width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+                    width: 34, height: 34, borderRadius: 8, flexShrink: 0,
                     display: "grid", placeItems: "center",
                     background: kpi.iconBg, color: kpi.iconColor,
+                  }}>{kpi.icon}</div>
+                </div>
+                <div>
+                  <div className="font-montserrat" style={{
+                    fontSize: "2.1rem", fontWeight: 800,
+                    color: kpi.valColor, lineHeight: 1, letterSpacing: "-.05em",
                   }}>
-                    {kpi.icon}
+                    {kpi.val}
+                    {kpi.unit && <span style={{ fontSize: "1.1rem", fontWeight: 600, color: kpi.accent, marginLeft: 1 }}>{kpi.unit}</span>}
                   </div>
-                  <span style={{
-                    fontFamily: "var(--f-data)", fontSize: ".65rem", fontWeight: 600,
-                    color: "var(--muted)", letterSpacing: ".03em", lineHeight: 1.3,
-                  }}>
-                    {kpi.label}
-                  </span>
+                  <div style={{
+                    fontFamily: "var(--f-data)", fontSize: ".67rem",
+                    color: kpi.accent, marginTop: 5, opacity: .75,
+                  }}>{kpi.sub}</div>
                 </div>
-                <div className="font-montserrat" style={{
-                  fontSize: "1.65rem", fontWeight: 700,
-                  color: "var(--fg)", lineHeight: 1, letterSpacing: "-.03em",
-                }}>
-                  {kpi.val}
-                </div>
-                <div style={{
-                  fontFamily: "var(--f-data)", fontSize: ".67rem",
-                  color: "var(--muted)", marginTop: 4,
-                }}>
-                  {kpi.sub}
-                </div>
-              </Card>
+              </div>
             ))}
           </div>
 
@@ -615,69 +633,67 @@ export default async function DashboardPage() {
             </section>
           )}
 
-          {/* Quick Actions — Classroom-style feature tiles */}
+          {/* Quick Actions */}
           <section>
             <SectionHeading label="Accesos rápidos" />
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(165px, 1fr))",
-              gap: 12,
-            }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 10 }}>
               {[
                 {
                   href: "/dashboard/cursos",
-                  icon: <GraduationCap size={24} strokeWidth={1.75} />,
+                  icon: <GraduationCap size={22} strokeWidth={1.75} />,
                   label: "Mis cursos",
                   sub: `${inscripciones.length} inscrito${inscripciones.length !== 1 ? "s" : ""}`,
                   iconBg: "#DBEAFE", iconColor: "#1D4ED8", accent: "#1D4ED8",
                 },
                 {
                   href: "/dashboard/constancias",
-                  icon: <Award size={24} strokeWidth={1.75} />,
+                  icon: <Award size={22} strokeWidth={1.75} />,
                   label: "Constancias",
                   sub: `${completados.length} obtenida${completados.length !== 1 ? "s" : ""}`,
                   iconBg: "#D1FAE5", iconColor: "#059669", accent: "#059669",
                 },
                 {
                   href: "/dashboard/calendario",
-                  icon: <Calendar size={24} strokeWidth={1.75} />,
+                  icon: <Calendar size={22} strokeWidth={1.75} />,
                   label: "Calendario",
                   sub: `${eventos.length} próximo${eventos.length !== 1 ? "s" : ""}`,
                   iconBg: "#EDE9FE", iconColor: "#7C3AED", accent: "#7C3AED",
                 },
                 {
                   href: "/dashboard/pagos",
-                  icon: <CreditCard size={24} strokeWidth={1.75} />,
+                  icon: <CreditCard size={22} strokeWidth={1.75} />,
                   label: "Pagos y cuotas",
-                  sub: pagosPend.length > 0 ? `${pagosPend.length} pendiente${pagosPend.length !== 1 ? "s" : ""}` : "Al corriente",
+                  sub: pagosPend.length > 0
+                    ? `${pagosPend.length} pendiente${pagosPend.length !== 1 ? "s" : ""}`
+                    : "Al corriente",
                   iconBg: pagosPend.length > 0 ? "#FEF3C7" : "#D1FAE5",
                   iconColor: pagosPend.length > 0 ? "#D97706" : "#059669",
-                  accent: pagosPend.length > 0 ? "#F59E0B" : "#10B981",
+                  accent: pagosPend.length > 0 ? "#D97706" : "#059669",
                 },
               ].map(item => (
                 <Link key={item.href} href={item.href} className="dash-quick-link" style={{
-                  display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 12,
-                  padding: "16px", textDecoration: "none",
+                  display: "flex", alignItems: "center", gap: 14,
+                  padding: "14px 16px", textDecoration: "none",
                   background: "var(--surface)", border: "1px solid var(--line)",
+                  borderLeft: `3px solid ${item.accent}`,
                   borderRadius: 10, boxShadow: "var(--shadow-sm)",
-                  borderTop: `3px solid ${item.accent}`,
-                }}
-                >
+                }}>
                   <div style={{
-                    width: 42, height: 42, borderRadius: 10, flexShrink: 0,
+                    width: 44, height: 44, borderRadius: 10, flexShrink: 0,
                     display: "grid", placeItems: "center",
                     background: item.iconBg, color: item.iconColor,
                   }}>
                     {item.icon}
                   </div>
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: ".88rem", color: "var(--fg)", marginBottom: 2 }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontWeight: 600, fontSize: ".9rem", color: "var(--fg)", marginBottom: 2 }}>
                       {item.label}
                     </div>
-                    <div style={{ fontFamily: "var(--f-data)", fontSize: ".68rem", color: "var(--muted)" }}>
+                    <div style={{ fontFamily: "var(--f-data)", fontSize: ".7rem", color: "var(--muted)" }}>
                       {item.sub}
                     </div>
                   </div>
+                  <ChevronRight size={15} strokeWidth={2.5} style={{ color: "var(--muted-2)", flexShrink: 0 }} />
                 </Link>
               ))}
             </div>
