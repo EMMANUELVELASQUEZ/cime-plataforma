@@ -50,10 +50,11 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans:      ['var(--font-inter)',     'system-ui', 'sans-serif'],
-        mono:      ['var(--font-jetbrains)', 'ui-monospace', 'monospace'],
-        display:   ['var(--font-playfair)',  'Georgia', '"Times New Roman"', 'serif'],
-        condensed: ['var(--font-barlow)',    '"Arial Narrow"', 'Helvetica Neue', 'sans-serif'],
+        sans:        ['var(--font-inter)',        'system-ui', 'sans-serif'],
+        mono:        ['var(--font-jetbrains)',    'ui-monospace', 'monospace'],
+        display:     ['var(--font-playfair)',     'Georgia', '"Times New Roman"', 'serif'],
+        condensed:   ['var(--font-barlow)',       '"Arial Narrow"', 'Helvetica Neue', 'sans-serif'],
+        montserrat:  ['var(--font-montserrat)',   'Montserrat', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
         'sm':      '0 1px 2px rgba(7,10,36,.05)',

@@ -3,57 +3,107 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import {
   GraduationCap, Clock, Award, CreditCard, Calendar, Megaphone,
-  ChevronRight, BookOpen, Shield, TrendingUp,
-  ArrowRight, CheckCircle2, AlertCircle, User, MapPin, Star,
+  ChevronRight, ArrowRight, CheckCircle2, AlertCircle, User,
+  MapPin, BookOpen, Shield,
 } from "lucide-react"
 
 export const dynamic = "force-dynamic"
 
-const AREA_LABEL: Record<string, string> = { ELE: "Eléctrica", MEC: "Mecánica", SOL: "Solar / Renovable" }
-const AREA_COLOR: Record<string, string> = { ELE: "#1B6FC8", MEC: "#7C3AED", SOL: "#0D9F6F" }
-const AREA_BG:    Record<string, string> = { ELE: "#EBF3FC",  MEC: "#F3EFFE", SOL: "#E6F5EE" }
+// ─── Area config (Classroom-style header colours) ──────────────────────────
+const AREA: Record<string, {
+  label: string; headerBg: string; chipBg: string; chipText: string
+}> = {
+  ELE: { label: "Eléctrica",        headerBg: "#1E40AF", chipBg: "rgba(147,197,253,.22)", chipText: "#93C5FD" },
+  MEC: { label: "Mecánica",         headerBg: "#5B21B6", chipBg: "rgba(196,181,253,.22)", chipText: "#C4B5FD" },
+  SOL: { label: "Sol / Renovable",  headerBg: "#064E3B", chipBg: "rgba(110,231,183,.22)", chipText: "#6EE7B7" },
+}
+const areaOf = (a: string) => AREA[a] ?? { label: a, headerBg: "#1E3A8A", chipBg: "rgba(147,197,253,.2)", chipText: "#93C5FD" }
 
-function daysUntil(dateStr: string | null | undefined): number | null {
-  if (!dateStr) return null
-  const parsed = new Date(dateStr.replace(/(\d+)\s+(\w+)\s+(\d+)/, (_, d, m, y) => {
-    const months: Record<string, string> = { ene:"01",feb:"02",mar:"03",abr:"04",may:"05",jun:"06",jul:"07",ago:"08",sep:"09",oct:"10",nov:"11",dic:"12" }
-    return `${y}-${months[m.toLowerCase()] ?? "12"}-${d.padStart(2,"0")}`
-  }))
-  if (isNaN(parsed.getTime())) return null
-  return Math.ceil((parsed.getTime() - Date.now()) / 86400000)
+// ─── Status config ──────────────────────────────────────────────────────────
+const ESTC: Record<string, { label: string; bg: string; text: string; ring: string }> = {
+  VIGENTE:     { label: "Vigente",     bg: "rgba(16,185,129,.12)", text: "#34D399", ring: "rgba(52,211,153,.3)"  },
+  POR_RENOVAR: { label: "Por renovar", bg: "rgba(245,158,11,.12)", text: "#FBBF24", ring: "rgba(251,191,36,.3)"  },
+  SUSPENDIDO:  { label: "Suspendido",  bg: "rgba(239,68,68,.12)",  text: "#F87171", ring: "rgba(248,113,113,.3)" },
+}
+const estadoOf = (e: string) => ESTC[e] ?? ESTC.VIGENTE
+
+// ─── Aviso colour ───────────────────────────────────────────────────────────
+const AVISO_DOT: Record<string, string> = {
+  Urgente:      "#EF4444",
+  Importante:   "#F59E0B",
+  Informativo:  "#3B82F6",
+  Convocatoria: "#10B981",
 }
 
-const money = (n: number) => n.toLocaleString("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 })
+// ─── Event type colour ──────────────────────────────────────────────────────
+const EV_COLOR: Record<string, { bg: string; text: string }> = {
+  Asamblea:    { bg: "#EEF2FF", text: "#4F46E5" },
+  Taller:      { bg: "#E0F2FE", text: "#0284C7" },
+  Conferencia: { bg: "#F3E8FF", text: "#7C3AED" },
+  Evaluación:  { bg: "#D1FAE5", text: "#059669" },
+  Cuota:       { bg: "#FEF3C7", text: "#D97706" },
+}
+const evColor = (t: string) => EV_COLOR[t] ?? { bg: "#DBEAFE", text: "#1D4ED8" }
 
-// ─── Micro helpers ───────────────────────────────────────────────
-const Label = ({ children }: { children: React.ReactNode }) => (
+function initials(name: string) {
+  return name.replace(/^(Ing\.|Lic\.|Dr\.|Mtro\.|Mtra\.)\s*/i, "")
+    .split(/\s+/).slice(0, 2).map(w => w[0] ?? "").join("").toUpperCase()
+}
+
+// ─── Shared card wrapper ────────────────────────────────────────────────────
+const Card = ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (
   <div style={{
-    fontSize: ".58rem", fontFamily: "var(--f-data)", fontWeight: 700,
-    letterSpacing: ".14em", textTransform: "uppercase", color: "var(--muted)",
-    marginBottom: 4,
+    background: "var(--surface)", border: "1px solid var(--line)",
+    borderRadius: 10, boxShadow: "var(--shadow-sm)",
+    overflow: "hidden", ...style,
   }}>
     {children}
   </div>
 )
 
-const SectionRule = ({ label, action }: { label: string; action?: React.ReactNode }) => (
+const CardHeader = ({ children }: { children: React.ReactNode }) => (
   <div style={{
-    display: "flex", justifyContent: "space-between", alignItems: "center",
-    gap: 14, marginBottom: 14, paddingBottom: 12,
-    borderBottom: "1px solid var(--line)",
+    display: "flex", alignItems: "center", justifyContent: "space-between",
+    padding: "14px 18px", borderBottom: "1px solid var(--line)",
+    gap: 12,
   }}>
-    <div style={{ display: "flex", alignItems: "baseline", gap: 12 }}>
-      <h2 style={{
-        fontFamily: "var(--f-display)", fontSize: "1.05rem",
-        fontWeight: 800, margin: 0, letterSpacing: "-.02em",
-      }}>
-        {label}
-      </h2>
-    </div>
-    {action}
+    {children}
   </div>
 )
 
+const SectionHeading = ({ label, href, count }: { label: string; href?: string; count?: number }) => (
+  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <h2 className="font-montserrat" style={{
+        fontSize: "1rem", fontWeight: 700, color: "var(--fg)",
+        letterSpacing: "-.01em", margin: 0,
+      }}>
+        {label}
+      </h2>
+      {count !== undefined && (
+        <span style={{
+          fontFamily: "var(--f-data)", fontSize: ".62rem", fontWeight: 700,
+          padding: "1px 7px", borderRadius: 10,
+          background: "var(--surface-3)", color: "var(--muted)",
+          border: "1px solid var(--line)",
+        }}>
+          {count}
+        </span>
+      )}
+    </div>
+    {href && (
+      <Link href={href} style={{
+        display: "inline-flex", alignItems: "center", gap: 4,
+        fontSize: ".8rem", fontWeight: 600, color: "var(--brand)",
+        textDecoration: "none", fontFamily: "var(--f-data)",
+      }}>
+        Ver todos <ChevronRight size={13} strokeWidth={2.5} />
+      </Link>
+    )}
+  </div>
+)
+
+// ─── Page ───────────────────────────────────────────────────────────────────
 export default async function DashboardPage() {
   const session = await auth()
   const userId  = (session?.user as any)?.id
@@ -69,14 +119,7 @@ export default async function DashboardPage() {
     }),
     prisma.inscripcionCurso.findMany({
       where: { usuarioId: userId },
-      include: {
-        curso: {
-          include: {
-            modulos: { orderBy: { orden: "asc" } },
-            inscritos: { select: { id: true } },
-          },
-        },
-      },
+      include: { curso: { include: { modulos: { orderBy: { orden: "asc" } } } } },
       orderBy: { createdAt: "desc" },
     }),
     prisma.evento.findMany({
@@ -86,790 +129,850 @@ export default async function DashboardPage() {
     }),
     prisma.aviso.findMany({
       orderBy: [{ fijado: "desc" }, { createdAt: "desc" }],
-      take: 5,
+      take: 6,
     }),
     prisma.pago.findMany({
       where: { usuarioId: userId },
       orderBy: { createdAt: "desc" },
-      take: 3,
+      take: 5,
     }),
   ])
 
-  if (!usuario) return <div className="empty">Sin datos de sesión.</div>
+  if (!usuario) return <p style={{ color: "var(--muted)", padding: 24 }}>Sin datos de sesión.</p>
 
-  const enCurso    = inscripciones.filter(i => i.estado !== "COMPLETADO")
+  const enCurso     = inscripciones.filter(i => i.estado !== "COMPLETADO")
   const completados = inscripciones.filter(i => i.estado === "COMPLETADO")
-  const pct        = Math.min(100, Math.round((usuario.horas / usuario.horasMeta) * 100))
-  const diasVig    = daysUntil(usuario.vigencia)
-  const pagosPend  = pagos.filter(p => p.estado === "pendiente")
-  const montoPend  = pagosPend.reduce((s, p) => s + p.monto, 0)
+  const pct         = Math.min(100, Math.round((usuario.horas / usuario.horasMeta) * 100))
+  const faltanH     = Math.max(0, usuario.horasMeta - usuario.horas)
+  const pagosPend   = pagos.filter(p => ["PENDIENTE","pendiente","VENCIDO","vencido"].includes(p.estado))
+  const est         = estadoOf(usuario.estado)
 
-  const now   = new Date()
-  const hour  = now.getHours()
+  const hour   = new Date().getHours()
   const saludo = hour < 12 ? "Buenos días" : hour < 19 ? "Buenas tardes" : "Buenas noches"
 
-  const ESTC: Record<string, { label: string; color: string; bg: string }> = {
-    VIGENTE:     { label: "Vigente",     color: "#1A7A4A", bg: "rgba(26,122,74,.15)"  },
-    POR_RENOVAR: { label: "Por renovar", color: "#C8960A", bg: "rgba(200,150,10,.15)" },
-    SUSPENDIDO:  { label: "Suspendido",  color: "#B03030", bg: "rgba(176,48,48,.15)"  },
-  }
-  const est = ESTC[usuario.estado] ?? ESTC.VIGENTE
-
-  const kpis = [
-    {
-      label: "Horas acreditadas",
-      val:   `${usuario.horas}`,
-      unit:  "h",
-      sub:   `${pct}% de ${usuario.horasMeta}h meta`,
-      color: "#C8B820",
-      icon:  <Clock size={12} strokeWidth={2} />,
-    },
-    {
-      label: "Cursos activos",
-      val:   String(enCurso.length),
-      unit:  "",
-      sub:   enCurso.length === 0 ? "Sin cursos en progreso" : "Inscritos en progreso",
-      color: "#1B4F91",
-      icon:  <BookOpen size={12} strokeWidth={2} />,
-    },
-    {
-      label: "Constancias",
-      val:   String(completados.length),
-      unit:  "",
-      sub:   completados.length === 1 ? "Curso acreditado" : "Cursos acreditados",
-      color: "#1A7A4A",
-      icon:  <Award size={12} strokeWidth={2} />,
-    },
-    montoPend > 0
-      ? { label: "Saldo pendiente", val: money(montoPend),  unit: "", sub: `${pagosPend.length} pago${pagosPend.length > 1 ? "s" : ""} por realizar`, color: "#906012", icon: <CreditCard size={12} strokeWidth={2} /> }
-      : { label: "Pagos",           val: "Al corriente",    unit: "", sub: "Sin adeudos pendientes",                                                   color: "#1A7A4A", icon: <CreditCard size={12} strokeWidth={2} /> },
-  ]
+  // SVG circular progress — both computed server-side (no JS needed)
+  const R_BIG = 68, CIRC_BIG = +(2 * Math.PI * R_BIG).toFixed(2)
+  const OFFSET_BIG = +(CIRC_BIG * (1 - pct / 100)).toFixed(2)
+  const R_MINI = 24, CIRC_MINI = +(2 * Math.PI * R_MINI).toFixed(2)
+  const OFFSET_MINI = +(CIRC_MINI * (1 - pct / 100)).toFixed(2)
+  const progressColor = pct >= 100 ? "#10B981" : "#F59E0B"
 
   return (
     <>
-      {/* ── CREDENTIAL HERO ─────────────────────────────────────── */}
-      <div style={{
-        background: "linear-gradient(165deg, #070A24 0%, #0D1540 52%, #080E2E 100%)",
-        position: "relative",
-        overflow: "hidden",
-        borderRadius: 4,
-        borderLeft: "3px solid #E5D330",
-      }}>
-        {/* Grid texture */}
-        <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none",
-          backgroundImage:
-            "linear-gradient(rgba(229,211,48,.035) 1px, transparent 1px), " +
-            "linear-gradient(90deg, rgba(229,211,48,.025) 1px, transparent 1px)",
-          backgroundSize: "52px 52px",
-        }} />
-        {/* Radial glow */}
-        <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none",
-          background: "radial-gradient(ellipse 60% 80% at 100% 50%, rgba(229,211,48,.04), transparent 65%)",
-        }} />
+      {/* ══════════════════════════════════════════════════════════
+          PROFILE BANNER  —  Solid institutional navy, Classroom-style
+         ══════════════════════════════════════════════════════════ */}
+      <div style={{ borderRadius: 12, overflow: "hidden", boxShadow: "0 4px 24px rgba(30,58,138,.22)" }}>
 
+        {/* Top decorative banner */}
         <div style={{
+          height: 110,
           position: "relative",
-          display: "flex", gap: 0, alignItems: "stretch", flexWrap: "wrap",
+          overflow: "hidden",
+          background: "linear-gradient(135deg, #1E3A8A 0%, #1E40AF 55%, #2563EB 100%)",
         }}>
-          {/* ─ Left: Identity ─ */}
-          <div style={{ flex: "1 1 340px", minWidth: 0, padding: "28px 32px 26px 36px" }}>
-            {/* Eyebrow */}
-            <div style={{
-              display: "flex", alignItems: "center", gap: 7,
-              fontSize: ".58rem", color: "rgba(229,211,48,.5)",
-              fontFamily: "var(--f-data)", letterSpacing: ".16em",
-              textTransform: "uppercase", marginBottom: 9,
-            }}>
-              <Shield size={8} strokeWidth={2.5} />
-              Colegio de Ingenieros Mecánicos y Electricistas de Veracruz
-            </div>
+          {/* Dot-grid pattern */}
+          <div style={{
+            position: "absolute", inset: 0,
+            backgroundImage: "radial-gradient(circle, rgba(255,255,255,.14) 1px, transparent 1px)",
+            backgroundSize: "20px 20px",
+          }} />
+          {/* Diagonal light sweep */}
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(135deg, transparent 45%, rgba(255,255,255,.07) 100%)",
+          }} />
+          {/* CIME watermark */}
+          <div style={{
+            position: "absolute", right: 20, top: "50%", transform: "translateY(-50%)",
+            fontFamily: "var(--font-montserrat), Montserrat, system-ui",
+            fontWeight: 800, fontSize: "5rem", letterSpacing: ".14em",
+            color: "rgba(255,255,255,.04)", userSelect: "none", pointerEvents: "none",
+          }}>
+            CIME
+          </div>
+        </div>
 
-            {/* Greeting */}
-            <div style={{
-              fontSize: ".62rem", color: "rgba(255,255,255,.22)",
-              fontFamily: "var(--f-data)", letterSpacing: ".06em", marginBottom: 5,
-            }}>
-              {saludo}
-            </div>
-
-            {/* Name — Playfair Display */}
-            <h1 style={{
-              fontFamily: "var(--f-display)",
-              fontSize: "clamp(1.45rem,2.5vw,2.05rem)",
-              fontWeight: 900,
-              color: "#ffffff",
-              letterSpacing: "-.03em",
-              lineHeight: 1.08,
-              margin: "0 0 5px",
-            }}>
-              {usuario.nombre}
-            </h1>
-
-            {usuario.especialidad && (
-              <div style={{
-                fontSize: ".76rem", color: "rgba(255,255,255,.4)",
-                fontFamily: "var(--f-data)", marginBottom: 16, letterSpacing: ".02em",
-              }}>
-                {usuario.especialidad}
-              </div>
-            )}
-
-            {/* Meta row */}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
-              <span style={{
-                display: "inline-flex", alignItems: "center", gap: 5,
-                padding: "2px 8px 2px 7px", borderRadius: 2,
-                background: est.bg, border: `1px solid ${est.color}44`,
-                color: est.color, fontSize: ".6rem", fontWeight: 700,
-                letterSpacing: ".1em", textTransform: "uppercase",
-                fontFamily: "var(--f-data)",
-              }}>
-                <span style={{ width: 4, height: 4, borderRadius: "50%", background: est.color, flexShrink: 0 }} />
-                {est.label}
-              </span>
-
-              {([
-                usuario.numeroColegiado && { text: `CIME-VER-${usuario.numeroColegiado}`, icon: <Shield size={9} strokeWidth={2.5} /> },
-                usuario.ciudad          && { text: usuario.ciudad,           icon: <MapPin size={9} strokeWidth={2.5} /> },
-                usuario.alta            && { text: `Alta ${usuario.alta}`,   icon: <Star   size={9} strokeWidth={2.5} /> },
-              ] as { text: string; icon: React.ReactNode }[]).filter(Boolean).map((item, i) => (
-                <span key={i} style={{
-                  display: "inline-flex", alignItems: "center", gap: 4,
-                  fontSize: ".62rem", color: "rgba(255,255,255,.28)",
-                  fontFamily: "var(--f-data)", letterSpacing: ".02em",
-                }}>
-                  {item.icon} {item.text}
-                </span>
-              ))}
-            </div>
+        {/* Profile info row */}
+        <div style={{
+          background: "#1B4F91",
+          padding: "0 28px 22px",
+          display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: 16,
+          marginTop: -44,
+        }}>
+          {/* Avatar overlapping banner */}
+          <div style={{
+            width: 80, height: 80, flexShrink: 0,
+            borderRadius: "50%",
+            border: "4px solid white",
+            boxShadow: "0 4px 14px rgba(0,0,0,.25)",
+            background: "#1E3A8A",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontFamily: "var(--font-montserrat), Montserrat, system-ui",
+            fontSize: "1.6rem", fontWeight: 700, color: "white",
+          }}>
+            {initials(usuario.nombre)}
           </div>
 
-          {/* Vertical rule */}
-          <div style={{
-            width: 1, background: "rgba(255,255,255,.06)",
-            flexShrink: 0, alignSelf: "stretch",
-            margin: "20px 0",
-          }} />
-
-          {/* ─ Right: Progress metrics ─ */}
-          <div style={{
-            flex: "0 1 300px", minWidth: 220,
-            padding: "28px 36px 26px 32px",
-            display: "flex", flexDirection: "column", justifyContent: "space-between",
-            gap: 16,
-          }}>
-            <div style={{
-              fontSize: ".58rem", color: "rgba(255,255,255,.22)",
-              fontFamily: "var(--f-data)", letterSpacing: ".14em",
-              textTransform: "uppercase",
-            }}>
-              Actualización profesional 2026
-            </div>
-
-            {/* Hours display */}
-            <div style={{ display: "flex", alignItems: "flex-end", gap: 16 }}>
-              <div>
-                <div style={{
-                  fontFamily: "var(--f-data)", fontSize: ".56rem",
-                  color: "rgba(255,255,255,.22)", letterSpacing: ".12em",
-                  textTransform: "uppercase", marginBottom: 2,
+          {/* Identity */}
+          <div style={{ flex: "1 1 220px", paddingBottom: 2 }}>
+            {/* Chips row */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 6 }}>
+              {usuario.numeroColegiado && (
+                <span style={{
+                  fontFamily: "var(--f-mono)", fontSize: ".66rem",
+                  color: "rgba(255,255,255,.45)", letterSpacing: ".08em",
                 }}>
-                  Acreditadas
-                </div>
-                <div style={{
-                  fontFamily: "var(--f-data)",
-                  fontSize: "2.4rem", fontWeight: 700,
-                  color: "#E5D330", lineHeight: 1,
-                  letterSpacing: "-.04em",
+                  CIME-VER-{usuario.numeroColegiado}
+                </span>
+              )}
+              <span style={{
+                display: "inline-flex", alignItems: "center", gap: 4,
+                fontFamily: "var(--f-data)", fontSize: ".65rem", fontWeight: 700,
+                letterSpacing: ".07em", textTransform: "uppercase",
+                padding: "2px 9px", borderRadius: 99,
+                background: est.bg, color: est.text,
+                boxShadow: `0 0 0 1px ${est.ring}`,
+              }}>
+                <span style={{ width: 5, height: 5, borderRadius: "50%", background: est.text, flexShrink: 0 }} />
+                {est.label}
+              </span>
+              {usuario.vigencia && (
+                <span style={{
+                  fontFamily: "var(--f-data)", fontSize: ".64rem",
+                  color: "rgba(255,255,255,.32)",
                 }}>
-                  {usuario.horas}<span style={{ fontSize: "1.1rem", opacity: .65 }}>h</span>
-                </div>
-              </div>
-              <div style={{ paddingBottom: 5 }}>
-                <div style={{
-                  fontFamily: "var(--f-data)", fontSize: ".56rem",
-                  color: "rgba(255,255,255,.22)", letterSpacing: ".12em",
-                  textTransform: "uppercase", marginBottom: 2,
-                }}>
-                  Meta
-                </div>
-                <div style={{
-                  fontFamily: "var(--f-data)", fontWeight: 700,
-                  fontSize: "1.1rem", color: "rgba(255,255,255,.35)",
-                }}>
-                  {usuario.horasMeta}h
-                </div>
-              </div>
-              {diasVig !== null && (
-                <div style={{ paddingBottom: 5, marginLeft: "auto" }}>
-                  <div style={{
-                    fontFamily: "var(--f-data)", fontSize: ".56rem",
-                    color: "rgba(255,255,255,.22)", letterSpacing: ".12em",
-                    textTransform: "uppercase", marginBottom: 2, textAlign: "right",
-                  }}>
-                    Vence en
-                  </div>
-                  <div style={{
-                    fontFamily: "var(--f-data)", fontWeight: 700, fontSize: "1.1rem",
-                    color: diasVig <= 30 ? "#E06060" : diasVig <= 90 ? "#D4A033" : "rgba(255,255,255,.38)",
-                    textAlign: "right",
-                  }}>
-                    {diasVig}d
-                  </div>
-                </div>
+                  Vigencia: {usuario.vigencia}
+                </span>
               )}
             </div>
 
-            {/* Progress bar — flat, no radius */}
-            <div>
-              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{
-                  fontFamily: "var(--f-data)", fontSize: ".58rem",
-                  color: "rgba(255,255,255,.2)", letterSpacing: ".08em", textTransform: "uppercase",
-                }}>
-                  Avance anual
+            {/* Name */}
+            <h1 className="font-montserrat" style={{
+              fontSize: "clamp(1.3rem, 2.4vw, 1.75rem)",
+              fontWeight: 600, color: "white", lineHeight: 1.2,
+              letterSpacing: "-.01em", margin: "0 0 5px",
+            }}>
+              {saludo.split(" ").slice(0, 2).join(" ")}, {usuario.nombre.split(" ").slice(0, 2).join(" ")}
+            </h1>
+
+            {/* Meta chips */}
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "3px 16px" }}>
+              {usuario.especialidad && (
+                <span style={{ fontFamily: "var(--f-data)", fontSize: ".76rem", color: "rgba(255,255,255,.52)" }}>
+                  {usuario.especialidad}
                 </span>
+              )}
+              {usuario.ciudad && (
                 <span style={{
-                  fontFamily: "var(--f-data)", fontSize: ".68rem", fontWeight: 700,
-                  color: pct >= 100 ? "#3DB87A" : "#E5D330",
+                  display: "flex", alignItems: "center", gap: 4,
+                  fontFamily: "var(--f-data)", fontSize: ".74rem", color: "rgba(255,255,255,.32)",
                 }}>
-                  {pct}%
+                  <MapPin size={11} strokeWidth={2} /> {usuario.ciudad}
                 </span>
-              </div>
-              <div style={{ height: 4, background: "rgba(255,255,255,.07)" }}>
-                <div style={{
-                  height: "100%",
-                  width: `${pct}%`,
-                  background: pct >= 100
-                    ? "linear-gradient(90deg,#22c55e,#3db87a)"
-                    : "linear-gradient(90deg,#c8b820,#e5d330)",
-                  transition: "width 1.4s cubic-bezier(0.4,0,.2,1)",
-                }} />
-              </div>
+              )}
+              {usuario.alta && (
+                <span style={{ fontFamily: "var(--f-data)", fontSize: ".74rem", color: "rgba(255,255,255,.28)" }}>
+                  Alta {usuario.alta}
+                </span>
+              )}
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* ── KPI STRIP ───────────────────────────────────────────── */}
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
-        border: "1px solid var(--line)",
-        borderRadius: 4,
-        overflow: "hidden",
-        background: "var(--surface)",
-        boxShadow: "0 1px 3px rgba(7,10,36,.06), 0 1px 2px rgba(7,10,36,.04)",
-      }}>
-        {kpis.map((kpi, i) => (
-          <div key={kpi.label} style={{
-            padding: "15px 18px 13px",
-            borderRight: i < kpis.length - 1 ? "1px solid var(--line)" : "none",
-            boxShadow: `inset 3px 0 0 0 ${kpi.color}`,
-            cursor: "default",
+          {/* Hours stat + mini SVG ring */}
+          <div style={{
+            display: "flex", alignItems: "center", gap: 20,
+            paddingBottom: 2, flexShrink: 0,
           }}>
-            <div style={{
-              display: "flex", alignItems: "center", gap: 5,
-              fontSize: ".57rem", letterSpacing: ".13em",
-              textTransform: "uppercase", color: "var(--muted)",
-              fontFamily: "var(--f-data)", marginBottom: 9,
-            }}>
-              {kpi.icon} {kpi.label}
-            </div>
-            <div style={{
-              fontFamily: "var(--f-data)",
-              fontSize: kpi.val.length > 7 ? "1.2rem" : "1.85rem",
-              fontWeight: 700, letterSpacing: "-.03em",
-              lineHeight: 1, color: kpi.color, marginBottom: 5,
-            }}>
-              {kpi.val}<span style={{ fontSize: ".75em", opacity: .6 }}>{kpi.unit}</span>
-            </div>
-            <div style={{
-              fontSize: ".67rem", color: "var(--muted)",
-              fontFamily: "var(--f-data)",
-            }}>
-              {kpi.sub}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* ── CURSOS EN PROGRESO ──────────────────────────────────── */}
-      {enCurso.length > 0 ? (
-        <section>
-          <SectionRule
-            label="Continúa donde lo dejaste"
-            action={
-              <Link href="/dashboard/cursos" className="btn sm ghost" style={{
-                fontFamily: "var(--f-data)", fontSize: ".7rem",
-                letterSpacing: ".05em", gap: 4,
+            <div style={{ textAlign: "right" }}>
+              <div style={{
+                fontFamily: "var(--font-montserrat), Montserrat, system-ui",
+                fontSize: "2.6rem", fontWeight: 700,
+                color: "#FBBF24", lineHeight: 1, letterSpacing: "-.04em",
               }}>
-                Ver catálogo <ChevronRight size={12} strokeWidth={2.5} />
-              </Link>
-            }
-          />
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-            gap: 1,
-            border: "1px solid var(--line)",
-            borderRadius: 4,
-            overflow: "hidden",
-            background: "var(--line)",
-            boxShadow: "0 1px 3px rgba(7,10,36,.06)",
-          }}>
-            {enCurso.slice(0, 3).map(insc => {
-              const c     = insc.curso
-              const color = AREA_COLOR[c.area] ?? "#5754D0"
-              const bg    = AREA_BG[c.area]    ?? "#F0F0FF"
-              const p     = Math.round(insc.progreso)
-              const totalMods = c.modulos.length
-              return (
-                <article key={insc.id} style={{
-                  background: "var(--surface)",
-                  display: "flex", flexDirection: "column",
-                }}>
-                  {/* Top area stripe */}
-                  <div style={{ height: 3, background: color, flexShrink: 0 }} />
+                {usuario.horas}
+                <span style={{ fontSize: "1.2rem", color: "rgba(251,191,36,.55)", fontWeight: 600 }}>h</span>
+              </div>
+              <div style={{ fontFamily: "var(--f-data)", fontSize: ".66rem", color: "rgba(255,255,255,.38)", marginTop: 3 }}>
+                de {usuario.horasMeta}h meta · {pct}%
+              </div>
+            </div>
 
-                  {/* Header */}
-                  <div style={{ padding: "16px 18px 12px", flex: 1 }}>
-                    <span style={{
-                      display: "inline-flex", alignItems: "center",
-                      padding: "2px 7px", marginBottom: 10,
-                      background: bg, color,
-                      fontSize: ".58rem", fontWeight: 700,
-                      letterSpacing: ".1em", textTransform: "uppercase",
-                      fontFamily: "var(--f-data)", borderRadius: 2,
-                    }}>
-                      {AREA_LABEL[c.area]}
-                    </span>
-
-                    <h3 style={{
-                      fontFamily: "var(--f-display)",
-                      fontSize: ".97rem", fontWeight: 800,
-                      color: "var(--fg)", lineHeight: 1.25,
-                      margin: 0, letterSpacing: "-.01em",
-                    }}>
-                      {c.titulo}
-                    </h3>
-                  </div>
-
-                  {/* Meta row */}
-                  <div style={{
-                    padding: "0 18px 14px",
-                    display: "flex", alignItems: "center", gap: 14,
-                    fontSize: ".68rem", color: "var(--muted)",
-                    fontFamily: "var(--f-data)", letterSpacing: ".02em",
-                    borderBottom: "1px solid var(--line)",
-                  }}>
-                    <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                      <User size={10} strokeWidth={2} />
-                      {c.instructor}
-                    </span>
-                    <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                      <Clock size={10} strokeWidth={2} />
-                      {c.horas}h
-                    </span>
-                    {totalMods > 0 && (
-                      <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                        <BookOpen size={10} strokeWidth={2} />
-                        {totalMods} móds.
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Progress */}
-                  <div style={{ padding: "12px 18px 14px" }}>
-                    <div style={{
-                      display: "flex", justifyContent: "space-between",
-                      alignItems: "baseline", marginBottom: 7,
-                    }}>
-                      <span style={{
-                        fontSize: ".58rem", color: "var(--muted)",
-                        fontFamily: "var(--f-data)", letterSpacing: ".1em",
-                        textTransform: "uppercase",
-                      }}>
-                        Avance
-                      </span>
-                      <span style={{
-                        fontFamily: "var(--f-data)", fontWeight: 700,
-                        fontSize: ".9rem", letterSpacing: "-.01em", color,
-                      }}>
-                        {p}<span style={{ fontSize: ".65rem", opacity: .6 }}>%</span>
-                      </span>
-                    </div>
-                    <div style={{ height: 4, background: "var(--surface-2)" }}>
-                      <div style={{
-                        height: "100%", width: `${p}%`, background: color,
-                        transition: "width 1s ease",
-                        boxShadow: p > 5 ? `0 0 6px ${color}55` : "none",
-                      }} />
-                    </div>
-                  </div>
-
-                  {/* Footer */}
-                  <div style={{
-                    padding: "9px 18px",
-                    borderTop: "1px solid var(--line)",
-                    display: "flex", justifyContent: "space-between", alignItems: "center",
-                    background: "var(--surface-2)", gap: 8,
-                  }}>
-                    <span style={{
-                      fontSize: ".64rem", color: "var(--muted)",
-                      fontFamily: "var(--f-data)", letterSpacing: ".03em",
-                    }}>
-                      {new Date(c.fechaFin).toLocaleDateString("es-MX", {
-                        day: "numeric", month: "short", year: "numeric",
-                      }).toUpperCase()}
-                    </span>
-                    <Link href={`/dashboard/cursos/${c.id}`} className="btn sm primary" style={{
-                      fontSize: ".7rem", height: 28, padding: "0 11px",
-                      borderRadius: 2, gap: 4, letterSpacing: ".02em",
-                      fontFamily: "var(--f-data)",
-                    }}>
-                      Continuar <ArrowRight size={11} strokeWidth={2.5} />
-                    </Link>
-                  </div>
-                </article>
-              )
-            })}
+            {/* Mini ring */}
+            <div style={{ position: "relative", width: 64, height: 64, flexShrink: 0 }}>
+              <svg width="64" height="64" viewBox="0 0 64 64" style={{ transform: "rotate(-90deg)" }}>
+                <circle cx="32" cy="32" r={R_MINI} fill="none" stroke="rgba(255,255,255,.1)" strokeWidth="5.5" />
+                <circle cx="32" cy="32" r={R_MINI} fill="none"
+                  stroke={progressColor} strokeWidth="5.5" strokeLinecap="round"
+                  strokeDasharray={CIRC_MINI} strokeDashoffset={OFFSET_MINI}
+                />
+              </svg>
+              <div style={{
+                position: "absolute", inset: 0,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontFamily: "var(--font-montserrat), Montserrat",
+                fontWeight: 700, fontSize: ".82rem", color: "white",
+              }}>
+                {pct}%
+              </div>
+            </div>
           </div>
-        </section>
-      ) : (
-        <div style={{
-          background: "var(--surface)",
-          border: "1px solid var(--line)",
-          borderRadius: 4,
-          borderLeft: "3px solid var(--info)",
-          padding: "28px 24px",
-          display: "flex", alignItems: "center", gap: 20,
-          boxShadow: "0 1px 3px rgba(7,10,36,.06)",
-        }}>
-          <div style={{
-            width: 44, height: 44, flexShrink: 0,
-            background: "var(--info-bg)", border: "1px solid var(--info-ring)",
-            borderRadius: 3, display: "grid", placeItems: "center",
-          }}>
-            <GraduationCap size={22} strokeWidth={1.5} style={{ color: "var(--info)" }} />
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <h3 style={{
-              fontFamily: "var(--f-display)", fontSize: ".95rem",
-              fontWeight: 800, marginBottom: 3,
-            }}>
-              Sin cursos activos
-            </h3>
-            <p style={{ fontSize: ".8rem", margin: 0 }}>
-              Inscríbete al catálogo de cursos para acumular horas de actualización profesional.
-            </p>
-          </div>
-          <Link href="/dashboard/cursos" className="btn primary" style={{
-            borderRadius: 2, flexShrink: 0,
-            fontFamily: "var(--f-data)", letterSpacing: ".04em", fontSize: ".78rem",
-          }}>
-            <BookOpen size={14} strokeWidth={1.75} /> Catálogo
-          </Link>
         </div>
-      )}
+      </div>
 
-      {/* ── CURSOS COMPLETADOS ──────────────────────────────────── */}
-      {completados.length > 0 && (
-        <section>
-          <SectionRule
-            label="Constancias obtenidas"
-            action={
-              <span className="chip nodot ok" style={{ fontFamily: "var(--f-data)", fontSize: ".62rem" }}>
-                {completados.length} acreditado{completados.length > 1 ? "s" : ""}
-              </span>
-            }
-          />
-          <div style={{
-            display: "grid", gap: 1,
-            border: "1px solid var(--line)", borderRadius: 4,
-            overflow: "hidden", background: "var(--line)",
-            boxShadow: "0 1px 3px rgba(7,10,36,.05)",
-          }}>
-            {completados.slice(0, 4).map(insc => {
-              const color = AREA_COLOR[insc.curso.area] ?? "#5754D0"
-              const bg    = AREA_BG[insc.curso.area]   ?? "#F0F0FF"
-              return (
-                <div key={insc.id} style={{
-                  display: "flex", alignItems: "center", gap: 14,
-                  background: "var(--surface)",
-                  padding: "12px 18px",
-                  borderLeft: `3px solid ${color}`,
-                }}>
+      {/* ══════════════════════════════════════════════════════════
+          MAIN GRID  —  8-col content + 4-col sidebar
+         ══════════════════════════════════════════════════════════ */}
+      <div className="grid grid-cols-1 lg:grid-cols-12" style={{ gap: 24, alignItems: "start" }}>
+
+        {/* ── LEFT COLUMN (content area) ─────────────────────────── */}
+        <div className="lg:col-span-8" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+
+          {/* KPI strip — 4 cards */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 12 }}>
+            {[
+              {
+                label: "Horas acreditadas",
+                val: `${usuario.horas}h`,
+                sub: `${pct}% de ${usuario.horasMeta}h`,
+                iconBg: "#FEF3C7", iconColor: "#D97706",
+                icon: <Clock size={17} strokeWidth={2} />,
+                accent: "#F59E0B",
+              },
+              {
+                label: "Cursos activos",
+                val: String(enCurso.length),
+                sub: enCurso.length === 0 ? "Sin inscritos" : "En progreso",
+                iconBg: "#DBEAFE", iconColor: "#1D4ED8",
+                icon: <BookOpen size={17} strokeWidth={2} />,
+                accent: "#3B82F6",
+              },
+              {
+                label: "Constancias",
+                val: String(completados.length),
+                sub: completados.length === 1 ? "Acreditado" : "Acreditados",
+                iconBg: "#D1FAE5", iconColor: "#059669",
+                icon: <Award size={17} strokeWidth={2} />,
+                accent: "#10B981",
+              },
+              {
+                label: pagosPend.length > 0 ? "Pago pendiente" : "Pagos",
+                val: pagosPend.length > 0 ? `${pagosPend.length}` : "Al corriente",
+                sub: pagosPend.length > 0 ? "Por realizar" : "Sin adeudos",
+                iconBg: pagosPend.length > 0 ? "#FEF3C7" : "#D1FAE5",
+                iconColor: pagosPend.length > 0 ? "#D97706" : "#059669",
+                icon: <CreditCard size={17} strokeWidth={2} />,
+                accent: pagosPend.length > 0 ? "#F59E0B" : "#10B981",
+              },
+            ].map(kpi => (
+              <Card key={kpi.label} style={{ padding: "14px 16px", borderTop: `3px solid ${kpi.accent}` }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 10 }}>
                   <div style={{
-                    width: 34, height: 34, borderRadius: 2, flexShrink: 0,
-                    background: "var(--ok-bg)", border: "1px solid var(--ok-ring)",
+                    width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+                    display: "grid", placeItems: "center",
+                    background: kpi.iconBg, color: kpi.iconColor,
+                  }}>
+                    {kpi.icon}
+                  </div>
+                  <span style={{
+                    fontFamily: "var(--f-data)", fontSize: ".65rem", fontWeight: 600,
+                    color: "var(--muted)", letterSpacing: ".03em", lineHeight: 1.3,
+                  }}>
+                    {kpi.label}
+                  </span>
+                </div>
+                <div className="font-montserrat" style={{
+                  fontSize: "1.65rem", fontWeight: 700,
+                  color: "var(--fg)", lineHeight: 1, letterSpacing: "-.03em",
+                }}>
+                  {kpi.val}
+                </div>
+                <div style={{
+                  fontFamily: "var(--f-data)", fontSize: ".67rem",
+                  color: "var(--muted)", marginTop: 4,
+                }}>
+                  {kpi.sub}
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          {/* Active courses — Classroom cards */}
+          <section>
+            <SectionHeading label="Mis cursos activos" href="/dashboard/cursos" count={enCurso.length} />
+
+            {enCurso.length > 0 ? (
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
+                gap: 14,
+              }}>
+                {enCurso.slice(0, 4).map(insc => {
+                  const a = areaOf(insc.curso.area)
+                  const p = Math.round(insc.progreso)
+                  const totalMods = insc.curso.modulos.length
+                  return (
+                    <article key={insc.id} style={{
+                      background: "var(--surface)", border: "1px solid var(--line)",
+                      borderRadius: 10, overflow: "hidden",
+                      display: "flex", flexDirection: "column",
+                      boxShadow: "var(--shadow-sm)",
+                      transition: "box-shadow .15s, transform .12s",
+                    }}>
+                      {/* Classroom-style coloured card header */}
+                      <div style={{
+                        height: 96, position: "relative", padding: "14px 16px",
+                        display: "flex", flexDirection: "column", justifyContent: "flex-end",
+                        background: a.headerBg,
+                        flexShrink: 0,
+                      }}>
+                        {/* Dot texture */}
+                        <div style={{
+                          position: "absolute", inset: 0, opacity: .25,
+                          backgroundImage: "radial-gradient(circle, rgba(255,255,255,.3) 1px, transparent 1px)",
+                          backgroundSize: "16px 16px",
+                        }} />
+                        <span style={{
+                          position: "relative", zIndex: 1, alignSelf: "flex-start",
+                          fontFamily: "var(--f-data)", fontSize: ".6rem", fontWeight: 700,
+                          letterSpacing: ".1em", textTransform: "uppercase",
+                          padding: "2px 8px", borderRadius: 3,
+                          background: a.chipBg, color: a.chipText,
+                        }}>
+                          {a.label}
+                        </span>
+                      </div>
+
+                      {/* Body */}
+                      <div style={{ padding: "14px 16px", flex: 1, display: "flex", flexDirection: "column" }}>
+                        <h3 className="font-montserrat" style={{
+                          fontSize: ".92rem", fontWeight: 600,
+                          color: "var(--fg)", lineHeight: 1.3, marginBottom: 6,
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+                          overflow: "hidden",
+                        } as React.CSSProperties}>
+                          {insc.curso.titulo}
+                        </h3>
+                        <div style={{
+                          display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap",
+                          fontFamily: "var(--f-data)", fontSize: ".67rem", color: "var(--muted)",
+                          marginBottom: "auto",
+                        }}>
+                          <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                            <User size={10} strokeWidth={2} /> {insc.curso.instructor}
+                          </span>
+                          <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                            <Clock size={10} strokeWidth={2} /> {insc.curso.horas}h
+                          </span>
+                          {totalMods > 0 && (
+                            <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                              <BookOpen size={10} strokeWidth={2} /> {totalMods} móds.
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Progress */}
+                        <div style={{ marginTop: 14 }}>
+                          <div style={{
+                            display: "flex", justifyContent: "space-between",
+                            alignItems: "baseline", marginBottom: 5,
+                          }}>
+                            <span style={{
+                              fontFamily: "var(--f-data)", fontSize: ".62rem",
+                              color: "var(--muted)", letterSpacing: ".06em", textTransform: "uppercase",
+                            }}>
+                              Progreso
+                            </span>
+                            <span style={{
+                              fontFamily: "var(--font-montserrat), Montserrat",
+                              fontSize: ".82rem", fontWeight: 700,
+                              color: p >= 100 ? "#10B981" : "#D97706",
+                            }}>
+                              {p}%
+                            </span>
+                          </div>
+                          <div style={{ height: 6, background: "var(--surface-3)", borderRadius: 3, overflow: "hidden" }}>
+                            <div style={{
+                              height: "100%", borderRadius: 3,
+                              width: `${p}%`,
+                              background: p >= 100
+                                ? "linear-gradient(90deg, #059669, #10B981)"
+                                : "linear-gradient(90deg, #D97706, #F59E0B)",
+                            }} />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Footer */}
+                      <div style={{
+                        borderTop: "1px solid var(--line)",
+                        padding: "9px 16px",
+                        display: "flex", justifyContent: "space-between", alignItems: "center",
+                        background: "var(--surface-2)",
+                      }}>
+                        <span style={{ fontFamily: "var(--f-data)", fontSize: ".65rem", color: "var(--muted)" }}>
+                          {new Date(insc.curso.fechaFin).toLocaleDateString("es-MX", { month: "short", year: "numeric" }).toUpperCase()}
+                        </span>
+                        <Link href={`/dashboard/cursos/${insc.curso.id}`} style={{
+                          display: "inline-flex", alignItems: "center", gap: 5,
+                          fontFamily: "var(--f-data)", fontSize: ".74rem", fontWeight: 700,
+                          color: "var(--brand)", textDecoration: "none",
+                          letterSpacing: ".02em",
+                        }}>
+                          Continuar <ArrowRight size={12} strokeWidth={2.5} />
+                        </Link>
+                      </div>
+                    </article>
+                  )
+                })}
+              </div>
+            ) : (
+              <Card>
+                <div style={{ padding: "36px 24px", textAlign: "center" }}>
+                  <div style={{
+                    width: 56, height: 56, borderRadius: "50%", margin: "0 auto 14px",
+                    background: "var(--info-bg)", border: "1px solid var(--info-ring)",
                     display: "grid", placeItems: "center",
                   }}>
-                    <CheckCircle2 size={16} strokeWidth={2} style={{ color: "var(--ok)" }} />
+                    <GraduationCap size={26} strokeWidth={1.5} style={{ color: "var(--info)" }} />
                   </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{
-                      fontWeight: 600, fontSize: ".88rem", marginBottom: 3,
-                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
-                    }}>
-                      {insc.curso.titulo}
-                    </div>
-                    <div style={{
-                      display: "flex", alignItems: "center", gap: 10,
-                      fontSize: ".68rem", color: "var(--muted)",
-                      fontFamily: "var(--f-data)",
-                    }}>
-                      <span style={{
-                        padding: "1px 6px", background: bg, color,
-                        fontSize: ".58rem", fontWeight: 700, letterSpacing: ".1em",
-                        textTransform: "uppercase", borderRadius: 2,
-                      }}>
-                        {AREA_LABEL[insc.curso.area]}
-                      </span>
-                      <span>{insc.curso.horas}h acreditadas</span>
-                      {insc.folio && <span>· Folio {insc.folio}</span>}
-                    </div>
-                  </div>
-                  <Link href="/dashboard/constancias" className="btn sm" style={{
-                    flexShrink: 0, borderRadius: 2,
-                    fontFamily: "var(--f-data)", fontSize: ".68rem", letterSpacing: ".04em",
+                  <h3 className="font-montserrat" style={{
+                    fontSize: ".95rem", fontWeight: 600,
+                    color: "var(--fg)", marginBottom: 6,
                   }}>
-                    <Award size={12} strokeWidth={2} /> Constancia
+                    Sin cursos activos
+                  </h3>
+                  <p style={{ fontSize: ".84rem", color: "var(--muted)", maxWidth: "36ch", margin: "0 auto 18px" }}>
+                    Inscríbete a los cursos disponibles para acumular horas de actualización profesional.
+                  </p>
+                  <Link href="/dashboard/cursos" className="btn primary" style={{ borderRadius: 8, gap: 7 }}>
+                    <BookOpen size={15} strokeWidth={1.75} /> Ver catálogo
                   </Link>
                 </div>
-              )
-            })}
-          </div>
-        </section>
-      )}
+              </Card>
+            )}
+          </section>
 
-      {/* ── EVENTOS + AVISOS ────────────────────────────────────── */}
-      <div className="grid g-dash">
-
-        {/* Eventos */}
-        <div className="card" style={{ borderRadius: 4 }}>
-          <div className="card-h">
-            <h2 style={{
-              display: "flex", alignItems: "center", gap: 8,
-              fontFamily: "var(--f-display)", fontSize: ".95rem",
-              fontWeight: 800, letterSpacing: "-.02em",
-            }}>
-              <Calendar size={14} strokeWidth={2} style={{ color: "var(--brand)" }} />
-              Próximos eventos
-            </h2>
-            <Link href="/dashboard/calendario" className="btn sm ghost" style={{
-              fontFamily: "var(--f-data)", fontSize: ".68rem", letterSpacing: ".04em",
-            }}>
-              Ver todo
-            </Link>
-          </div>
-          {eventos.length === 0 ? (
-            <div className="empty" style={{ padding: "28px 16px" }}>
-              <Calendar size={24} strokeWidth={1.25} />
-              <span>Sin eventos próximos</span>
-            </div>
-          ) : (
-            <div>
-              {eventos.map((ev, idx) => {
-                const fecha = new Date(ev.fecha)
-                const d   = fecha.getDate()
-                const mes = fecha.toLocaleDateString("es-MX", { month: "short" }).replace(".","").toUpperCase()
-                const TIPO_COLOR: Record<string, { color: string; bg: string }> = {
-                  Asamblea:    { color: "#6366f1", bg: "#6366f112" },
-                  Taller:      { color: "#0ea5e9", bg: "#0ea5e912" },
-                  Evaluación:  { color: "#10b981", bg: "#10b98112" },
-                  Cuota:       { color: "#f59e0b", bg: "#f59e0b12" },
-                  Conferencia: { color: "#8b5cf6", bg: "#8b5cf612" },
-                }
-                const tc = TIPO_COLOR[ev.tipo] ?? { color: "var(--brand)", bg: "var(--info-bg)" }
-                return (
-                  <div key={ev.id} style={{
-                    display: "flex", alignItems: "center", gap: 14,
-                    padding: "12px 18px",
-                    borderBottom: idx < eventos.length - 1 ? "1px solid var(--line)" : "none",
-                  }}>
-                    {/* Date box */}
-                    <div style={{
-                      width: 40, height: 40, flexShrink: 0,
-                      background: tc.bg, borderRadius: 2,
-                      border: `1px solid ${tc.color}22`,
-                      display: "flex", flexDirection: "column",
-                      alignItems: "center", justifyContent: "center",
+          {/* Completed courses — compact horizontal list */}
+          {completados.length > 0 && (
+            <section>
+              <SectionHeading label="Constancias obtenidas" href="/dashboard/constancias" count={completados.length} />
+              <Card>
+                {completados.slice(0, 4).map((insc, idx) => {
+                  const a = areaOf(insc.curso.area)
+                  return (
+                    <div key={insc.id} style={{
+                      display: "flex", alignItems: "center", gap: 12,
+                      padding: "12px 16px",
+                      borderBottom: idx < Math.min(completados.length, 4) - 1 ? "1px solid var(--line)" : undefined,
                     }}>
-                      <span style={{
-                        fontFamily: "var(--f-data)", fontSize: ".9rem",
-                        fontWeight: 700, color: tc.color, lineHeight: 1,
-                      }}>{d}</span>
-                      <span style={{
-                        fontFamily: "var(--f-data)", fontSize: ".52rem",
-                        color: tc.color, fontWeight: 700, letterSpacing: ".1em",
-                      }}>{mes}</span>
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{
-                        fontWeight: 600, fontSize: ".84rem", marginBottom: 3,
-                        overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                        width: 34, height: 34, borderRadius: 8, flexShrink: 0,
+                        background: "var(--ok-bg)", border: "1px solid var(--ok-ring)",
+                        display: "grid", placeItems: "center",
                       }}>
-                        {ev.titulo}
+                        <CheckCircle2 size={16} strokeWidth={2} style={{ color: "var(--ok)" }} />
                       </div>
-                      <div style={{
-                        display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap",
-                        fontSize: ".68rem", color: "var(--muted)", fontFamily: "var(--f-data)",
-                      }}>
-                        <span style={{
-                          padding: "1px 6px", background: tc.bg, color: tc.color,
-                          fontSize: ".57rem", fontWeight: 700, letterSpacing: ".1em",
-                          textTransform: "uppercase", borderRadius: 2,
-                        }}>{ev.tipo}</span>
-                        <span>{ev.hora} · {ev.lugar}</span>
-                      </div>
-                    </div>
-                    <ChevronRight size={13} strokeWidth={1.75} style={{ color: "var(--muted)", flexShrink: 0 }} />
-                  </div>
-                )
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Avisos */}
-        <div className="card" style={{ borderRadius: 4 }}>
-          <div className="card-h">
-            <h2 style={{
-              display: "flex", alignItems: "center", gap: 8,
-              fontFamily: "var(--f-display)", fontSize: ".95rem",
-              fontWeight: 800, letterSpacing: "-.02em",
-            }}>
-              <Megaphone size={14} strokeWidth={2} style={{ color: "var(--warn)" }} />
-              Avisos del colegio
-            </h2>
-            <Link href="/dashboard/avisos" className="btn sm ghost" style={{
-              fontFamily: "var(--f-data)", fontSize: ".68rem", letterSpacing: ".04em",
-            }}>
-              Ver todos
-            </Link>
-          </div>
-          {avisos.length === 0 ? (
-            <div className="empty" style={{ padding: "28px 16px" }}>
-              <Megaphone size={24} strokeWidth={1.25} />
-              <span>Sin avisos recientes</span>
-            </div>
-          ) : (
-            <div>
-              {avisos.map((av, idx) => {
-                const AVISO_COLOR: Record<string, { color: string; bg: string }> = {
-                  Urgente:      { color: "var(--bad)",  bg: "var(--bad-bg)"  },
-                  Importante:   { color: "var(--warn)", bg: "var(--warn-bg)" },
-                  Informativo:  { color: "var(--info)", bg: "var(--info-bg)" },
-                  Convocatoria: { color: "var(--ok)",   bg: "var(--ok-bg)"   },
-                }
-                const ac = AVISO_COLOR[av.tipo] ?? AVISO_COLOR.Informativo
-                return (
-                  <div key={av.id} style={{
-                    display: "flex", alignItems: "flex-start", gap: 12,
-                    padding: "12px 18px",
-                    borderBottom: idx < avisos.length - 1 ? "1px solid var(--line)" : "none",
-                    borderLeft: av.fijado || av.tipo === "Urgente" ? `3px solid ${ac.color}` : "3px solid transparent",
-                  }}>
-                    <div style={{
-                      width: 28, height: 28, flexShrink: 0, marginTop: 1,
-                      background: ac.bg, borderRadius: 2,
-                      display: "grid", placeItems: "center",
-                    }}>
-                      {av.tipo === "Urgente" || av.fijado
-                        ? <AlertCircle size={13} strokeWidth={1.75} style={{ color: ac.color }} />
-                        : <Megaphone   size={13} strokeWidth={1.75} style={{ color: ac.color }} />
-                      }
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{
-                        fontWeight: 600, fontSize: ".84rem", lineHeight: 1.3, marginBottom: 4,
-                        overflow: "hidden",
-                        display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
-                      } as React.CSSProperties}>
-                        {av.titulo}
-                      </div>
-                      <div style={{
-                        display: "flex", gap: 7, alignItems: "center",
-                        fontSize: ".65rem", fontFamily: "var(--f-data)",
-                      }}>
-                        <span style={{
-                          padding: "1px 6px", background: ac.bg,
-                          color: ac.color, fontSize: ".57rem", fontWeight: 700,
-                          letterSpacing: ".1em", textTransform: "uppercase", borderRadius: 2,
-                        }}>{av.tipo}</span>
-                        <span style={{ color: "var(--muted)" }}>{av.categoria}</span>
-                        {av.fijado && (
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{
+                          fontWeight: 600, fontSize: ".87rem", color: "var(--fg)",
+                          overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                        }}>
+                          {insc.curso.titulo}
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 2 }}>
                           <span style={{
-                            fontFamily: "var(--f-data)", fontSize: ".57rem",
-                            color: "var(--warn)", fontWeight: 700, letterSpacing: ".1em",
+                            fontFamily: "var(--f-data)", fontSize: ".6rem", fontWeight: 700,
+                            letterSpacing: ".08em", textTransform: "uppercase",
+                            padding: "1px 6px", borderRadius: 3,
+                            background: a.chipBg, color: a.chipText,
+                            filter: "brightness(.85) saturate(1.2)",
                           }}>
-                            FIJADO
+                            {a.label}
                           </span>
-                        )}
+                          <span style={{ fontFamily: "var(--f-data)", fontSize: ".67rem", color: "var(--muted)" }}>
+                            {insc.curso.horas}h acreditadas
+                          </span>
+                          {insc.folio && (
+                            <span style={{ fontFamily: "var(--f-mono)", fontSize: ".65rem", color: "var(--muted-2)" }}>
+                              · {insc.folio}
+                            </span>
+                          )}
+                        </div>
                       </div>
+                      <Link href="/dashboard/constancias" style={{
+                        display: "inline-flex", alignItems: "center", gap: 4,
+                        fontFamily: "var(--f-data)", fontSize: ".7rem", fontWeight: 600,
+                        color: "var(--muted)", textDecoration: "none", flexShrink: 0,
+                      }}>
+                        <Award size={12} strokeWidth={2} /> Ver
+                      </Link>
+                    </div>
+                  )
+                })}
+              </Card>
+            </section>
+          )}
+
+          {/* Quick Actions — Classroom-style feature tiles */}
+          <section>
+            <SectionHeading label="Accesos rápidos" />
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(165px, 1fr))",
+              gap: 12,
+            }}>
+              {[
+                {
+                  href: "/dashboard/cursos",
+                  icon: <GraduationCap size={24} strokeWidth={1.75} />,
+                  label: "Mis cursos",
+                  sub: `${inscripciones.length} inscrito${inscripciones.length !== 1 ? "s" : ""}`,
+                  iconBg: "#DBEAFE", iconColor: "#1D4ED8", accent: "#1D4ED8",
+                },
+                {
+                  href: "/dashboard/constancias",
+                  icon: <Award size={24} strokeWidth={1.75} />,
+                  label: "Constancias",
+                  sub: `${completados.length} obtenida${completados.length !== 1 ? "s" : ""}`,
+                  iconBg: "#D1FAE5", iconColor: "#059669", accent: "#059669",
+                },
+                {
+                  href: "/dashboard/calendario",
+                  icon: <Calendar size={24} strokeWidth={1.75} />,
+                  label: "Calendario",
+                  sub: `${eventos.length} próximo${eventos.length !== 1 ? "s" : ""}`,
+                  iconBg: "#EDE9FE", iconColor: "#7C3AED", accent: "#7C3AED",
+                },
+                {
+                  href: "/dashboard/pagos",
+                  icon: <CreditCard size={24} strokeWidth={1.75} />,
+                  label: "Pagos y cuotas",
+                  sub: pagosPend.length > 0 ? `${pagosPend.length} pendiente${pagosPend.length !== 1 ? "s" : ""}` : "Al corriente",
+                  iconBg: pagosPend.length > 0 ? "#FEF3C7" : "#D1FAE5",
+                  iconColor: pagosPend.length > 0 ? "#D97706" : "#059669",
+                  accent: pagosPend.length > 0 ? "#F59E0B" : "#10B981",
+                },
+              ].map(item => (
+                <Link key={item.href} href={item.href} style={{
+                  display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 12,
+                  padding: "16px", textDecoration: "none",
+                  background: "var(--surface)", border: "1px solid var(--line)",
+                  borderRadius: 10, boxShadow: "var(--shadow-sm)",
+                  borderTop: `3px solid ${item.accent}`,
+                  transition: "box-shadow .14s, transform .12s",
+                }}
+                  onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.boxShadow = "var(--shadow-md)"; el.style.transform = "translateY(-2px)" }}
+                  onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.boxShadow = "var(--shadow-sm)"; el.style.transform = "none" }}
+                >
+                  <div style={{
+                    width: 42, height: 42, borderRadius: 10, flexShrink: 0,
+                    display: "grid", placeItems: "center",
+                    background: item.iconBg, color: item.iconColor,
+                  }}>
+                    {item.icon}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: ".88rem", color: "var(--fg)", marginBottom: 2 }}>
+                      {item.label}
+                    </div>
+                    <div style={{ fontFamily: "var(--f-data)", fontSize: ".68rem", color: "var(--muted)" }}>
+                      {item.sub}
                     </div>
                   </div>
-                )
-              })}
+                </Link>
+              ))}
             </div>
+          </section>
+
+          {/* Upcoming events */}
+          {eventos.length > 0 && (
+            <section>
+              <SectionHeading label="Próximos eventos" href="/dashboard/calendario" count={eventos.length} />
+              <Card>
+                {eventos.map((ev, idx) => {
+                  const fecha = new Date(ev.fecha)
+                  const d   = fecha.getDate()
+                  const mes = fecha.toLocaleDateString("es-MX", { month: "short" }).replace(".", "").toUpperCase()
+                  const tc  = evColor(ev.tipo)
+                  return (
+                    <div key={ev.id} style={{
+                      display: "flex", alignItems: "center", gap: 14, padding: "12px 18px",
+                      borderBottom: idx < eventos.length - 1 ? "1px solid var(--line)" : undefined,
+                    }}>
+                      <div style={{
+                        width: 44, height: 44, flexShrink: 0, borderRadius: 8,
+                        display: "flex", flexDirection: "column",
+                        alignItems: "center", justifyContent: "center",
+                        background: tc.bg,
+                      }}>
+                        <span style={{ fontFamily: "var(--font-montserrat), Montserrat", fontWeight: 700, fontSize: ".95rem", color: tc.text, lineHeight: 1 }}>{d}</span>
+                        <span style={{ fontFamily: "var(--f-data)", fontWeight: 700, fontSize: ".5rem", letterSpacing: ".1em", color: tc.text }}>{mes}</span>
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontWeight: 600, fontSize: ".87rem", color: "var(--fg)", marginBottom: 3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {ev.titulo}
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <span style={{
+                            fontFamily: "var(--f-data)", fontSize: ".58rem", fontWeight: 700,
+                            padding: "1px 6px", borderRadius: 3,
+                            background: tc.bg, color: tc.text, letterSpacing: ".07em", textTransform: "uppercase",
+                          }}>
+                            {ev.tipo}
+                          </span>
+                          <span style={{ fontFamily: "var(--f-data)", fontSize: ".67rem", color: "var(--muted)" }}>
+                            {ev.hora} · {ev.lugar}
+                          </span>
+                        </div>
+                      </div>
+                      <ChevronRight size={14} strokeWidth={1.75} style={{ color: "var(--muted-2)", flexShrink: 0 }} />
+                    </div>
+                  )
+                })}
+              </Card>
+            </section>
           )}
         </div>
-      </div>
 
-      {/* ── ACCESOS RÁPIDOS ─────────────────────────────────────── */}
-      <div style={{
-        background: "var(--surface)",
-        border: "1px solid var(--line)",
-        borderRadius: 4,
-        padding: "16px 20px",
-        boxShadow: "0 1px 3px rgba(7,10,36,.05)",
-      }}>
-        <div style={{
-          fontSize: ".58rem", fontFamily: "var(--f-data)", fontWeight: 700,
-          letterSpacing: ".15em", textTransform: "uppercase",
-          color: "var(--muted)", marginBottom: 14,
-        }}>
-          Accesos rápidos
-        </div>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(175px, 1fr))",
-          gap: 1,
-          border: "1px solid var(--line)",
-          borderRadius: 2, overflow: "hidden",
-          background: "var(--line)",
-        }}>
-          {[
-            { href: "/dashboard/cursos",      icon: <GraduationCap size={16} strokeWidth={1.75} />, label: "Mis cursos",  sub: `${inscripciones.length} inscritos`,                                                                       color: "#1B4F91" },
-            { href: "/dashboard/constancias", icon: <Award         size={16} strokeWidth={1.75} />, label: "Constancias", sub: `${completados.length} obtenidas`,                                                                        color: "#1A7A4A" },
-            { href: "/dashboard/calendario",  icon: <Calendar      size={16} strokeWidth={1.75} />, label: "Calendario",  sub: `${eventos.length} próximos`,                                                                             color: "#6366f1" },
-            { href: "/dashboard/pagos",       icon: <CreditCard    size={16} strokeWidth={1.75} />, label: "Pagos",       sub: pagosPend.length > 0 ? `${pagosPend.length} pendiente${pagosPend.length > 1 ? "s" : ""}` : "Al corriente", color: pagosPend.length > 0 ? "#906012" : "#1A7A4A" },
-          ].map(item => (
-            <Link key={item.href} href={item.href} className="ent-quick" style={{
-              display: "flex", alignItems: "center", gap: 12,
-              padding: "13px 16px",
-              boxShadow: `inset 3px 0 0 0 ${item.color}`,
-            }}>
-              <div style={{ color: item.color, flexShrink: 0 }}>{item.icon}</div>
-              <div style={{ minWidth: 0 }}>
-                <div style={{
-                  fontWeight: 600, fontSize: ".84rem",
-                  color: "var(--fg)", marginBottom: 1,
-                }}>
-                  {item.label}
-                </div>
-                <div style={{
-                  fontSize: ".68rem", color: "var(--muted)",
-                  fontFamily: "var(--f-data)", letterSpacing: ".02em",
-                }}>
-                  {item.sub}
+        {/* ── RIGHT SIDEBAR ───────────────────────────────────────── */}
+        <div className="lg:col-span-4" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+
+          {/* ── Large circular progress card ── */}
+          <Card>
+            <CardHeader>
+              <h3 className="font-montserrat" style={{ fontSize: ".9rem", fontWeight: 700, color: "var(--fg)", margin: 0 }}>
+                Actualización 2026
+              </h3>
+              <span style={{
+                fontFamily: "var(--f-data)", fontSize: ".62rem", fontWeight: 700,
+                letterSpacing: ".06em",
+                color: pct >= 100 ? "var(--ok)" : "var(--muted)",
+                padding: "2px 8px", borderRadius: 10,
+                background: pct >= 100 ? "var(--ok-bg)" : "var(--surface-2)",
+              }}>
+                {pct >= 100 ? "¡Meta alcanzada!" : `${faltanH}h restantes`}
+              </span>
+            </CardHeader>
+
+            <div style={{ padding: "24px 20px 20px" }}>
+              {/* Large SVG ring */}
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 24 }}>
+                <div style={{ position: "relative", width: 160, height: 160 }}>
+                  <svg width="160" height="160" viewBox="0 0 160 160" style={{ transform: "rotate(-90deg)" }}>
+                    {/* Track ring */}
+                    <circle cx="80" cy="80" r={R_BIG} fill="none"
+                      stroke="var(--surface-3)" strokeWidth="12" />
+                    {/* Progress ring */}
+                    <circle cx="80" cy="80" r={R_BIG} fill="none"
+                      stroke={progressColor} strokeWidth="12" strokeLinecap="round"
+                      strokeDasharray={CIRC_BIG} strokeDashoffset={OFFSET_BIG}
+                    />
+                    {/* Background track (subtle glow) */}
+                    <circle cx="80" cy="80" r={R_BIG} fill="none"
+                      stroke={progressColor} strokeWidth="12" strokeLinecap="round"
+                      strokeDasharray={CIRC_BIG} strokeDashoffset={OFFSET_BIG}
+                      opacity=".12"
+                      style={{ filter: "blur(6px)" }}
+                    />
+                  </svg>
+                  {/* Center text */}
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    display: "flex", flexDirection: "column",
+                    alignItems: "center", justifyContent: "center",
+                  }}>
+                    <span className="font-montserrat" style={{
+                      fontSize: "2.5rem", fontWeight: 700,
+                      color: "var(--fg)", lineHeight: 1, letterSpacing: "-.04em",
+                    }}>
+                      {pct}
+                      <span style={{ fontSize: "1.3rem", color: "var(--muted)", fontWeight: 500 }}>%</span>
+                    </span>
+                    <span style={{
+                      fontFamily: "var(--f-data)", fontSize: ".7rem",
+                      color: "var(--muted)", marginTop: 4,
+                    }}>
+                      {usuario.horas} / {usuario.horasMeta}h
+                    </span>
+                  </div>
                 </div>
               </div>
-            </Link>
-          ))}
+
+              {/* Progress stats */}
+              <div style={{ display: "grid", gap: 10 }}>
+                {[
+                  { label: "Horas acreditadas", val: `${usuario.horas}h`, color: "#F59E0B" },
+                  { label: "Meta anual",         val: `${usuario.horasMeta}h`, color: "var(--muted)" },
+                  { label: "Cursos en progreso", val: String(enCurso.length),   color: "#3B82F6" },
+                  { label: "Cursos completados", val: String(completados.length),color: "#10B981" },
+                  ...(faltanH > 0 ? [{ label: "Horas faltantes", val: `${faltanH}h`, color: "#F87171" }] : []),
+                  ...(usuario.vigencia ? [{ label: "Vigencia", val: usuario.vigencia, color: "var(--muted)" }] : []),
+                ].map(stat => (
+                  <div key={stat.label} style={{
+                    display: "flex", justifyContent: "space-between", alignItems: "center",
+                  }}>
+                    <span style={{
+                      fontFamily: "var(--f-data)", fontSize: ".72rem", color: "var(--muted)",
+                    }}>
+                      {stat.label}
+                    </span>
+                    <span className="font-montserrat" style={{
+                      fontSize: ".82rem", fontWeight: 700, color: stat.color,
+                    }}>
+                      {stat.val}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Full progress bar */}
+              <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid var(--line)" }}>
+                <div style={{
+                  display: "flex", justifyContent: "space-between",
+                  fontFamily: "var(--f-data)", fontSize: ".65rem",
+                  color: "var(--muted)", marginBottom: 7,
+                }}>
+                  <span>Avance anual</span>
+                  <span style={{ fontWeight: 700, color: progressColor }}>{pct}%</span>
+                </div>
+                <div style={{ height: 8, background: "var(--surface-3)", borderRadius: 4, overflow: "hidden" }}>
+                  <div style={{
+                    height: "100%", borderRadius: 4, width: `${pct}%`,
+                    background: `linear-gradient(90deg, ${pct >= 100 ? "#059669, #10B981" : "#D97706, #F59E0B"})`,
+                  }} />
+                </div>
+                {faltanH > 0 && (
+                  <p style={{
+                    fontFamily: "var(--f-data)", fontSize: ".67rem",
+                    color: "var(--muted)", marginTop: 7,
+                  }}>
+                    Faltan <strong style={{ color: "#F59E0B" }}>{faltanH}h</strong> para tu meta
+                  </p>
+                )}
+              </div>
+            </div>
+          </Card>
+
+          {/* ── Avisos card ── */}
+          <Card>
+            <CardHeader>
+              <h3 className="font-montserrat" style={{
+                display: "flex", alignItems: "center", gap: 7,
+                fontSize: ".9rem", fontWeight: 700, color: "var(--fg)", margin: 0,
+              }}>
+                <Megaphone size={14} strokeWidth={2} style={{ color: "#F59E0B" }} />
+                Avisos del colegio
+              </h3>
+              <Link href="/dashboard/avisos" style={{
+                fontFamily: "var(--f-data)", fontSize: ".72rem", fontWeight: 600,
+                color: "var(--brand)", textDecoration: "none",
+              }}>
+                Ver todos
+              </Link>
+            </CardHeader>
+
+            {avisos.length === 0 ? (
+              <div style={{ padding: "36px 20px", textAlign: "center" }}>
+                <Megaphone size={28} strokeWidth={1.25} style={{ color: "var(--muted-2)", margin: "0 auto 10px" }} />
+                <p style={{ fontSize: ".84rem", color: "var(--muted)" }}>Sin avisos recientes</p>
+              </div>
+            ) : (
+              <div>
+                {avisos.map((av, idx) => {
+                  const dot = AVISO_DOT[av.tipo] ?? "#3B82F6"
+                  return (
+                    <Link key={av.id} href="/dashboard/avisos" style={{
+                      display: "flex", alignItems: "flex-start", gap: 10, padding: "11px 18px",
+                      borderBottom: idx < avisos.length - 1 ? "1px solid var(--line)" : undefined,
+                      textDecoration: "none",
+                      transition: "background .12s",
+                    }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "var(--surface-2)" }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "transparent" }}
+                    >
+                      {/* Dot indicator */}
+                      <div style={{
+                        width: 6, height: 6, borderRadius: "50%", flexShrink: 0,
+                        background: dot, marginTop: 7,
+                        boxShadow: `0 0 6px ${dot}66`,
+                      }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{
+                          fontWeight: 500, fontSize: ".84rem", color: "var(--fg)",
+                          lineHeight: 1.35, marginBottom: 4,
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
+                        } as React.CSSProperties}>
+                          {av.titulo}
+                        </div>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <span style={{
+                            fontFamily: "var(--f-data)", fontSize: ".6rem", fontWeight: 700,
+                            letterSpacing: ".08em", textTransform: "uppercase", color: dot,
+                          }}>
+                            {av.tipo}
+                          </span>
+                          <span style={{ fontFamily: "var(--f-data)", fontSize: ".65rem", color: "var(--muted-2)" }}>
+                            · {av.categoria}
+                          </span>
+                          {av.fijado && (
+                            <span style={{
+                              fontFamily: "var(--f-data)", fontSize: ".6rem", fontWeight: 700,
+                              color: "#F59E0B", letterSpacing: ".06em",
+                            }}>
+                              · Fijado
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </Link>
+                  )
+                })}
+              </div>
+            )}
+          </Card>
+
+          {/* ── Perfil quick info ── */}
+          <Card>
+            <CardHeader>
+              <h3 className="font-montserrat" style={{ fontSize: ".9rem", fontWeight: 700, color: "var(--fg)", margin: 0 }}>
+                Mi perfil
+              </h3>
+              <Link href="/dashboard/perfil" style={{
+                fontFamily: "var(--f-data)", fontSize: ".72rem", fontWeight: 600,
+                color: "var(--brand)", textDecoration: "none",
+              }}>
+                Editar
+              </Link>
+            </CardHeader>
+            <div style={{ padding: "14px 18px", display: "grid", gap: 10 }}>
+              {[
+                { label: "Colegiado",    val: usuario.numeroColegiado ? `CIME-VER-${usuario.numeroColegiado}` : "Sin asignar" },
+                { label: "Especialidad", val: usuario.especialidad ?? "—" },
+                { label: "Ciudad",       val: usuario.ciudad ?? "—" },
+                { label: "Cédula",       val: usuario.cedula ?? "—" },
+                { label: "Alta",         val: usuario.alta ? String(usuario.alta) : "—" },
+              ].map(row => (
+                <div key={row.label} style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 12 }}>
+                  <span style={{
+                    fontFamily: "var(--f-data)", fontSize: ".67rem", fontWeight: 600,
+                    color: "var(--muted)", letterSpacing: ".04em", textTransform: "uppercase",
+                    flexShrink: 0,
+                  }}>
+                    {row.label}
+                  </span>
+                  <span style={{
+                    fontSize: ".8rem", color: "var(--fg-2)", textAlign: "right",
+                    overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                  }}>
+                    {row.val}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </Card>
         </div>
       </div>
     </>
