@@ -58,6 +58,7 @@ const TITLES: Record<string, string> = {
   "/admin/eventos":          "Eventos",
   "/admin/avisos":           "Avisos",
   "/admin/expedientes":      "Expedientes",
+  "/admin/pagos":            "Gestión de Pagos",
   "/dashboard":              "Inicio",
   "/dashboard/cursos":       "Mis cursos",
   "/dashboard/calendario":   "Calendario",
@@ -143,6 +144,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
       { href: "/admin/eventos",    icon: <Calendar      size={18} strokeWidth={1.75} />, label: "Eventos" },
       { href: "/admin/avisos",       icon: <Megaphone   size={18} strokeWidth={1.75} />, label: "Avisos" },
       { href: "/admin/expedientes",  icon: <FolderOpen  size={18} strokeWidth={1.75} />, label: "Expedientes" },
+      { href: "/admin/pagos",        icon: <CreditCard  size={18} strokeWidth={1.75} />, label: "Pagos" },
     ],
   }]
 

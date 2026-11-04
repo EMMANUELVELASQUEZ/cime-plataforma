@@ -63,6 +63,7 @@ model Curso {
 
   modulos    ModuloCurso[]
   inscritos  InscripcionCurso[]
+  pagos      Pago[]
 }
 
 enum Area {
@@ -154,6 +155,7 @@ enum EstadoInscripcion {
   INSCRITO
   EN_CURSO
   COMPLETADO
+  BLOQUEADO
 }
 
 model Evento {
@@ -177,15 +179,19 @@ model Aviso {
 }
 
 model Pago {
-  id        String   @id @default(cuid())
-  usuarioId String
-  concepto  String
-  monto     Float
-  estado    String
-  folio     String   @unique
-  createdAt DateTime @default(now())
+  id          String    @id @default(cuid())
+  usuarioId   String
+  concepto    String
+  monto       Float
+  estado      String
+  folio       String    @unique
+  comprobante String?
+  cursoId     String?
+  vencimiento DateTime?
+  createdAt   DateTime  @default(now())
 
   usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  curso   Curso?  @relation(fields: [cursoId], references: [id], onDelete: SetNull)
 }
 
 // ─── Expedientes ─────────────────────────────────────────────────
