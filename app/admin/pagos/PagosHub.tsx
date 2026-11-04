@@ -109,6 +109,46 @@ const INSCRIPCION_ESTADO_CFG: Record<string, { label: string; color: string; bg:
   BLOQUEADO:  { label: "Bloqueado",  color: "#dc2626", bg: "rgba(220,38,38,.1)"  },
 }
 
+// ─── Comprobante helpers ──────────────────────────────────────────────────────
+type ComprobanteInfo = { url: string; nombre: string; tipo: string; bytes: number }
+
+function parseComprobante(raw: string | null): ComprobanteInfo | null {
+  if (!raw) return null
+  try {
+    const p = JSON.parse(raw)
+    if (p?.url && p?.nombre) return p as ComprobanteInfo
+  } catch {}
+  // legacy plain URL
+  if (raw.startsWith("http")) return { url: raw, nombre: "comprobante", tipo: "application/octet-stream", bytes: 0 }
+  return null
+}
+
+function openComprobante(raw: string | null) {
+  const info = parseComprobante(raw)
+  if (!info) return
+  if (info.url.startsWith("data:")) {
+    const [header, b64] = info.url.split(",")
+    const mime = header.match(/:(.*?);/)?.[1] ?? "application/octet-stream"
+    const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0))
+    const blob = new Blob([bytes], { type: mime })
+    const blobUrl = URL.createObjectURL(blob)
+    const win = window.open(blobUrl, "_blank")
+    if (!win) {
+      const a = document.createElement("a")
+      a.href = blobUrl; a.download = info.nombre; a.click()
+    }
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 60_000)
+  } else {
+    window.open(info.url, "_blank")
+  }
+}
+
+function comprobanteLabel(raw: string | null): string {
+  const info = parseComprobante(raw)
+  if (!info) return ""
+  return info.nombre ?? "Archivo adjunto"
+}
+
 // ─── Export functions ─────────────────────────────────────────────────────────
 function exportCSV(data: ColegiadoData[]) {
   const rows: string[][] = [
@@ -127,7 +167,7 @@ function exportCSV(data: ColegiadoData[]) {
           p.monto.toFixed(2),
           p.estado,
           fmtDate(p.createdAt),
-          p.comprobante ?? "",
+          comprobanteLabel(p.comprobante) || "Sin comprobante",
         ])
       })
     }
@@ -676,15 +716,21 @@ function ComprobanteModal({
           </div>
 
           {pago.comprobante && (
-            <div style={{ marginBottom: 14, padding: "10px 14px", borderRadius: 8, background: "var(--surface-2)", border: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 10 }}>
-              <FileText size={16} style={{ color: "var(--brand)", flexShrink: 0 }} />
+            <div style={{ marginBottom: 14, padding: "10px 14px", borderRadius: 8, background: "var(--surface-2)", border: "1px solid var(--ok-ring)", display: "flex", alignItems: "center", gap: 10 }}>
+              <FileText size={16} style={{ color: "var(--ok)", flexShrink: 0 }} />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: ".8rem", fontWeight: 600, color: "var(--fg)" }}>Comprobante actual</div>
-                <div style={{ fontSize: ".74rem", color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{pago.comprobante}</div>
+                <div style={{ fontSize: ".78rem", fontWeight: 700, color: "var(--ok)" }}>Comprobante guardado</div>
+                <div style={{ fontSize: ".73rem", color: "var(--muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginTop: 1 }}>
+                  {comprobanteLabel(pago.comprobante)}
+                </div>
               </div>
-              <a href={pago.comprobante} target="_blank" rel="noopener noreferrer" style={{ color: "var(--brand)", flexShrink: 0 }}>
+              <button
+                onClick={() => openComprobante(pago.comprobante)}
+                style={{ background: "none", border: "none", cursor: "pointer", color: "var(--brand)", flexShrink: 0, padding: 2 }}
+                title="Ver documento"
+              >
                 <ExternalLink size={14} />
-              </a>
+              </button>
             </div>
           )}
 
@@ -1255,14 +1301,13 @@ function ColegiadoRow({
                           <td style={{ padding: "9px 10px" }}>
                             {pago.comprobante ? (
                               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                <a
-                                  href={pago.comprobante}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  style={{ display: "flex", alignItems: "center", gap: 4, fontSize: ".78rem", color: "#2563eb", fontWeight: 600 }}
+                                <button
+                                  onClick={() => openComprobante(pago.comprobante)}
+                                  style={{ display: "flex", alignItems: "center", gap: 4, fontSize: ".78rem", color: "#2563eb", fontWeight: 600, background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                                  title={comprobanteLabel(pago.comprobante)}
                                 >
                                   <ExternalLink size={12} /> Ver
-                                </a>
+                                </button>
                                 <button
                                   onClick={() => setComprobanteTarget(pago)}
                                   style={{ background: "none", border: "none", cursor: "pointer", color: "var(--muted)", fontSize: ".76rem", padding: 0 }}
