@@ -29,6 +29,7 @@ model Usuario {
   inscripciones InscripcionCurso[]
   pagos         Pago[]
   expediente    Expediente?
+  solicitudes   SolicitudPlan[]
 }
 
 enum Rol {
@@ -232,4 +233,31 @@ model EntradaExpediente {
   createdAt    DateTime    @default(now())
 
   expediente Expediente @relation(fields: [expedienteId], references: [id], onDelete: Cascade)
+}
+
+model PlanPago {
+  id          String          @id @default(cuid())
+  nombre      String
+  descripcion String?
+  monto       Float
+  iva         Boolean         @default(false)
+  tipo        String          @default("OTRO")
+  activo      Boolean         @default(true)
+  solicitudes SolicitudPlan[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+}
+
+model SolicitudPlan {
+  id        String   @id @default(cuid())
+  planId    String
+  plan      PlanPago @relation(fields: [planId], references: [id], onDelete: Cascade)
+  usuarioId String
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  estado    String   @default("PENDIENTE")
+  notas     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([planId, usuarioId])
 }

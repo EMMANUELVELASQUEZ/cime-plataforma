@@ -8,7 +8,7 @@ import {
   LayoutDashboard, GraduationCap, Calendar, FileCheck, Megaphone,
   Users, CreditCard, User, Moon, Sun, LogOut, Menu, X,
   ChevronRight, ChevronDown, BarChart3, Bell,
-  PanelLeftClose, PanelLeftOpen, FolderOpen,
+  PanelLeftClose, PanelLeftOpen, FolderOpen, FileText,
 } from "lucide-react"
 
 // ─── Helpers ────────────────────────────────────────────────────
@@ -41,6 +41,7 @@ export interface AppShellUser {
   especialidad?:    string | null
   cursosResumen?:   { titulo: string; horas: number; progreso: number; area: string; estado: string }[]
   avisosCount?:     number
+  planesAlerta?:    number
 }
 
 interface AppShellProps {
@@ -59,6 +60,7 @@ const TITLES: Record<string, string> = {
   "/admin/avisos":           "Avisos",
   "/admin/expedientes":      "Expedientes",
   "/admin/pagos":            "Gestión de Pagos",
+  "/admin/planes":           "Planes de Pago",
   "/dashboard":              "Inicio",
   "/dashboard/cursos":       "Mis cursos",
   "/dashboard/calendario":   "Calendario",
@@ -66,6 +68,7 @@ const TITLES: Record<string, string> = {
   "/dashboard/avisos":       "Avisos",
   "/dashboard/directorio":   "Directorio",
   "/dashboard/pagos":        "Pagos y cuotas",
+  "/dashboard/planes":       "Planes de pago",
   "/dashboard/perfil":       "Mi perfil",
 }
 
@@ -145,6 +148,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
       { href: "/admin/avisos",       icon: <Megaphone   size={18} strokeWidth={1.75} />, label: "Avisos" },
       { href: "/admin/expedientes",  icon: <FolderOpen  size={18} strokeWidth={1.75} />, label: "Expedientes" },
       { href: "/admin/pagos",        icon: <CreditCard  size={18} strokeWidth={1.75} />, label: "Pagos" },
+      { href: "/admin/planes",       icon: <FileText    size={18} strokeWidth={1.75} />, label: "Planes", badge: user.planesAlerta || undefined },
     ],
   }]
 
@@ -164,6 +168,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
         { href: "/dashboard/avisos",     icon: <Bell      size={18} strokeWidth={1.75} />, label: "Avisos", badge: user.avisosCount || undefined },
         { href: "/dashboard/directorio", icon: <Users     size={18} strokeWidth={1.75} />, label: "Directorio" },
         { href: "/dashboard/pagos",      icon: <CreditCard size={18} strokeWidth={1.75} />, label: "Pagos y cuotas" },
+        { href: "/dashboard/planes",     icon: <FileText   size={18} strokeWidth={1.75} />, label: "Planes de pago" },
       ],
     },
     {
