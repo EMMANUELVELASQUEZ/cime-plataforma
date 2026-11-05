@@ -1,17 +1,30 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import { EstadoColegiado } from "@prisma/client"
-import { Users, CheckCircle2, AlertTriangle, GraduationCap, Plus, UserCog, BookOpen } from "lucide-react"
+import { Users, CheckCircle2, AlertTriangle, GraduationCap, Plus, UserCog, BookOpen, Calendar, MapPin, Clock, ChevronRight } from "lucide-react"
 
 export const dynamic = "force-dynamic"
 
+const EV_CFG: Record<string, { color: string; bg: string; border: string }> = {
+  Asamblea:    { color: "#4F46E5", bg: "#EEF2FF", border: "#C7D2FE" },
+  Taller:      { color: "#0284C7", bg: "#E0F2FE", border: "#BAE6FD" },
+  Conferencia: { color: "#7C3AED", bg: "#F3E8FF", border: "#DDD6FE" },
+  Evaluación:  { color: "#059669", bg: "#D1FAE5", border: "#A7F3D0" },
+  Cuota:       { color: "#D97706", bg: "#FEF3C7", border: "#FDE68A" },
+}
+const evCfg = (t: string) => EV_CFG[t] ?? { color: "#1D4ED8", bg: "#DBEAFE", border: "#BFDBFE" }
+
 export default async function AdminDashboard() {
-  const [totalColegiados, vigentes, porRenovar, suspendidos, totalCursos] = await Promise.all([
+  const [totalColegiados, vigentes, porRenovar, suspendidos, totalCursos, eventos] = await Promise.all([
     prisma.usuario.count({ where: { rol: "COLEGIADO" } }),
     prisma.usuario.count({ where: { rol: "COLEGIADO", estado: EstadoColegiado.VIGENTE } }),
     prisma.usuario.count({ where: { rol: "COLEGIADO", estado: EstadoColegiado.POR_RENOVAR } }),
     prisma.usuario.count({ where: { rol: "COLEGIADO", estado: EstadoColegiado.SUSPENDIDO } }),
     prisma.curso.count(),
+    prisma.evento.findMany({
+      orderBy: { fecha: "asc" },
+      take: 5,
+    }),
   ])
 
   const pct = (a: number, b: number) => b > 0 ? Math.round(a / b * 100) : 0
@@ -30,14 +43,9 @@ export default async function AdminDashboard() {
     return name.replace(/^(Ing\.|Lic\.|Dr\.|Mtro\.|Mtra\.)\s*/i, "").split(/\s+/).slice(0, 2).map((w: string) => w[0] ?? "").join("").toUpperCase()
   }
 
-  const distribucion = [
-    { label: "Ingeniería Eléctrica",      count: Math.round(totalColegiados * 0.35) },
-    { label: "Ing. Mecánica Eléctrica",   count: Math.round(totalColegiados * 0.28) },
-    { label: "Ingeniería Mecánica",       count: Math.round(totalColegiados * 0.19) },
-    { label: "Energías Renovables",       count: Math.round(totalColegiados * 0.10) },
-    { label: "Electromecánica",           count: Math.round(totalColegiados * 0.08) },
-  ]
-  const maxDist = Math.max(...distribucion.map(d => d.count), 1)
+  const now = new Date()
+  const eventosProximos = eventos.filter(e => new Date(e.fecha) >= now)
+  const eventosPasados  = eventos.filter(e => new Date(e.fecha) <  now)
 
   const stats = [
     {
@@ -207,22 +215,131 @@ export default async function AdminDashboard() {
             </div>
           </div>
 
-          {/* Distribución por especialidad */}
-          <div className="card">
-            <div className="card-h"><h2>Especialidades</h2></div>
-            <div className="card-b" style={{ display: "grid", gap: 12 }}>
-              {distribucion.map(d => (
-                <div key={d.label}>
-                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".82rem", marginBottom: 5 }}>
-                    <span style={{ color: "var(--fg-2)" }}>{d.label}</span>
-                    <b style={{ fontFamily: "var(--f-mono)" }}>{d.count}</b>
-                  </div>
-                  <div style={{ height: 5, borderRadius: 99, background: "var(--surface-2)", overflow: "hidden" }}>
-                    <div style={{ height: "100%", width: `${pct(d.count, maxDist)}%`, background: "var(--brand)", borderRadius: 99 }} />
-                  </div>
-                </div>
-              ))}
+          {/* Eventos del colegio */}
+          <div className="card" style={{ overflow: "hidden" }}>
+            <div className="card-h">
+              <h2 style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Calendar size={15} strokeWidth={2} style={{ color: "var(--brand)" }} />
+                Eventos del colegio
+              </h2>
+              <Link href="/admin/eventos" className="btn sm ghost" style={{ fontSize: ".72rem" }}>
+                Gestionar →
+              </Link>
             </div>
+
+            {eventos.length === 0 ? (
+              <div style={{ padding: "28px 20px", textAlign: "center" }}>
+                <Calendar size={28} strokeWidth={1.25} style={{ color: "var(--muted-2)", margin: "0 auto 10px", display: "block" }} />
+                <p style={{ fontSize: ".82rem", color: "var(--muted)" }}>Sin eventos registrados</p>
+                <Link href="/admin/eventos" className="btn sm" style={{ marginTop: 10, display: "inline-flex" }}>
+                  <Plus size={13} strokeWidth={2} /> Crear evento
+                </Link>
+              </div>
+            ) : (
+              <div>
+                {eventosProximos.length > 0 && (
+                  <div style={{ padding: "8px 16px 4px", fontSize: ".62rem", fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--brand)", background: "var(--info-bg)", borderBottom: "1px solid var(--line)" }}>
+                    Próximos · {eventosProximos.length}
+                  </div>
+                )}
+                {eventosProximos.map((ev, idx) => {
+                  const fecha = new Date(ev.fecha)
+                  const dia   = fecha.getDate()
+                  const mes   = fecha.toLocaleDateString("es-MX", { month: "short" }).replace(".", "").toUpperCase()
+                  const cfg   = evCfg(ev.tipo)
+                  return (
+                    <div key={ev.id} style={{
+                      display: "flex", alignItems: "flex-start", gap: 12,
+                      padding: "12px 16px",
+                      borderBottom: idx < eventosProximos.length - 1 || eventosPasados.length > 0 ? "1px solid var(--line)" : undefined,
+                    }}>
+                      {/* Date block */}
+                      <div style={{
+                        flexShrink: 0, width: 42, height: 46, borderRadius: 8,
+                        display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                        background: cfg.bg, border: `1px solid ${cfg.border}`,
+                      }}>
+                        <span style={{ fontWeight: 800, fontSize: "1.05rem", lineHeight: 1, color: cfg.color }}>{dia}</span>
+                        <span style={{ fontWeight: 700, fontSize: ".5rem", letterSpacing: ".1em", color: cfg.color, marginTop: 1 }}>{mes}</span>
+                      </div>
+
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontWeight: 600, fontSize: ".84rem", color: "var(--fg)", lineHeight: 1.3, marginBottom: 4,
+                          overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {ev.titulo}
+                        </div>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "3px 10px", alignItems: "center" }}>
+                          <span style={{
+                            fontSize: ".58rem", fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase",
+                            padding: "1px 6px", borderRadius: 3, background: cfg.bg, color: cfg.color,
+                          }}>{ev.tipo}</span>
+                          {ev.hora && (
+                            <span style={{ display: "flex", alignItems: "center", gap: 3, fontSize: ".67rem", color: "var(--muted)" }}>
+                              <Clock size={9} strokeWidth={2} /> {ev.hora}
+                            </span>
+                          )}
+                          {ev.lugar && (
+                            <span style={{ display: "flex", alignItems: "center", gap: 3, fontSize: ".67rem", color: "var(--muted)",
+                              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 120 }}>
+                              <MapPin size={9} strokeWidth={2} /> {ev.lugar}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+
+                {eventosPasados.length > 0 && (
+                  <>
+                    <div style={{ padding: "8px 16px 4px", fontSize: ".62rem", fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "var(--muted)", background: "var(--surface-2)", borderTop: eventosProximos.length > 0 ? "1px solid var(--line)" : undefined, borderBottom: "1px solid var(--line)" }}>
+                      Realizados · {eventosPasados.length}
+                    </div>
+                    {eventosPasados.map((ev, idx) => {
+                      const fecha = new Date(ev.fecha)
+                      const dia   = fecha.getDate()
+                      const mes   = fecha.toLocaleDateString("es-MX", { month: "short" }).replace(".", "").toUpperCase()
+                      return (
+                        <div key={ev.id} style={{
+                          display: "flex", alignItems: "flex-start", gap: 12,
+                          padding: "10px 16px", opacity: .6,
+                          borderBottom: idx < eventosPasados.length - 1 ? "1px solid var(--line)" : undefined,
+                        }}>
+                          <div style={{
+                            flexShrink: 0, width: 42, height: 46, borderRadius: 8,
+                            display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
+                            background: "var(--surface-2)", border: "1px solid var(--line)",
+                          }}>
+                            <span style={{ fontWeight: 800, fontSize: "1.05rem", lineHeight: 1, color: "var(--muted)" }}>{dia}</span>
+                            <span style={{ fontWeight: 700, fontSize: ".5rem", letterSpacing: ".1em", color: "var(--muted)", marginTop: 1 }}>{mes}</span>
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontWeight: 600, fontSize: ".82rem", color: "var(--muted)", lineHeight: 1.3, marginBottom: 3,
+                              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              {ev.titulo}
+                            </div>
+                            <span style={{
+                              fontSize: ".58rem", fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase",
+                              padding: "1px 6px", borderRadius: 3, background: "var(--surface-3)", color: "var(--muted)",
+                            }}>{ev.tipo}</span>
+                          </div>
+                          <CheckCircle2 size={13} strokeWidth={2} style={{ color: "var(--ok)", flexShrink: 0, marginTop: 4 }} />
+                        </div>
+                      )
+                    })}
+                  </>
+                )}
+
+                <Link href="/admin/eventos" style={{
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+                  padding: "10px 16px", fontSize: ".75rem", fontWeight: 600,
+                  color: "var(--brand)", textDecoration: "none", borderTop: "1px solid var(--line)",
+                  background: "var(--surface-2)",
+                }}>
+                  Ver todos los eventos <ChevronRight size={13} strokeWidth={2.5} />
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Cuotas */}
