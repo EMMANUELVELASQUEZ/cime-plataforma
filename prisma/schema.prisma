@@ -49,7 +49,7 @@ model Curso {
   titulo      String
   descripcion String?
   imagen      String?
-  area        Area        @default(ELE)
+  area        String      @default("General")
   horas       Int
   modalidad   String
   lugar       String
@@ -65,12 +65,6 @@ model Curso {
   modulos    ModuloCurso[]
   inscritos  InscripcionCurso[]
   pagos      Pago[]
-}
-
-enum Area {
-  ELE
-  MEC
-  SOL
 }
 
 enum EstadoCurso {
@@ -229,6 +223,7 @@ model EntradaExpediente {
   tipo         TipoEntrada @default(NOTA)
   titulo       String
   contenido    String?
+  archivo      String?
   autor        String?
   createdAt    DateTime    @default(now())
 

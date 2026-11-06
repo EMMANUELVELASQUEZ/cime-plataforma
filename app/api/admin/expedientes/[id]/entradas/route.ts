@@ -11,7 +11,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const session = await requireAdmin()
   if (!session) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
 
-  const { tipo, titulo, contenido } = await req.json()
+  const { tipo, titulo, contenido, archivo } = await req.json()
   if (!titulo) return NextResponse.json({ error: "El título es obligatorio" }, { status: 400 })
 
   try {
@@ -21,6 +21,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         tipo: tipo ?? "NOTA",
         titulo: titulo.trim(),
         contenido: contenido?.trim() || null,
+        archivo: archivo ?? null,
         autor: session.user?.name ?? "Admin",
       },
     })
