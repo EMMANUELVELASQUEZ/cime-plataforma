@@ -20,35 +20,39 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Nombre, correo y contraseña son obligatorios." }, { status: 400 })
   }
 
-  const exists = await prisma.usuario.findFirst({
-    where: {
-      OR: [
-        { correo: correo.toLowerCase() },
-        ...(numeroColegiado ? [{ numeroColegiado }] : []),
-      ],
-    },
-  })
-  if (exists) {
-    return NextResponse.json({ error: "Ya existe un colegiado con ese correo o número." }, { status: 409 })
+  try {
+    const exists = await prisma.usuario.findFirst({
+      where: {
+        OR: [
+          { correo: correo.toLowerCase() },
+          ...(numeroColegiado ? [{ numeroColegiado }] : []),
+        ],
+      },
+    })
+    if (exists) {
+      return NextResponse.json({ error: "Ya existe un colegiado con ese correo o número." }, { status: 409 })
+    }
+
+    const hash = await bcrypt.hash(password, 12)
+    const usuario = await prisma.usuario.create({
+      data: {
+        nombre,
+        correo: correo.toLowerCase(),
+        password: hash,
+        rol: Rol.COLEGIADO,
+        numeroColegiado: numeroColegiado || null,
+        especialidad: especialidad || null,
+        ciudad: ciudad || null,
+        cedula: cedula || null,
+        telefono: telefono || null,
+        estado: (estado as EstadoColegiado) ?? EstadoColegiado.VIGENTE,
+        alta: alta ?? new Date().getFullYear(),
+        horasMeta: horasMeta ?? 60,
+      },
+    })
+
+    return NextResponse.json({ id: usuario.id, nombre: usuario.nombre }, { status: 201 })
+  } catch {
+    return NextResponse.json({ error: "Error al crear colegiado" }, { status: 500 })
   }
-
-  const hash = await bcrypt.hash(password, 12)
-  const usuario = await prisma.usuario.create({
-    data: {
-      nombre,
-      correo: correo.toLowerCase(),
-      password: hash,
-      rol: Rol.COLEGIADO,
-      numeroColegiado: numeroColegiado || null,
-      especialidad: especialidad || null,
-      ciudad: ciudad || null,
-      cedula: cedula || null,
-      telefono: telefono || null,
-      estado: (estado as EstadoColegiado) ?? EstadoColegiado.VIGENTE,
-      alta: alta ?? new Date().getFullYear(),
-      horasMeta: horasMeta ?? 60,
-    },
-  })
-
-  return NextResponse.json({ id: usuario.id, nombre: usuario.nombre }, { status: 201 })
 }

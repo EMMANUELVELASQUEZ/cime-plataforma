@@ -9,6 +9,10 @@ async function requireAdmin() {
 
 export async function DELETE(_: Request, { params }: { params: { id: string } }) {
   if (!await requireAdmin()) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
-  await prisma.evento.delete({ where: { id: params.id } })
-  return NextResponse.json({ ok: true })
+  try {
+    await prisma.evento.delete({ where: { id: params.id } })
+    return NextResponse.json({ ok: true })
+  } catch {
+    return NextResponse.json({ error: "Error al eliminar evento" }, { status: 500 })
+  }
 }

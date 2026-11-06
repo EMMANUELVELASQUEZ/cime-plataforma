@@ -11,6 +11,12 @@ export async function POST(req: Request) {
   if (!await requireAdmin()) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
   const { titulo, contenido, categoria, tipo, fijado } = await req.json()
   if (!titulo || !contenido) return NextResponse.json({ error: "Faltan campos obligatorios" }, { status: 400 })
-  const aviso = await prisma.aviso.create({ data: { titulo, contenido, categoria: categoria ?? "Evento", tipo: tipo ?? "conferencia", fijado: !!fijado } })
-  return NextResponse.json(aviso, { status: 201 })
+  try {
+    const aviso = await prisma.aviso.create({
+      data: { titulo, contenido, categoria: categoria ?? "Evento", tipo: tipo ?? "conferencia", fijado: !!fijado },
+    })
+    return NextResponse.json(aviso, { status: 201 })
+  } catch {
+    return NextResponse.json({ error: "Error al crear aviso" }, { status: 500 })
+  }
 }

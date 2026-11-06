@@ -7,13 +7,15 @@ async function requireAdmin() {
   return session && (session.user as any)?.role === "ADMIN" ? session : null
 }
 
-// DELETE /api/admin/expedientes/[id]/entradas/[entradaId]
 export async function DELETE(
   _: Request,
   { params }: { params: { id: string; entradaId: string } }
 ) {
   if (!await requireAdmin()) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
-
-  await prisma.entradaExpediente.delete({ where: { id: params.entradaId } })
-  return NextResponse.json({ ok: true })
+  try {
+    await prisma.entradaExpediente.delete({ where: { id: params.entradaId } })
+    return NextResponse.json({ ok: true })
+  } catch {
+    return NextResponse.json({ error: "Error al eliminar entrada" }, { status: 500 })
+  }
 }

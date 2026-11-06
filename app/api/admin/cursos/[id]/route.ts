@@ -9,27 +9,35 @@ async function requireAdmin() {
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   if (!await requireAdmin()) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
-  const { titulo, area, modalidad, horas, precio, cupo, fechaInicio, fechaFin, instructor, estado } = await req.json()
-  const curso = await prisma.curso.update({
-    where: { id: params.id },
-    data: {
-      ...(titulo && { titulo }),
-      ...(area && { area }),
-      ...(modalidad && { modalidad }),
-      ...(horas !== undefined && { horas: Number(horas) }),
-      ...(precio !== undefined && { precio: Number(precio) }),
-      ...(cupo !== undefined && { cupo: Number(cupo) }),
-      ...(fechaInicio && { fechaInicio: new Date(fechaInicio) }),
-      ...(fechaFin && { fechaFin: new Date(fechaFin) }),
-      ...(instructor !== undefined && { instructor }),
-      ...(estado && { estado }),
-    },
-  })
-  return NextResponse.json(curso)
+  try {
+    const { titulo, area, modalidad, horas, precio, cupo, fechaInicio, fechaFin, instructor, estado } = await req.json()
+    const curso = await prisma.curso.update({
+      where: { id: params.id },
+      data: {
+        ...(titulo && { titulo }),
+        ...(area && { area }),
+        ...(modalidad && { modalidad }),
+        ...(horas !== undefined && { horas: Number(horas) }),
+        ...(precio !== undefined && { precio: Number(precio) }),
+        ...(cupo !== undefined && { cupo: Number(cupo) }),
+        ...(fechaInicio && { fechaInicio: new Date(fechaInicio) }),
+        ...(fechaFin && { fechaFin: new Date(fechaFin) }),
+        ...(instructor !== undefined && { instructor }),
+        ...(estado && { estado }),
+      },
+    })
+    return NextResponse.json(curso)
+  } catch {
+    return NextResponse.json({ error: "Error al actualizar curso" }, { status: 500 })
+  }
 }
 
 export async function DELETE(_: Request, { params }: { params: { id: string } }) {
   if (!await requireAdmin()) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
-  await prisma.curso.delete({ where: { id: params.id } })
-  return NextResponse.json({ ok: true })
+  try {
+    await prisma.curso.delete({ where: { id: params.id } })
+    return NextResponse.json({ ok: true })
+  } catch {
+    return NextResponse.json({ error: "Error al eliminar curso" }, { status: 500 })
+  }
 }

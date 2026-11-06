@@ -12,15 +12,19 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const { titulo } = await req.json()
   if (!titulo?.trim()) return NextResponse.json({ error: "Título requerido" }, { status: 400 })
 
-  const count = await prisma.moduloCurso.count({ where: { cursoId: params.id } })
-  const modulo = await prisma.moduloCurso.create({
-    data: { cursoId: params.id, titulo: titulo.trim(), orden: count + 1 },
-    include: {
-      lecciones: {
-        orderBy: { orden: "asc" },
-        include: { recursos: { orderBy: { orden: "asc" } } },
+  try {
+    const count = await prisma.moduloCurso.count({ where: { cursoId: params.id } })
+    const modulo = await prisma.moduloCurso.create({
+      data: { cursoId: params.id, titulo: titulo.trim(), orden: count + 1 },
+      include: {
+        lecciones: {
+          orderBy: { orden: "asc" },
+          include: { recursos: { orderBy: { orden: "asc" } } },
+        },
       },
-    },
-  })
-  return NextResponse.json(modulo, { status: 201 })
+    })
+    return NextResponse.json(modulo, { status: 201 })
+  } catch {
+    return NextResponse.json({ error: "Error al crear módulo" }, { status: 500 })
+  }
 }
