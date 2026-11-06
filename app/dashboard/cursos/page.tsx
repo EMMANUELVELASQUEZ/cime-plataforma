@@ -5,13 +5,26 @@ import { GraduationCap, Check, Clock, User, CalendarDays, BookOpen, Award } from
 
 export const dynamic = "force-dynamic"
 
-const AREA_LABEL: Record<string, string>  = { ELE: "Eléctrica", MEC: "Mecánica", SOL: "Solar" }
-const AREA_COLOR: Record<string, string>  = { ELE: "#0ea5e9", MEC: "#10b981", SOL: "#f59e0b" }
-const AREA_GRAD: Record<string, string>   = {
-  ELE: "linear-gradient(140deg,#052233 0%,#0e4a6e 100%)",
-  MEC: "linear-gradient(140deg,#05231a 0%,#0a5c3a 100%)",
-  SOL: "linear-gradient(140deg,#231a05 0%,#7a5000 100%)",
+const PALETTE_COLORS = ["#0ea5e9","#10b981","#f59e0b","#6366f1","#ec4899","#14b8a6","#f97316","#8b5cf6","#06b6d4","#84cc16"]
+const PALETTE_GRADS  = [
+  "linear-gradient(140deg,#052233 0%,#0e4a6e 100%)",
+  "linear-gradient(140deg,#05231a 0%,#0a5c3a 100%)",
+  "linear-gradient(140deg,#231a05 0%,#7a5000 100%)",
+  "linear-gradient(140deg,#14102e 0%,#312e81 100%)",
+  "linear-gradient(140deg,#1a0520 0%,#831843 100%)",
+  "linear-gradient(140deg,#042021 0%,#0d4f52 100%)",
+  "linear-gradient(140deg,#1e1005 0%,#7c3608 100%)",
+  "linear-gradient(140deg,#140e22 0%,#3730a3 100%)",
+  "linear-gradient(140deg,#042030 0%,#0e7490 100%)",
+  "linear-gradient(140deg,#0f1a04 0%,#365314 100%)",
+]
+function areaHash(area: string): number {
+  let h = 0
+  for (let i = 0; i < area.length; i++) h = (h * 31 + area.charCodeAt(i)) & 0xffff
+  return h
 }
+function areaColor(area: string) { return PALETTE_COLORS[areaHash(area) % PALETTE_COLORS.length] }
+function areaGrad(area: string)  { return PALETTE_GRADS[areaHash(area)  % PALETTE_GRADS.length]  }
 
 const money = (n: number) =>
   n.toLocaleString("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 })
@@ -55,8 +68,8 @@ export default async function CursosPage() {
           <div className="lms-course-grid">
             {enCurso.map(i => {
               const c     = i.curso
-              const color = AREA_COLOR[c.area] ?? "#6366f1"
-              const grad  = AREA_GRAD[c.area] ?? "linear-gradient(140deg,#1a1a2e,#6366f1)"
+              const color = areaColor(c.area ?? "General")
+              const grad  = areaGrad(c.area ?? "General")
               const p     = Math.round(i.progreso)
               return (
                 <div key={i.id} className="lms-course">
@@ -64,7 +77,7 @@ export default async function CursosPage() {
                     <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", width: "100%" }}>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <span className="subject-tag" style={{ background: `${color}22`, color, borderColor: `${color}44`, display: "inline-block", marginBottom: 5 }}>
-                          {AREA_LABEL[c.area]}
+                          {c.area || "General"}
                         </span>
                         <div style={{ fontSize: ".9rem", fontWeight: 700, color: "#fff", lineHeight: 1.3, paddingRight: 8 }}>{c.titulo}</div>
                       </div>
@@ -125,8 +138,8 @@ export default async function CursosPage() {
             {cursosAbiertos.map(c => {
               const yaInscrito = inscritosIds.has(c.id)
               const lleno      = c.estado === "LLENO" || c.inscritos.length >= c.cupo
-              const color      = AREA_COLOR[c.area] ?? "#6366f1"
-              const grad       = AREA_GRAD[c.area] ?? "linear-gradient(140deg,#1a1a2e,#6366f1)"
+              const color      = areaColor(c.area ?? "General")
+              const grad       = areaGrad(c.area ?? "General")
               const pctCupo    = Math.round(c.inscritos.length / c.cupo * 100)
 
               return (
@@ -137,7 +150,7 @@ export default async function CursosPage() {
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <div style={{ display: "flex", gap: 5, marginBottom: 6, flexWrap: "wrap" }}>
                           <span className="subject-tag" style={{ background: `${color}22`, color, borderColor: `${color}44` }}>
-                            {AREA_LABEL[c.area]}
+                            {c.area || "General"}
                           </span>
                           {yaInscrito && (
                             <span className="subject-tag" style={{ background: "#10b98122", color: "#10b981", borderColor: "#10b98144", display: "flex", alignItems: "center", gap: 3 }}>

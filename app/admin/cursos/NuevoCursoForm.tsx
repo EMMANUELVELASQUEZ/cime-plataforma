@@ -49,11 +49,26 @@ export default function NuevoCursoForm() {
               <div className="grid g-3">
                 <div className="field">
                   <label>Área</label>
-                  <select name="area">
-                    <option value="ELE">Eléctrica</option>
-                    <option value="MEC">Mecánica</option>
-                    <option value="SOL">Solar/Renovable</option>
-                  </select>
+                  <input
+                    name="area"
+                    list="areas-sugerencias"
+                    placeholder="Ej. Eléctrica, Civil…"
+                    autoComplete="off"
+                  />
+                  <datalist id="areas-sugerencias">
+                    <option value="Eléctrica" />
+                    <option value="Mecánica" />
+                    <option value="Solar / Renovable" />
+                    <option value="Civil" />
+                    <option value="Industrial" />
+                    <option value="Electrónica" />
+                    <option value="Hidráulica" />
+                    <option value="Automatización" />
+                    <option value="Termofluidos" />
+                    <option value="Telecomunicaciones" />
+                    <option value="Peritaje" />
+                    <option value="Administración de proyectos" />
+                  </datalist>
                 </div>
                 <div className="field">
                   <label>Modalidad</label>

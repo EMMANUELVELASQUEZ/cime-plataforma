@@ -6,7 +6,6 @@ export const dynamic = "force-dynamic"
 
 const ESTADO_CHIP: Record<string, string> = { ABIERTO: "ok", EN_CURSO: "info", LLENO: "bad", COMPLETADO: "teal" }
 const ESTADO_LABEL: Record<string, string> = { ABIERTO: "Abierto", EN_CURSO: "En curso", LLENO: "Cupo lleno", COMPLETADO: "Completado" }
-const AREA_LABEL: Record<string, string> = { ELE: "Eléctrica", MEC: "Mecánica", SOL: "Solar/Renovable" }
 const money = (n: number) => n.toLocaleString("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 })
 
 export default async function AdminCursosPage() {
@@ -49,7 +48,7 @@ export default async function AdminCursosPage() {
                     <b style={{ fontSize: ".9rem" }}>{c.titulo}</b>
                     <div className="muted" style={{ fontSize: ".78rem" }}>{c.instructor}</div>
                   </td>
-                  <td style={{ fontSize: ".85rem" }}>{AREA_LABEL[c.area]}</td>
+                  <td style={{ fontSize: ".85rem" }}>{c.area || "—"}</td>
                   <td style={{ fontSize: ".85rem" }}>{c.modalidad}</td>
                   <td className="mono" style={{ fontSize: ".82rem" }}>{new Date(c.fechaInicio).toLocaleDateString("es-MX", { day: "numeric", month: "short" })}</td>
                   <td className="mono">{c.horas} h</td>

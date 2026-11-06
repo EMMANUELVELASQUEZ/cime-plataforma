@@ -65,8 +65,9 @@ const TIPOS_ENTRADA: Record<string, { color: string; label: string; icon: React.
   OBSERVACION: { color: "var(--muted)",label: "Observación", icon: <BookOpen   size={13} /> },
   REPORTE:     { color: "var(--bad)",  label: "Reporte",     icon: <AlertTriangle size={13}/> },
 }
-const AREA_COLOR: Record<string, string> = { ELE: "#4A90D9", MEC: "#9b6fe8", SOL: "#34d399" }
-const AREA_LABEL: Record<string, string> = { ELE: "Eléctrica", MEC: "Mecánica", SOL: "Sol / Sustentable" }
+const PALETTE_COLORS = ["#4A90D9","#9b6fe8","#34d399","#f59e0b","#ec4899","#14b8a6","#f97316","#06b6d4"]
+function areaHash(a: string) { let h = 0; for (let i = 0; i < a.length; i++) h = (h * 31 + a.charCodeAt(i)) & 0xffff; return h }
+function areaColor(a: string) { return PALETTE_COLORS[areaHash(a) % PALETTE_COLORS.length] }
 
 const HUES = [211, 142, 262, 24, 199, 327, 38, 172]
 const avatarHue = (n: string) => HUES[(n.charCodeAt(0) ?? 0) % HUES.length]
@@ -350,7 +351,7 @@ function TabCursos({ inscripciones }: { inscripciones: InscripcionData[] }) {
     <div style={{ display: "grid", gap: 12 }}>
       {inscripciones.map(i => {
         const st = ESTADOS_INS[i.estado] ?? ESTADOS_INS.INSCRITO
-        const aColor = AREA_COLOR[i.curso.area] ?? "#C89B2A"
+        const aColor = areaColor(i.curso.area ?? "General")
         const isEditing = editing === i.id
         return (
           <div key={i.id} style={{
@@ -369,7 +370,7 @@ function TabCursos({ inscripciones }: { inscripciones: InscripcionData[] }) {
                     fontFamily: "var(--f-data)", fontSize: ".63rem", fontWeight: 600,
                     color: aColor, letterSpacing: ".05em",
                   }}>
-                    {AREA_LABEL[i.curso.area] ?? i.curso.area} · {i.curso.horas}h
+                    {i.curso.area || "General"} · {i.curso.horas}h
                   </span>
                   <span style={{ fontFamily: "var(--f-mono)", fontSize: ".63rem", color: "var(--muted-2)" }}>
                     {i.curso.codigo}
@@ -493,7 +494,7 @@ function TabConstancias({ inscripciones }: { inscripciones: InscripcionData[] })
   return (
     <div style={{ display: "grid", gap: 2, background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--r)", overflow: "hidden" }}>
       {completados.map((i, idx) => {
-        const aColor = AREA_COLOR[i.curso.area] ?? "#C89B2A"
+        const aColor = areaColor(i.curso.area ?? "General")
         const hasConstancia = !!i.folio
         return (
           <div key={i.id} style={{
@@ -518,7 +519,7 @@ function TabConstancias({ inscripciones }: { inscripciones: InscripcionData[] })
               </h3>
               <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
                 <span style={{ fontFamily: "var(--f-data)", fontSize: ".65rem", color: aColor, fontWeight: 600 }}>
-                  {AREA_LABEL[i.curso.area] ?? i.curso.area} · {i.curso.horas}h
+                  {i.curso.area || "General"} · {i.curso.horas}h
                 </span>
                 <span style={{ fontFamily: "var(--f-data)", fontSize: ".65rem", color: "var(--muted)" }}>
                   Completado {fmtDate(i.createdAt)}
