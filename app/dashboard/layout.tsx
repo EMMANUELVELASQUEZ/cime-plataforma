@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma"
 import AppShell from "@/components/AppShell"
 import type { AppShellUser } from "@/components/AppShell"
 
+export const dynamic = "force-dynamic"
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const session = await auth()
   if (!session) redirect("/login")
