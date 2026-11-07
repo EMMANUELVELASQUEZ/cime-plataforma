@@ -4,7 +4,7 @@ import Link from "next/link"
 import {
   ChevronLeft, ChevronRight, ChevronDown,
   Check, Circle, Video, FileText, Image, Link2, AlignLeft,
-  Download, ExternalLink, BookOpen, Trophy,
+  Download, ExternalLink, BookOpen, Trophy, Archive, Paperclip,
 } from "lucide-react"
 
 /* ─── Types ───────────────────────────────────────────── */
@@ -53,15 +53,17 @@ function getBlobUrl(info: ArchivoInfo): string {
   return URL.createObjectURL(blob)
 }
 
-function getFileIconByNombre(nombre: string) {
-  const ext = nombre.split(".").pop()?.toLowerCase()
-  if (ext === "pdf") return { icon: "📄", color: "#ef4444", bg: "#ef444415" }
-  if (ext === "docx" || ext === "doc") return { icon: "📘", color: "#2563eb", bg: "#2563eb15" }
-  if (ext === "xlsx" || ext === "xls") return { icon: "📗", color: "#16a34a", bg: "#16a34a15" }
-  if (ext === "pptx" || ext === "ppt") return { icon: "📙", color: "#f97316", bg: "#f9731615" }
-  if (ext === "zip" || ext === "rar") return { icon: "📦", color: "#f59e0b", bg: "#f59e0b15" }
-  if (ext === "txt") return { icon: "📃", color: "#6b7280", bg: "#6b728015" }
-  return { icon: "📎", color: "#6b7280", bg: "#6b728015" }
+type IconInfo = { Icon: React.ElementType; color: string; bg: string }
+
+function getDocIconByNombre(nombre: string | undefined): IconInfo {
+  const ext = (nombre ?? "").split(".").pop()?.toLowerCase()
+  if (ext === "pdf") return { Icon: FileText, color: "#ef4444", bg: "#ef444415" }
+  if (ext === "docx" || ext === "doc") return { Icon: FileText, color: "#2563eb", bg: "#2563eb15" }
+  if (ext === "xlsx" || ext === "xls") return { Icon: FileText, color: "#16a34a", bg: "#16a34a15" }
+  if (ext === "pptx" || ext === "ppt") return { Icon: FileText, color: "#f97316", bg: "#f9731615" }
+  if (ext === "zip" || ext === "rar") return { Icon: Archive, color: "#f59e0b", bg: "#f59e0b15" }
+  if (ext === "txt") return { Icon: AlignLeft, color: "#6b7280", bg: "#6b728015" }
+  return { Icon: Paperclip, color: "#6b7280", bg: "#6b728015" }
 }
 
 function formatBytes(bytes: number) {
@@ -70,13 +72,17 @@ function formatBytes(bytes: number) {
   return `${(bytes / 1048576).toFixed(1)} MB`
 }
 
+const resourceHeaderIcon = { width: 28, height: 28, borderRadius: 7, display: "grid", placeItems: "center", flexShrink: 0 }
+
 /* ─── Resource renderers ──────────────────────────────── */
 function RecursoVideo({ recurso }: { recurso: Recurso }) {
   const embed = recurso.url ? getEmbedUrl(recurso.url) : null
   return (
     <div style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
-      <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 8 }}>
-        <span style={{ fontSize: 16 }}>🎥</span>
+      <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ ...resourceHeaderIcon, background: "#ef444415", color: "#ef4444" }}>
+          <Video size={15} strokeWidth={1.75} />
+        </div>
         <span style={{ fontWeight: 600, fontSize: ".9rem" }}>{recurso.titulo}</span>
       </div>
       {embed ? (
@@ -104,9 +110,11 @@ function RecursoDocPdf({ recurso, info }: { recurso: Recurso; info: ArchivoInfo 
 
   return (
     <div style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
-      <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 8, justifyContent: "space-between" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 16 }}>📄</span>
+      <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 10, justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ ...resourceHeaderIcon, background: "#ef444415", color: "#ef4444" }}>
+            <FileText size={15} strokeWidth={1.75} />
+          </div>
           <span style={{ fontWeight: 600, fontSize: ".9rem" }}>{recurso.titulo}</span>
           <span style={{ fontSize: ".73rem", color: "var(--muted)" }}>{formatBytes(info.bytes)}</span>
         </div>
@@ -129,14 +137,16 @@ function RecursoDoc({ recurso }: { recurso: Recurso }) {
   const info = parseArchivo(recurso.url)
   if (!info) return null
   if (info.tipo === "application/pdf") return <RecursoDocPdf recurso={recurso} info={info} />
-  const { icon, color, bg } = getFileIconByNombre(info.nombre)
+  const { Icon, color, bg } = getDocIconByNombre(info.nombre)
   return (
     <div style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
       <button
         onClick={() => downloadArchivo(recurso.url)}
         style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 18px", width: "100%", background: "none", border: "none", cursor: "pointer", color: "inherit", textAlign: "left" }}
       >
-        <div style={{ width: 46, height: 46, borderRadius: 10, background: bg, color, display: "grid", placeItems: "center", flexShrink: 0, fontSize: 22 }}>{icon}</div>
+        <div style={{ width: 46, height: 46, borderRadius: 10, background: bg, color, display: "grid", placeItems: "center", flexShrink: 0 }}>
+          <Icon size={22} strokeWidth={1.5} />
+        </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontWeight: 600, fontSize: ".9rem", marginBottom: 2, color: "var(--fg)" }}>{recurso.titulo}</div>
           <div style={{ fontSize: ".76rem", color: "var(--muted)" }}>
@@ -151,11 +161,14 @@ function RecursoDoc({ recurso }: { recurso: Recurso }) {
 
 function RecursoImagen({ recurso }: { recurso: Recurso }) {
   const info = parseArchivo(recurso.url)
+  const [imgErr, setImgErr] = useState(false)
   return (
     <div style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
-      <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 8, justifyContent: "space-between" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span style={{ fontSize: 16 }}>🖼️</span>
+      <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 10, justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ ...resourceHeaderIcon, background: "#10b98115", color: "#10b981" }}>
+            <Image size={15} strokeWidth={1.75} />
+          </div>
           <span style={{ fontWeight: 600, fontSize: ".9rem" }}>{recurso.titulo}</span>
           {info && <span style={{ fontSize: ".73rem", color: "var(--muted)" }}>{formatBytes(info.bytes)}</span>}
         </div>
@@ -165,9 +178,22 @@ function RecursoImagen({ recurso }: { recurso: Recurso }) {
           </button>
         )}
       </div>
-      {info && (
+      {info && !imgErr && (
         <div style={{ padding: 16, textAlign: "center", background: "var(--surface-2)" }}>
-          <img src={info.url} alt={recurso.titulo} style={{ maxWidth: "100%", maxHeight: 500, borderRadius: "var(--r)", objectFit: "contain", margin: "0 auto" }} />
+          <img
+            src={info.url}
+            alt={recurso.titulo}
+            style={{ maxWidth: "100%", maxHeight: 500, borderRadius: "var(--r)", objectFit: "contain", margin: "0 auto" }}
+            onError={() => setImgErr(true)}
+          />
+        </div>
+      )}
+      {info && imgErr && (
+        <div style={{ padding: "20px 18px", display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ color: "var(--muted)", fontSize: ".84rem" }}>No se puede previsualizar esta imagen.</div>
+          <button className="btn sm" onClick={() => downloadArchivo(recurso.url)}>
+            <Download size={13} strokeWidth={2} /> Descargar
+          </button>
         </div>
       )}
     </div>
@@ -177,8 +203,10 @@ function RecursoImagen({ recurso }: { recurso: Recurso }) {
 function RecursoTexto({ recurso }: { recurso: Recurso }) {
   return (
     <div style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
-      <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 8 }}>
-        <span style={{ fontSize: 16 }}>📝</span>
+      <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ ...resourceHeaderIcon, background: "#8b5cf615", color: "#8b5cf6" }}>
+          <AlignLeft size={15} strokeWidth={1.75} />
+        </div>
         <span style={{ fontWeight: 600, fontSize: ".9rem" }}>{recurso.titulo}</span>
       </div>
       <div style={{ padding: "20px 24px", lineHeight: 1.75, fontSize: ".9rem", color: "var(--fg-2)", whiteSpace: "pre-wrap" }}>
@@ -196,7 +224,9 @@ function RecursoLink({ recurso }: { recurso: Recurso }) {
       rel="noopener noreferrer"
       style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 18px", background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--r-lg)", textDecoration: "none", color: "inherit" }}
     >
-      <div style={{ width: 46, height: 46, borderRadius: 10, background: "#f59e0b15", color: "#f59e0b", display: "grid", placeItems: "center", flexShrink: 0, fontSize: 22 }}>🔗</div>
+      <div style={{ width: 46, height: 46, borderRadius: 10, background: "#f59e0b15", color: "#f59e0b", display: "grid", placeItems: "center", flexShrink: 0 }}>
+        <Link2 size={22} strokeWidth={1.5} />
+      </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontWeight: 600, fontSize: ".9rem", color: "var(--fg)", marginBottom: 2 }}>{recurso.titulo}</div>
         <div style={{ fontSize: ".76rem", color: "var(--brand)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{recurso.url}</div>
