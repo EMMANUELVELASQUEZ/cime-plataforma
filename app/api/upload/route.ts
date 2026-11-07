@@ -2,13 +2,31 @@ import { NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 
 const ALLOWED_TYPES: Record<string, string> = {
-  "application/pdf":    "pdf",
-  "image/jpeg":         "jpg",
-  "image/png":          "png",
-  "image/webp":         "webp",
+  // Documents
+  "application/pdf": "pdf",
+  "application/msword": "doc",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+  "application/vnd.ms-excel": "xls",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "xlsx",
+  "application/vnd.ms-powerpoint": "ppt",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation": "pptx",
+  // Archives
+  "application/zip": "zip",
+  "application/x-zip-compressed": "zip",
+  "application/x-zip": "zip",
+  "application/x-rar-compressed": "rar",
+  "application/vnd.rar": "rar",
+  // Text
+  "text/plain": "txt",
+  // Images
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
 }
 
-const MAX_BYTES = 2 * 1024 * 1024 // 2 MB
+// Vercel function body limit is 4.5 MB; base64 adds ~33% overhead, so cap at 3 MB raw
+const MAX_BYTES = 3 * 1024 * 1024
 
 export async function POST(req: Request) {
   const session = await auth()
@@ -20,10 +38,10 @@ export async function POST(req: Request) {
   if (!file) return NextResponse.json({ error: "Sin archivo" }, { status: 400 })
 
   if (!ALLOWED_TYPES[file.type])
-    return NextResponse.json({ error: "Tipo no permitido (PDF, JPG, PNG, WEBP)" }, { status: 400 })
+    return NextResponse.json({ error: "Tipo no permitido. Formatos aceptados: PDF, Word, Excel, PowerPoint, ZIP, RAR, TXT e imágenes." }, { status: 400 })
 
   if (file.size > MAX_BYTES)
-    return NextResponse.json({ error: "Archivo muy grande (máx 2 MB)" }, { status: 400 })
+    return NextResponse.json({ error: `Archivo muy grande (máx 3 MB). Para archivos grandes usa un enlace externo.` }, { status: 400 })
 
   try {
     const buffer = await file.arrayBuffer()

@@ -49,6 +49,25 @@ function formatBytes(bytes: number) {
   return `${(bytes / 1048576).toFixed(1)} MB`
 }
 
+function parseRecursoUrl(raw: string | null): { url: string; nombre: string; tipo: string; bytes: number } | null {
+  if (!raw) return null
+  try { return JSON.parse(raw) } catch { return null }
+}
+
+function openRecurso(raw: string | null) {
+  const info = parseRecursoUrl(raw)
+  if (!info) return
+  const base64 = info.url.split(",")[1]
+  const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0))
+  const blob = new Blob([bytes], { type: info.tipo })
+  const blobUrl = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = blobUrl
+  a.download = info.nombre
+  a.click()
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 1500)
+}
+
 function getYoutubeThumb(url: string): string | null {
   const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([a-zA-Z0-9_-]{11})/)
   return m ? `https://img.youtube.com/vi/${m[1]}/mqdefault.jpg` : null
@@ -401,9 +420,9 @@ export default function CursoEditorClient({ cursoId, curso }: { cursoId: string;
                               </a>
                             )}
                             {recurso.url && (recurso.tipo === "DOCUMENTO" || recurso.tipo === "IMAGEN") && (
-                              <a href={recurso.url} target="_blank" rel="noopener noreferrer" className="btn sm ghost" style={{ fontSize: ".72rem" }}>
+                              <button className="btn sm ghost" style={{ fontSize: ".72rem" }} onClick={() => openRecurso(recurso.url)}>
                                 Ver
-                              </a>
+                              </button>
                             )}
                             <button
                               className="btn sm ghost danger"
@@ -550,7 +569,7 @@ export default function CursoEditorClient({ cursoId, curso }: { cursoId: string;
 
           {(recursoTipo === "DOCUMENTO" || recursoTipo === "IMAGEN") && (
             <div className="field">
-              <label>{recursoTipo === "DOCUMENTO" ? "Archivo (PDF, Word, Excel, ZIP — máx 4.5 MB)" : "Imagen (JPG, PNG, WebP — máx 4.5 MB)"}</label>
+              <label>{recursoTipo === "DOCUMENTO" ? "Archivo (PDF, Word, Excel, ZIP, PPT — máx 3 MB)" : "Imagen (JPG, PNG, WebP, GIF — máx 3 MB)"}</label>
               <div
                 style={{
                   border: "2px dashed var(--line-2)", borderRadius: "var(--r)", padding: "24px 16px",
@@ -571,7 +590,7 @@ export default function CursoEditorClient({ cursoId, curso }: { cursoId: string;
                 type="file"
                 style={{ display: "none" }}
                 accept={recursoTipo === "DOCUMENTO"
-                  ? ".pdf,.doc,.docx,.xls,.xlsx,.zip"
+                  ? ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.txt"
                   : "image/jpeg,image/png,image/webp,image/gif"}
                 onChange={() => {
                   const f = fileRef.current?.files?.[0]

@@ -25,16 +25,42 @@ function getEmbedUrl(url: string): string | null {
   return null
 }
 
-function getFileIcon(tipo: TipoRecurso, url: string | null) {
-  if (tipo === "VIDEO_LINK") return { icon: "🎥", color: "#ef4444", bg: "#ef444415" }
-  if (tipo === "IMAGEN") return { icon: "🖼️", color: "#10b981", bg: "#10b98115" }
-  if (tipo === "LINK_EXTERNO") return { icon: "🔗", color: "#f59e0b", bg: "#f59e0b15" }
-  if (tipo === "TEXTO") return { icon: "📝", color: "#8b5cf6", bg: "#8b5cf615" }
-  const ext = url?.split(".").pop()?.toLowerCase()
+interface ArchivoInfo { url: string; nombre: string; tipo: string; bytes: number }
+
+function parseArchivo(raw: string | null): ArchivoInfo | null {
+  if (!raw) return null
+  try { return JSON.parse(raw) } catch { return null }
+}
+
+function downloadArchivo(raw: string | null) {
+  const info = parseArchivo(raw)
+  if (!info) return
+  const base64 = info.url.split(",")[1]
+  const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0))
+  const blob = new Blob([bytes], { type: info.tipo })
+  const blobUrl = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = blobUrl
+  a.download = info.nombre
+  a.click()
+  setTimeout(() => URL.revokeObjectURL(blobUrl), 1500)
+}
+
+function getBlobUrl(info: ArchivoInfo): string {
+  const base64 = info.url.split(",")[1]
+  const bytes = Uint8Array.from(atob(base64), c => c.charCodeAt(0))
+  const blob = new Blob([bytes], { type: info.tipo })
+  return URL.createObjectURL(blob)
+}
+
+function getFileIconByNombre(nombre: string) {
+  const ext = nombre.split(".").pop()?.toLowerCase()
   if (ext === "pdf") return { icon: "📄", color: "#ef4444", bg: "#ef444415" }
   if (ext === "docx" || ext === "doc") return { icon: "📘", color: "#2563eb", bg: "#2563eb15" }
   if (ext === "xlsx" || ext === "xls") return { icon: "📗", color: "#16a34a", bg: "#16a34a15" }
-  if (ext === "zip") return { icon: "📦", color: "#f59e0b", bg: "#f59e0b15" }
+  if (ext === "pptx" || ext === "ppt") return { icon: "📙", color: "#f97316", bg: "#f9731615" }
+  if (ext === "zip" || ext === "rar") return { icon: "📦", color: "#f59e0b", bg: "#f59e0b15" }
+  if (ext === "txt") return { icon: "📃", color: "#6b7280", bg: "#6b728015" }
   return { icon: "📎", color: "#6b7280", bg: "#6b728015" }
 }
 
@@ -68,51 +94,80 @@ function RecursoVideo({ recurso }: { recurso: Recurso }) {
   )
 }
 
-function RecursoDoc({ recurso }: { recurso: Recurso }) {
-  const { icon, color, bg } = getFileIcon(recurso.tipo, recurso.url)
-  const ext = recurso.url?.split(".").pop()?.toUpperCase()
-  const isPdf = ext === "PDF"
+function RecursoDocPdf({ recurso, info }: { recurso: Recurso; info: ArchivoInfo }) {
+  const [blobUrl, setBlobUrl] = useState<string | null>(null)
+
+  function loadPdf() {
+    if (blobUrl) return
+    setBlobUrl(getBlobUrl(info))
+  }
+
   return (
     <div style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
-      {isPdf && recurso.url ? (
-        <>
-          <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 8, justifyContent: "space-between" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 16 }}>{icon}</span>
-              <span style={{ fontWeight: 600, fontSize: ".9rem" }}>{recurso.titulo}</span>
-            </div>
-            <a href={recurso.url} download target="_blank" rel="noopener noreferrer" className="btn sm">
-              <Download size={13} strokeWidth={2} /> Descargar
-            </a>
-          </div>
-          <iframe src={recurso.url} style={{ width: "100%", height: 500, border: 0, display: "block" }} />
-        </>
+      <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 8, justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 16 }}>📄</span>
+          <span style={{ fontWeight: 600, fontSize: ".9rem" }}>{recurso.titulo}</span>
+          <span style={{ fontSize: ".73rem", color: "var(--muted)" }}>{formatBytes(info.bytes)}</span>
+        </div>
+        <button className="btn sm" onClick={() => downloadArchivo(recurso.url)}>
+          <Download size={13} strokeWidth={2} /> Descargar
+        </button>
+      </div>
+      {!blobUrl ? (
+        <div style={{ padding: 24, textAlign: "center" }}>
+          <button className="btn primary" onClick={loadPdf}>Ver PDF</button>
+        </div>
       ) : (
-        <a href={recurso.url ?? "#"} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 18px", textDecoration: "none", color: "inherit" }}>
-          <div style={{ width: 46, height: 46, borderRadius: 10, background: bg, color, display: "grid", placeItems: "center", flexShrink: 0, fontSize: 22 }}>{icon}</div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontWeight: 600, fontSize: ".9rem", marginBottom: 2, color: "var(--fg)" }}>{recurso.titulo}</div>
-            <div style={{ fontSize: ".76rem", color: "var(--muted)" }}>
-              {ext}{recurso.tamano ? ` · ${formatBytes(recurso.tamano)}` : ""}
-            </div>
-          </div>
-          <Download size={18} strokeWidth={1.75} style={{ color: "var(--muted)", flexShrink: 0 }} />
-        </a>
+        <iframe src={blobUrl} style={{ width: "100%", height: 560, border: 0, display: "block" }} />
       )}
     </div>
   )
 }
 
-function RecursoImagen({ recurso }: { recurso: Recurso }) {
+function RecursoDoc({ recurso }: { recurso: Recurso }) {
+  const info = parseArchivo(recurso.url)
+  if (!info) return null
+  if (info.tipo === "application/pdf") return <RecursoDocPdf recurso={recurso} info={info} />
+  const { icon, color, bg } = getFileIconByNombre(info.nombre)
   return (
     <div style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
-      <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 8 }}>
-        <span style={{ fontSize: 16 }}>🖼️</span>
-        <span style={{ fontWeight: 600, fontSize: ".9rem" }}>{recurso.titulo}</span>
+      <button
+        onClick={() => downloadArchivo(recurso.url)}
+        style={{ display: "flex", alignItems: "center", gap: 14, padding: "16px 18px", width: "100%", background: "none", border: "none", cursor: "pointer", color: "inherit", textAlign: "left" }}
+      >
+        <div style={{ width: 46, height: 46, borderRadius: 10, background: bg, color, display: "grid", placeItems: "center", flexShrink: 0, fontSize: 22 }}>{icon}</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 600, fontSize: ".9rem", marginBottom: 2, color: "var(--fg)" }}>{recurso.titulo}</div>
+          <div style={{ fontSize: ".76rem", color: "var(--muted)" }}>
+            {info.nombre} · {formatBytes(info.bytes)}
+          </div>
+        </div>
+        <Download size={18} strokeWidth={1.75} style={{ color: "var(--muted)", flexShrink: 0 }} />
+      </button>
+    </div>
+  )
+}
+
+function RecursoImagen({ recurso }: { recurso: Recurso }) {
+  const info = parseArchivo(recurso.url)
+  return (
+    <div style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
+      <div style={{ padding: "12px 16px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 8, justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span style={{ fontSize: 16 }}>🖼️</span>
+          <span style={{ fontWeight: 600, fontSize: ".9rem" }}>{recurso.titulo}</span>
+          {info && <span style={{ fontSize: ".73rem", color: "var(--muted)" }}>{formatBytes(info.bytes)}</span>}
+        </div>
+        {info && (
+          <button className="btn sm" onClick={() => downloadArchivo(recurso.url)}>
+            <Download size={13} strokeWidth={2} /> Descargar
+          </button>
+        )}
       </div>
-      {recurso.url && (
+      {info && (
         <div style={{ padding: 16, textAlign: "center", background: "var(--surface-2)" }}>
-          <img src={recurso.url} alt={recurso.titulo} style={{ maxWidth: "100%", maxHeight: 500, borderRadius: "var(--r)", objectFit: "contain", margin: "0 auto" }} />
+          <img src={info.url} alt={recurso.titulo} style={{ maxWidth: "100%", maxHeight: 500, borderRadius: "var(--r)", objectFit: "contain", margin: "0 auto" }} />
         </div>
       )}
     </div>
