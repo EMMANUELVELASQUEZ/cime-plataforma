@@ -170,7 +170,22 @@ model Aviso {
   titulo    String
   contenido String
   fijado    Boolean  @default(false)
+  imagen    String?  // JSON payload: {url, nombre, tipo, bytes}
   createdAt DateTime @default(now())
+}
+
+model DirectorioMiembro {
+  id        String   @id @default(cuid())
+  nombre    String
+  cargo     String
+  area      String   @default("Mesa Directiva")
+  foto      String?  // JSON payload: {url, nombre, tipo, bytes}
+  email     String?
+  telefono  String?
+  bio       String?
+  orden     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Pago {

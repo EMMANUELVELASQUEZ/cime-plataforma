@@ -87,6 +87,286 @@ function fmtDate(d: Date) {
   return new Date(d).toLocaleDateString("es-MX", { day: "numeric", month: "long", year: "numeric" })
 }
 
+// ─── Helper: safe parse imagen JSON ─────────────────────────────────────────
+function parseImagen(raw: string | null): { url: string } | null {
+  if (!raw) return null
+  try { return JSON.parse(raw) } catch { return null }
+}
+
+// ─── Aviso card component ────────────────────────────────────────────────────
+function AvisoCard({
+  a,
+  pinned,
+  isLast,
+}: {
+  a: { id: string; tipo: string; categoria: string; titulo: string; contenido: string; fijado: boolean; imagen: string | null; createdAt: Date }
+  pinned: boolean
+  isLast: boolean
+}) {
+  const cat    = catOf(a.categoria)
+  const img    = parseImagen(a.imagen)
+
+  if (img) {
+    // ── Image card: standalone card with banner ──────────────────────────────
+    return (
+      <div style={{
+        background: "var(--surface)",
+        border: "1px solid var(--line)",
+        borderRadius: "var(--r-lg)",
+        overflow: "hidden",
+        boxShadow: "var(--shadow-sm)",
+        marginBottom: isLast ? 0 : 16,
+      }}>
+        {/* Banner image */}
+        <div style={{ position: "relative", height: 220, overflow: "hidden" }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={img.url}
+            alt={a.titulo}
+            style={{
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              display: "block",
+            }}
+          />
+          {/* Gradient overlay */}
+          <div style={{
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(to bottom, transparent 40%, rgba(0,0,0,.55) 100%)",
+          }} />
+          {/* Category + pin badges over image */}
+          <div style={{
+            position: "absolute",
+            top: 14,
+            left: 16,
+            display: "flex",
+            gap: 8,
+            alignItems: "center",
+          }}>
+            <span style={{
+              fontFamily: "var(--f-data)",
+              fontSize: ".65rem",
+              fontWeight: 700,
+              letterSpacing: ".08em",
+              textTransform: "uppercase",
+              padding: "3px 10px",
+              borderRadius: 4,
+              background: cat.bg,
+              color: cat.color,
+              border: `1px solid color-mix(in srgb, ${cat.color} 30%, transparent)`,
+            }}>
+              {a.categoria}
+            </span>
+            {pinned && (
+              <span style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+                fontFamily: "var(--f-data)",
+                fontSize: ".63rem",
+                fontWeight: 600,
+                color: "var(--warn)",
+                letterSpacing: ".05em",
+                background: "var(--warn-bg)",
+                padding: "3px 8px",
+                borderRadius: 4,
+                border: "1px solid color-mix(in srgb, var(--warn) 25%, transparent)",
+              }}>
+                <IcoPin />
+                Fijado
+              </span>
+            )}
+          </div>
+          {/* Title overlay at bottom */}
+          <div style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: "16px 20px 14px",
+          }}>
+            <h3 style={{
+              fontFamily: "var(--f-display)",
+              fontSize: "1.15rem",
+              fontWeight: 800,
+              color: "#fff",
+              lineHeight: 1.3,
+              textShadow: "0 1px 6px rgba(0,0,0,.45)",
+            }}>
+              {a.titulo}
+            </h3>
+          </div>
+        </div>
+
+        {/* Body */}
+        <div style={{ padding: "16px 20px 18px" }}>
+          <p style={{
+            fontSize: ".875rem",
+            color: "var(--fg-2)",
+            lineHeight: 1.65,
+          }}>
+            {a.contenido}
+          </p>
+          <time style={{
+            display: "block",
+            fontFamily: "var(--f-data)",
+            fontSize: ".72rem",
+            color: "var(--muted)",
+            letterSpacing: ".03em",
+            marginTop: 12,
+          }}>
+            {fmtDate(a.createdAt)}
+          </time>
+        </div>
+      </div>
+    )
+  }
+
+  // ── Text-only card: original row style ──────────────────────────────────────
+  return (
+    <div style={{
+      display: "grid",
+      gridTemplateColumns: "auto minmax(0,1fr) auto",
+      gap: 16,
+      padding: "20px 24px",
+      alignItems: "start",
+      borderBottom: isLast ? undefined : "1px solid var(--line)",
+      borderLeft: `3px solid ${cat.color}`,
+      background: pinned ? "color-mix(in srgb, var(--surface) 92%, var(--warn-bg))" : undefined,
+    }}>
+      {/* Icon */}
+      <div style={{
+        width: 40,
+        height: 40,
+        borderRadius: "var(--r-sm)",
+        display: "grid",
+        placeItems: "center",
+        background: cat.bg,
+        color: cat.color,
+        flexShrink: 0,
+      }}>
+        {iconOf(a.categoria)}
+      </div>
+
+      {/* Body */}
+      <div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
+          <span style={{
+            fontFamily: "var(--f-data)",
+            fontSize: ".65rem",
+            fontWeight: 700,
+            letterSpacing: ".08em",
+            textTransform: "uppercase",
+            padding: "2px 8px",
+            borderRadius: 3,
+            background: cat.bg,
+            color: cat.color,
+            border: `1px solid color-mix(in srgb, ${cat.color} 30%, transparent)`,
+          }}>
+            {a.categoria}
+          </span>
+          {pinned && (
+            <span style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 4,
+              fontFamily: "var(--f-data)",
+              fontSize: ".63rem",
+              fontWeight: 600,
+              color: "var(--warn)",
+              letterSpacing: ".05em",
+            }}>
+              <IcoPin />
+              Fijado
+            </span>
+          )}
+        </div>
+        <h3 style={{
+          fontFamily: "var(--f-display)",
+          fontSize: "1.05rem",
+          fontWeight: 800,
+          color: "var(--fg)",
+          lineHeight: 1.3,
+          marginBottom: 6,
+        }}>
+          {a.titulo}
+        </h3>
+        <p style={{
+          fontSize: ".875rem",
+          color: "var(--fg-2)",
+          lineHeight: 1.65,
+          maxWidth: "72ch",
+        }}>
+          {a.contenido}
+        </p>
+      </div>
+
+      {/* Date */}
+      <time style={{
+        fontFamily: "var(--f-data)",
+        fontSize: ".72rem",
+        color: "var(--muted)",
+        whiteSpace: "nowrap",
+        letterSpacing: ".03em",
+        paddingTop: 2,
+      }}>
+        {fmtDate(a.createdAt)}
+      </time>
+    </div>
+  )
+}
+
+// ─── Helper: group avisos by whether they have an image ─────────────────────
+// Image cards render outside the grouped list container (they are standalone cards).
+// Text-only cards are batched into a grouped bordered container.
+
+function renderGroup(
+  items: { id: string; tipo: string; categoria: string; titulo: string; contenido: string; fijado: boolean; imagen: string | null; createdAt: Date }[],
+  pinned: boolean
+) {
+  if (items.length === 0) return null
+
+  // Split into consecutive runs of text-only vs image cards
+  const nodes: React.ReactNode[] = []
+  let textBuffer: typeof items = []
+
+  function flushTextBuffer(keyPrefix: string) {
+    if (textBuffer.length === 0) return
+    const buf = textBuffer
+    textBuffer = []
+    nodes.push(
+      <div key={`${keyPrefix}-text`} style={{
+        background: "var(--surface)",
+        border: "1px solid var(--line)",
+        borderRadius: "var(--r)",
+        overflow: "hidden",
+        boxShadow: "var(--shadow-sm)",
+        marginBottom: 16,
+      }}>
+        {buf.map((a, idx) => (
+          <AvisoCard key={a.id} a={a} pinned={pinned} isLast={idx === buf.length - 1} />
+        ))}
+      </div>
+    )
+  }
+
+  items.forEach((a, i) => {
+    if (a.imagen) {
+      flushTextBuffer(`before-${a.id}`)
+      nodes.push(
+        <AvisoCard key={a.id} a={a} pinned={pinned} isLast={false} />
+      )
+    } else {
+      textBuffer.push(a)
+    }
+    if (i === items.length - 1) flushTextBuffer(`end-${i}`)
+  })
+
+  return <>{nodes}</>
+}
+
 // ─── Page ────────────────────────────────────────────────────────────────────
 export default async function AvisosPage() {
   const avisos = await prisma.aviso.findMany({
@@ -195,107 +475,7 @@ export default async function AvisosPage() {
             </span>
             <div style={{ flex: 1, height: 1, background: "var(--warn-ring)", opacity: .4 }} />
           </div>
-
-          <div style={{
-            background: "var(--surface)",
-            border: "1px solid var(--line)",
-            borderRadius: "var(--r)",
-            overflow: "hidden",
-            boxShadow: "var(--shadow-sm)",
-          }}>
-            {pinned.map((a, idx) => {
-              const cat = catOf(a.categoria)
-              return (
-                <div key={a.id} style={{
-                  display: "grid",
-                  gridTemplateColumns: "auto minmax(0,1fr) auto",
-                  gap: 16,
-                  padding: "20px 24px",
-                  alignItems: "start",
-                  borderBottom: idx < pinned.length - 1 ? "1px solid var(--line)" : undefined,
-                  borderLeft: `3px solid ${cat.color}`,
-                  background: "color-mix(in srgb, var(--surface) 92%, var(--warn-bg))",
-                }}>
-                  {/* Icon */}
-                  <div style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: "var(--r-sm)",
-                    display: "grid",
-                    placeItems: "center",
-                    background: cat.bg,
-                    color: cat.color,
-                    flexShrink: 0,
-                  }}>
-                    {iconOf(a.categoria)}
-                  </div>
-
-                  {/* Body */}
-                  <div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6, flexWrap: "wrap" }}>
-                      <span style={{
-                        fontFamily: "var(--f-data)",
-                        fontSize: ".65rem",
-                        fontWeight: 700,
-                        letterSpacing: ".08em",
-                        textTransform: "uppercase",
-                        padding: "2px 8px",
-                        borderRadius: 3,
-                        background: cat.bg,
-                        color: cat.color,
-                        border: `1px solid color-mix(in srgb, ${cat.color} 30%, transparent)`,
-                      }}>
-                        {a.categoria}
-                      </span>
-                      <span style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 4,
-                        fontFamily: "var(--f-data)",
-                        fontSize: ".63rem",
-                        fontWeight: 600,
-                        color: "var(--warn)",
-                        letterSpacing: ".05em",
-                      }}>
-                        <IcoPin />
-                        Fijado
-                      </span>
-                    </div>
-                    <h3 style={{
-                      fontFamily: "var(--f-display)",
-                      fontSize: "1.05rem",
-                      fontWeight: 800,
-                      color: "var(--fg)",
-                      lineHeight: 1.3,
-                      marginBottom: 6,
-                    }}>
-                      {a.titulo}
-                    </h3>
-                    <p style={{
-                      fontSize: ".875rem",
-                      color: "var(--fg-2)",
-                      lineHeight: 1.65,
-                      maxWidth: "72ch",
-                    }}>
-                      {a.contenido}
-                    </p>
-                  </div>
-
-                  {/* Date */}
-                  <time style={{
-                    fontFamily: "var(--f-data)",
-                    fontSize: ".72rem",
-                    color: "var(--muted)",
-                    whiteSpace: "nowrap",
-                    letterSpacing: ".03em",
-                    paddingTop: 2,
-                  }}>
-                    {fmtDate(a.createdAt)}
-                  </time>
-                </div>
-              )
-            })}
-          </div>
+          {renderGroup(pinned, true)}
         </div>
       )}
 
@@ -322,93 +502,7 @@ export default async function AvisosPage() {
               <div style={{ flex: 1, height: 1, background: "var(--line)" }} />
             </div>
           )}
-
-          <div style={{
-            background: "var(--surface)",
-            border: "1px solid var(--line)",
-            borderRadius: "var(--r)",
-            overflow: "hidden",
-            boxShadow: "var(--shadow-sm)",
-          }}>
-            {regular.map((a, idx) => {
-              const cat = catOf(a.categoria)
-              return (
-                <div key={a.id} style={{
-                  display: "grid",
-                  gridTemplateColumns: "auto minmax(0,1fr) auto",
-                  gap: 16,
-                  padding: "20px 24px",
-                  alignItems: "start",
-                  borderBottom: idx < regular.length - 1 ? "1px solid var(--line)" : undefined,
-                  borderLeft: `3px solid ${cat.color}`,
-                }}>
-                  {/* Icon */}
-                  <div style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: "var(--r-sm)",
-                    display: "grid",
-                    placeItems: "center",
-                    background: cat.bg,
-                    color: cat.color,
-                    flexShrink: 0,
-                  }}>
-                    {iconOf(a.categoria)}
-                  </div>
-
-                  {/* Body */}
-                  <div>
-                    <div style={{ marginBottom: 6 }}>
-                      <span style={{
-                        fontFamily: "var(--f-data)",
-                        fontSize: ".65rem",
-                        fontWeight: 700,
-                        letterSpacing: ".08em",
-                        textTransform: "uppercase",
-                        padding: "2px 8px",
-                        borderRadius: 3,
-                        background: cat.bg,
-                        color: cat.color,
-                        border: `1px solid color-mix(in srgb, ${cat.color} 30%, transparent)`,
-                      }}>
-                        {a.categoria}
-                      </span>
-                    </div>
-                    <h3 style={{
-                      fontFamily: "var(--f-display)",
-                      fontSize: "1.05rem",
-                      fontWeight: 800,
-                      color: "var(--fg)",
-                      lineHeight: 1.3,
-                      marginBottom: 6,
-                    }}>
-                      {a.titulo}
-                    </h3>
-                    <p style={{
-                      fontSize: ".875rem",
-                      color: "var(--fg-2)",
-                      lineHeight: 1.65,
-                      maxWidth: "72ch",
-                    }}>
-                      {a.contenido}
-                    </p>
-                  </div>
-
-                  {/* Date */}
-                  <time style={{
-                    fontFamily: "var(--f-data)",
-                    fontSize: ".72rem",
-                    color: "var(--muted)",
-                    whiteSpace: "nowrap",
-                    letterSpacing: ".03em",
-                    paddingTop: 2,
-                  }}>
-                    {fmtDate(a.createdAt)}
-                  </time>
-                </div>
-              )
-            })}
-          </div>
+          {renderGroup(regular, false)}
         </div>
       )}
     </div>
