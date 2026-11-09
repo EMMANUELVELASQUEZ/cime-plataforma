@@ -30,6 +30,17 @@ model Usuario {
   pagos         Pago[]
   expediente    Expediente?
   solicitudes   SolicitudPlan[]
+  mensajes      Mensaje[]
+}
+
+model Mensaje {
+  id         String   @id @default(cuid())
+  contenido  String
+  deAdmin    Boolean  @default(false)
+  leido      Boolean  @default(false)
+  usuarioId  String
+  createdAt  DateTime @default(now())
+  usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
 }
 
 enum Rol {

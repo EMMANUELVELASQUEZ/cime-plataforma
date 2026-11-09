@@ -8,7 +8,7 @@ import {
   LayoutDashboard, GraduationCap, Calendar, FileCheck, Megaphone,
   Users, CreditCard, User, Moon, Sun, LogOut, Menu, X,
   ChevronRight, ChevronDown, BarChart3, Bell,
-  PanelLeftClose, PanelLeftOpen, FolderOpen, FileText, Building2, BookMarked,
+  PanelLeftClose, PanelLeftOpen, FolderOpen, FileText, Building2, BookMarked, MessageCircle,
 } from "lucide-react"
 
 // ─── Helpers ────────────────────────────────────────────────────
@@ -40,10 +40,11 @@ export interface AppShellUser {
   estado?:          string
   especialidad?:    string | null
   cursosResumen?:   { titulo: string; horas: number; progreso: number; area: string; estado: string }[]
-  avisosCount?:     number
-  planesAlerta?:    number
-  totalColegiados?: number
-  padronPct?:       number
+  avisosCount?:       number
+  planesAlerta?:      number
+  totalColegiados?:   number
+  padronPct?:         number
+  mensajesNoLeidos?:  number
 }
 
 interface AppShellProps {
@@ -60,6 +61,7 @@ const TITLES: Record<string, string> = {
   "/admin/cursos":           "Cursos",
   "/admin/eventos":          "Eventos",
   "/admin/avisos":           "Avisos",
+  "/admin/mensajes":         "Mensajes",
   "/admin/directorio":       "Directorio Institucional",
   "/admin/expedientes":      "Expedientes",
   "/admin/pagos":            "Gestión de Pagos",
@@ -70,6 +72,7 @@ const TITLES: Record<string, string> = {
   "/dashboard/calendario":   "Calendario",
   "/dashboard/constancias":  "Constancias",
   "/dashboard/avisos":       "Avisos",
+  "/dashboard/mensajes":     "Mensajes",
   "/dashboard/directorio":   "Directorio",
   "/dashboard/pagos":        "Pagos y cuotas",
   "/dashboard/planes":       "Planes de pago",
@@ -149,8 +152,9 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
       { href: "/admin/colegiados", icon: <Users         size={18} strokeWidth={1.75} />, label: "Colegiados" },
       { href: "/admin/cursos",     icon: <GraduationCap size={18} strokeWidth={1.75} />, label: "Cursos" },
       { href: "/admin/eventos",    icon: <Calendar      size={18} strokeWidth={1.75} />, label: "Eventos" },
-      { href: "/admin/avisos",       icon: <Megaphone   size={18} strokeWidth={1.75} />, label: "Avisos" },
-      { href: "/admin/directorio",   icon: <Building2   size={18} strokeWidth={1.75} />, label: "Directorio" },
+      { href: "/admin/avisos",       icon: <Megaphone      size={18} strokeWidth={1.75} />, label: "Avisos" },
+      { href: "/admin/mensajes",     icon: <MessageCircle  size={18} strokeWidth={1.75} />, label: "Mensajes", badge: user.mensajesNoLeidos || undefined },
+      { href: "/admin/directorio",   icon: <Building2      size={18} strokeWidth={1.75} />, label: "Directorio" },
       { href: "/admin/expedientes",  icon: <FolderOpen  size={18} strokeWidth={1.75} />, label: "Expedientes" },
       { href: "/admin/pagos",        icon: <CreditCard  size={18} strokeWidth={1.75} />, label: "Pagos" },
       { href: "/admin/planes",         icon: <FileText    size={18} strokeWidth={1.75} />, label: "Planes", badge: user.planesAlerta || undefined },
@@ -171,8 +175,9 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
     {
       group: "Colegio",
       items: [
-        { href: "/dashboard/avisos",     icon: <Bell      size={18} strokeWidth={1.75} />, label: "Avisos", badge: user.avisosCount || undefined },
-        { href: "/dashboard/pagos",      icon: <CreditCard size={18} strokeWidth={1.75} />, label: "Pagos y cuotas" },
+        { href: "/dashboard/avisos",     icon: <Bell          size={18} strokeWidth={1.75} />, label: "Avisos", badge: user.avisosCount || undefined },
+        { href: "/dashboard/mensajes",   icon: <MessageCircle size={18} strokeWidth={1.75} />, label: "Mensajes", badge: user.mensajesNoLeidos || undefined },
+        { href: "/dashboard/pagos",      icon: <CreditCard    size={18} strokeWidth={1.75} />, label: "Pagos y cuotas" },
         { href: "/dashboard/planes",     icon: <FileText   size={18} strokeWidth={1.75} />, label: "Planes de pago" },
       ],
     },

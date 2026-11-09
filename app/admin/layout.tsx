@@ -2,7 +2,6 @@ import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import AppShell from "@/components/AppShell"
-import AsistenteAdmin from "@/components/AsistenteAdmin"
 
 export const dynamic = "force-dynamic"
 
@@ -11,10 +10,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!session) redirect("/login")
   if ((session.user as any)?.role !== "ADMIN") redirect("/dashboard")
 
-  const [planesAlerta, totalColegiados, vigentes] = await Promise.all([
+  const [planesAlerta, totalColegiados, vigentes, mensajesNoLeidos] = await Promise.all([
     prisma.solicitudPlan.count({ where: { estado: "PENDIENTE" } }),
     prisma.usuario.count({ where: { rol: "COLEGIADO" } }),
     prisma.usuario.count({ where: { rol: "COLEGIADO", estado: "VIGENTE" } }),
+    prisma.mensaje.count({ where: { deAdmin: false, leido: false } }),
   ])
 
   const user = {
@@ -25,12 +25,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     planesAlerta: planesAlerta > 0 ? planesAlerta : undefined,
     totalColegiados,
     padronPct: totalColegiados > 0 ? Math.round(vigentes / totalColegiados * 100) : 0,
+    mensajesNoLeidos: mensajesNoLeidos > 0 ? mensajesNoLeidos : undefined,
   }
 
   return (
     <AppShell user={user}>
       {children}
-      <AsistenteAdmin />
     </AppShell>
   )
 }

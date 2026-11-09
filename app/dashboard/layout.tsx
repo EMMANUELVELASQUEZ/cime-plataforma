@@ -12,7 +12,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const userId = (session.user as any)?.id
 
-  const [dbUser, avisosCount] = await Promise.all([
+  const [dbUser, avisosCount, mensajesNoLeidos] = await Promise.all([
     prisma.usuario.findUnique({
       where: { id: userId },
       select: {
@@ -32,6 +32,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       },
     }),
     prisma.aviso.count(),
+    prisma.mensaje.count({ where: { usuarioId: userId, deAdmin: true, leido: false } }),
   ])
 
   const inscripciones = dbUser?.inscripciones ?? []
@@ -64,6 +65,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     especialidad:    dbUser?.especialidad ?? null,
     cursosResumen,
     avisosCount,
+    mensajesNoLeidos: mensajesNoLeidos > 0 ? mensajesNoLeidos : undefined,
   }
 
   return (
