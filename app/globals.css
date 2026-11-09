@@ -1081,24 +1081,30 @@ dialog[open] { animation: dialogIn .18s cubic-bezier(.22,1,.36,1); }
   .chat-split-left.active { display: flex !important; position: fixed; inset: 60px 0 60px 0; z-index: 50; }
   .chat-split-right { width: 100% !important; }
 
-  /* Banner row responsive */
+  /* Banner responsive */
+  .banner-wrap {
+    padding: 20px 16px 20px 20px !important;
+    border-radius: 12px !important;
+  }
+  .banner-wrap > div:last-child > span:last-child { display: none !important; }
   .banner-row {
-    padding: 0 16px 18px !important;
     flex-direction: column !important;
     align-items: flex-start !important;
     gap: 12px !important;
-    margin-top: -36px !important;
   }
-  .banner-row .banner-avatar {
-    width: 72px !important;
-    height: 72px !important;
-    font-size: 1.4rem !important;
+  .banner-avatar {
+    width: 60px !important;
+    height: 60px !important;
+    font-size: 1.3rem !important;
   }
   .banner-hours {
     flex-direction: row !important;
     align-items: center !important;
-    gap: 12px !important;
-    align-self: flex-end !important;
+    gap: 10px !important;
+    margin-left: 0 !important;
+  }
+  .banner-hours > div:first-child > div:first-child {
+    font-size: 2rem !important;
   }
 
   /* Login mobile */
