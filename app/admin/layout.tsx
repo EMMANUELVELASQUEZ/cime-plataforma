@@ -2,6 +2,7 @@ import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import AppShell from "@/components/AppShell"
+import AsistenteAdmin from "@/components/AsistenteAdmin"
 
 export const dynamic = "force-dynamic"
 
@@ -29,6 +30,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <AppShell user={user}>
       {children}
+      <AsistenteAdmin />
     </AppShell>
   )
 }

@@ -8,7 +8,7 @@ import {
   LayoutDashboard, GraduationCap, Calendar, FileCheck, Megaphone,
   Users, CreditCard, User, Moon, Sun, LogOut, Menu, X,
   ChevronRight, ChevronDown, BarChart3, Bell,
-  PanelLeftClose, PanelLeftOpen, FolderOpen, FileText, Building2,
+  PanelLeftClose, PanelLeftOpen, FolderOpen, FileText, Building2, BookMarked,
 } from "lucide-react"
 
 // ─── Helpers ────────────────────────────────────────────────────
@@ -64,6 +64,7 @@ const TITLES: Record<string, string> = {
   "/admin/expedientes":      "Expedientes",
   "/admin/pagos":            "Gestión de Pagos",
   "/admin/planes":           "Planes de Pago",
+  "/admin/mis-documentos":   "Mis Documentos",
   "/dashboard":              "Inicio",
   "/dashboard/cursos":       "Mis cursos",
   "/dashboard/calendario":   "Calendario",
@@ -152,7 +153,8 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
       { href: "/admin/directorio",   icon: <Building2   size={18} strokeWidth={1.75} />, label: "Directorio" },
       { href: "/admin/expedientes",  icon: <FolderOpen  size={18} strokeWidth={1.75} />, label: "Expedientes" },
       { href: "/admin/pagos",        icon: <CreditCard  size={18} strokeWidth={1.75} />, label: "Pagos" },
-      { href: "/admin/planes",       icon: <FileText    size={18} strokeWidth={1.75} />, label: "Planes", badge: user.planesAlerta || undefined },
+      { href: "/admin/planes",         icon: <FileText    size={18} strokeWidth={1.75} />, label: "Planes", badge: user.planesAlerta || undefined },
+      { href: "/admin/mis-documentos", icon: <BookMarked  size={18} strokeWidth={1.75} />, label: "Mis documentos" },
     ],
   }]
 

@@ -271,3 +271,16 @@ model SolicitudPlan {
 
   @@unique([planId, usuarioId])
 }
+
+model DocumentoAdmin {
+  id            String   @id @default(cuid())
+  nombre        String
+  descripcion   String?
+  categoria     String   @default("General")
+  url           String   // Vercel Blob CDN URL
+  nombreArchivo String
+  tipoMime      String
+  bytes         Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
