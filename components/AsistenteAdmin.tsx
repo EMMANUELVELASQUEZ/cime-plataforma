@@ -115,11 +115,7 @@ export default function AsistenteAdmin() {
         let errMsg = "Error al conectar con el asistente."
         try {
           const errData = await res.json()
-          if (errData?.error?.includes("configurado") || res.status === 503) {
-            errMsg = "El asistente no está configurado. Contacta al administrador del sistema."
-          } else if (res.status === 401) {
-            errMsg = "Sin autorización para usar el asistente."
-          }
+          if (errData?.error) errMsg = errData.error
         } catch {}
         setMessages(prev =>
           prev.slice(0, -1).concat({ role: "assistant", content: errMsg })

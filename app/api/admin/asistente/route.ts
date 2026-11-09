@@ -50,8 +50,18 @@ Responde siempre en español. Sé profesional, breve y útil. Si la administrado
     })
 
     if (!anthropicRes.ok) {
-      const err = await anthropicRes.text()
-      return NextResponse.json({ error: err }, { status: anthropicRes.status })
+      const errBody = await anthropicRes.json().catch(() => ({})) as any
+      const msg = errBody?.error?.message ?? "Error al contactar Anthropic"
+      const status = anthropicRes.status
+      let userMsg = msg
+      if (msg.includes("credit balance") || msg.includes("too low")) {
+        userMsg = "La cuenta de Anthropic no tiene créditos. Ve a console.anthropic.com/settings/billing para recargar."
+      } else if (status === 401) {
+        userMsg = "La clave de API de Anthropic no es válida."
+      } else if (msg.includes("model")) {
+        userMsg = "El modelo solicitado no está disponible en esta cuenta."
+      }
+      return NextResponse.json({ error: userMsg }, { status })
     }
 
     return new Response(anthropicRes.body, {
