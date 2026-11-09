@@ -75,7 +75,7 @@ export default function ColegiadoMensajesPage() {
   }
 
   return (
-    <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column", height: "calc(100vh - 60px)" }}>
+    <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column" }}>
       {/* Header */}
       <div style={{ marginBottom: 16, flexShrink: 0 }}>
         <h1 style={{ fontSize: "1.35rem", fontWeight: 700, color: "var(--fg)", margin: 0 }}>
@@ -88,6 +88,7 @@ export default function ColegiadoMensajesPage() {
 
       {/* Chat container */}
       <div
+        className="mobile-chat-container"
         style={{
           flex: 1,
           display: "flex",
@@ -97,6 +98,7 @@ export default function ColegiadoMensajesPage() {
           overflow: "hidden",
           background: "var(--surface)",
           minHeight: 0,
+          height: "calc(100dvh - 190px)",
         }}
       >
         {/* Bubbles */}

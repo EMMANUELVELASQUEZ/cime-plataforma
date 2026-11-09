@@ -1051,3 +1051,64 @@ dialog[open] { animation: dialogIn .18s cubic-bezier(.22,1,.36,1); }
   }
   #sidebar-toggle { display: inline-flex !important; }
 }
+
+/* ─── Mobile enhancements ──────────────────────────────── */
+@media (max-width: 768px) {
+  /* Extra bottom padding for bottom nav */
+  .view { padding-bottom: 80px !important; }
+
+  /* Dashboard banner compact */
+  .mobile-banner-info { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+  .mobile-banner-hours { align-self: flex-end !important; }
+
+  /* Cards full width */
+  .card-b { padding: 14px !important; }
+  .card-h { padding: 12px 14px !important; }
+
+  /* Stat grid 2 cols on mobile */
+  .lms-stat-bar { grid-template-columns: repeat(2, minmax(0,1fr)) !important; gap: 10px !important; }
+
+  /* Tables scroll */
+  .table-wrap { -webkit-overflow-scrolling: touch; }
+
+  /* Bottom nav */
+  .bottom-nav {
+    display: flex !important;
+  }
+
+  /* Chat pages */
+  .chat-split-left { display: none; }
+  .chat-split-left.active { display: flex !important; position: fixed; inset: 60px 0 60px 0; z-index: 50; }
+  .chat-split-right { width: 100% !important; }
+
+  /* Banner row responsive */
+  .banner-row {
+    padding: 0 16px 18px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    margin-top: -36px !important;
+  }
+  .banner-row .banner-avatar {
+    width: 72px !important;
+    height: 72px !important;
+    font-size: 1.4rem !important;
+  }
+  .banner-hours {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 12px !important;
+    align-self: flex-end !important;
+  }
+
+  /* Login mobile */
+  .login { grid-template-columns: 1fr; }
+  .login-art { display: none; }
+  .login-panel { padding: 32px 20px 48px; border-left: none; }
+
+  /* Mobile chat container height */
+  .mobile-chat-container { height: calc(100dvh - 190px) !important; }
+}
+@media (min-width: 769px) {
+  .bottom-nav { display: none !important; }
+}

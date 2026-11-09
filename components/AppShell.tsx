@@ -11,6 +11,23 @@ import {
   PanelLeftClose, PanelLeftOpen, FolderOpen, FileText, Building2, BookMarked, MessageCircle,
 } from "lucide-react"
 
+// ─── Bottom nav items ────────────────────────────────────────
+const BOTTOM_NAV_COLEGIADO = [
+  { href: "/dashboard",          icon: <LayoutDashboard size={18} strokeWidth={1.75} />, label: "Inicio"   },
+  { href: "/dashboard/cursos",   icon: <GraduationCap   size={18} strokeWidth={1.75} />, label: "Cursos"   },
+  { href: "/dashboard/mensajes", icon: <MessageCircle   size={18} strokeWidth={1.75} />, label: "Mensajes", badge: true },
+  { href: "/dashboard/pagos",    icon: <CreditCard      size={18} strokeWidth={1.75} />, label: "Pagos"    },
+  { href: "/dashboard/perfil",   icon: <User            size={18} strokeWidth={1.75} />, label: "Perfil"   },
+]
+
+const BOTTOM_NAV_ADMIN = [
+  { href: "/admin",              icon: <BarChart3       size={18} strokeWidth={1.75} />, label: "Panel"      },
+  { href: "/admin/colegiados",   icon: <Users           size={18} strokeWidth={1.75} />, label: "Colegiados" },
+  { href: "/admin/mensajes",     icon: <MessageCircle   size={18} strokeWidth={1.75} />, label: "Mensajes", badge: true },
+  { href: "/admin/cursos",       icon: <GraduationCap   size={18} strokeWidth={1.75} />, label: "Cursos"     },
+  { href: null,                  icon: <Menu            size={18} strokeWidth={1.75} />, label: "Mas"        },
+]
+
 // ─── Helpers ────────────────────────────────────────────────────
 function cn(...c: (string | undefined | null | false)[]) {
   return c.filter(Boolean).join(" ")
@@ -549,6 +566,103 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
           {children}
         </main>
       </div>
+
+      {/* ── Bottom navigation bar (mobile only) ─────────────── */}
+      <nav
+        className="bottom-nav"
+        style={{
+          position: "fixed",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 60,
+          height: 60,
+          background: "#070F1C",
+          borderTop: "1px solid rgba(255,255,255,.08)",
+          paddingBottom: "env(safe-area-inset-bottom)",
+          display: "none",
+          alignItems: "stretch",
+        }}
+      >
+        {(isAdmin ? BOTTOM_NAV_ADMIN : BOTTOM_NAV_COLEGIADO).map((item, idx) => {
+          const isMenuBtn = item.href === null
+          const active = !isMenuBtn && (
+            pathname === item.href
+            || (item.href !== "/" && item.href !== "/admin" && item.href !== "/dashboard"
+                && pathname.startsWith(item.href + "/"))
+          )
+          const hasBadge = item.badge && (user.mensajesNoLeidos ?? 0) > 0
+
+          if (isMenuBtn) {
+            return (
+              <button
+                key={idx}
+                onClick={() => setMobileOpen(true)}
+                style={{
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 3,
+                  background: "none",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "rgba(255,255,255,.4)",
+                  padding: "6px 0",
+                  position: "relative",
+                }}
+              >
+                <span style={{ color: "rgba(255,255,255,.4)" }}>{item.icon}</span>
+                <span style={{ fontSize: 9, fontWeight: 600, letterSpacing: ".02em" }}>{item.label}</span>
+              </button>
+            )
+          }
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href!}
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 3,
+                textDecoration: "none",
+                color: active ? "#E8C060" : "rgba(255,255,255,.4)",
+                padding: "6px 0",
+                position: "relative",
+              }}
+            >
+              {active && (
+                <span style={{
+                  position: "absolute",
+                  top: 0, left: "20%", right: "20%",
+                  height: 2,
+                  borderRadius: "0 0 2px 2px",
+                  background: "#E8C060",
+                }} />
+              )}
+              <span style={{ position: "relative" }}>
+                {item.icon}
+                {hasBadge && (
+                  <span style={{
+                    position: "absolute",
+                    top: -3, right: -5,
+                    width: 7, height: 7,
+                    borderRadius: "50%",
+                    background: "#E05050",
+                    border: "1.5px solid #070F1C",
+                  }} />
+                )}
+              </span>
+              <span style={{ fontSize: 9, fontWeight: 600, letterSpacing: ".02em" }}>{item.label}</span>
+            </Link>
+          )
+        })}
+      </nav>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
-import { Send } from "lucide-react"
+import { Send, ArrowLeft } from "lucide-react"
 
 interface Conversacion {
   usuarioId:       string
@@ -35,8 +35,17 @@ export default function AdminMensajesPage() {
   const [mensajes, setMensajes]             = useState<Mensaje[]>([])
   const [input, setInput]                   = useState("")
   const [sending, setSending]               = useState(false)
+  const [isMobile, setIsMobile]             = useState(false)
+  const [mobileView, setMobileView]         = useState<"list" | "chat">("list")
   const bottomRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 769)
+    check()
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
 
   const fetchConversaciones = useCallback(async () => {
     try {
@@ -76,6 +85,7 @@ export default function AdminMensajesPage() {
   async function selectConversacion(c: Conversacion) {
     setSeleccionado(c)
     setMensajes([])
+    if (isMobile) setMobileView("chat")
     await fetchThread(c.usuarioId)
   }
 
@@ -134,7 +144,7 @@ export default function AdminMensajesPage() {
           border: "1px solid var(--line)",
           borderRadius: "var(--r-lg)",
           overflow: "hidden",
-          height: "calc(100vh - 180px)",
+          height: isMobile ? "calc(100dvh - 120px)" : "calc(100vh - 180px)",
           minHeight: 400,
           background: "var(--surface)",
         }}
@@ -142,10 +152,10 @@ export default function AdminMensajesPage() {
         {/* Left pane — conversation list */}
         <div
           style={{
-            width: 280,
+            width: isMobile ? "100%" : 280,
             flexShrink: 0,
-            borderRight: "1px solid var(--line)",
-            display: "flex",
+            borderRight: isMobile ? "none" : "1px solid var(--line)",
+            display: isMobile && mobileView !== "list" ? "none" : "flex",
             flexDirection: "column",
             background: "var(--surface-2)",
           }}
@@ -241,7 +251,12 @@ export default function AdminMensajesPage() {
         </div>
 
         {/* Right pane — chat thread */}
-        <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+        <div style={{
+          flex: 1,
+          display: isMobile && mobileView !== "chat" ? "none" : "flex",
+          flexDirection: "column",
+          minWidth: 0,
+        }}>
           {!seleccionado ? (
             <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <p style={{ color: "var(--muted)", fontSize: ".9rem" }}>
@@ -257,13 +272,39 @@ export default function AdminMensajesPage() {
                   borderBottom: "1px solid var(--line)",
                   background: "var(--surface-2)",
                   flexShrink: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
                 }}
               >
-                <div style={{ fontWeight: 700, fontSize: ".92rem", color: "var(--fg)" }}>
-                  {seleccionado.nombre}
-                </div>
-                <div style={{ fontSize: ".74rem", color: "var(--muted)", marginTop: 1 }}>
-                  {seleccionado.numeroColegiado ? `Col. ${seleccionado.numeroColegiado}` : "Sin numero"}
+                {isMobile && (
+                  <button
+                    onClick={() => { setMobileView("list"); setSeleccionado(null) }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 4,
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      color: "var(--brand)",
+                      fontSize: ".84rem",
+                      fontWeight: 600,
+                      padding: "0 4px 0 0",
+                      flexShrink: 0,
+                    }}
+                  >
+                    <ArrowLeft size={16} strokeWidth={2} />
+                    Volver
+                  </button>
+                )}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: ".92rem", color: "var(--fg)" }}>
+                    {seleccionado.nombre}
+                  </div>
+                  <div style={{ fontSize: ".74rem", color: "var(--muted)", marginTop: 1 }}>
+                    {seleccionado.numeroColegiado ? `Col. ${seleccionado.numeroColegiado}` : "Sin numero"}
+                  </div>
                 </div>
               </div>
 

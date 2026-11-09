@@ -213,7 +213,7 @@ export default async function DashboardPage() {
             <div style={{
               fontFamily: "var(--font-montserrat), Montserrat, system-ui",
               fontWeight: 900,
-              fontSize: "3.6rem",
+              fontSize: "clamp(2rem, 6vw, 3.6rem)",
               letterSpacing: ".22em",
               lineHeight: 1,
               background: "linear-gradient(180deg, rgba(240,208,128,.75) 0%, rgba(201,150,42,.45) 100%)",
@@ -251,14 +251,14 @@ export default async function DashboardPage() {
         </div>
 
         {/* Profile info row */}
-        <div style={{
+        <div className="banner-row" style={{
           background: "linear-gradient(180deg, #0F2256 0%, #0B1D3E 100%)",
           padding: "0 28px 24px",
           display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: 18,
           marginTop: -48,
         }}>
           {/* Avatar with gold ring */}
-          <div style={{
+          <div className="banner-avatar" style={{
             width: 88, height: 88, flexShrink: 0,
             borderRadius: "50%",
             border: "3px solid #C9962A",
@@ -352,7 +352,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Hours stat + mini SVG ring */}
-          <div style={{
+          <div className="banner-hours" style={{
             display: "flex", alignItems: "center", gap: 18,
             paddingBottom: 2, flexShrink: 0,
           }}>
