@@ -1083,28 +1083,33 @@ dialog[open] { animation: dialogIn .18s cubic-bezier(.22,1,.36,1); }
 
   /* Banner responsive */
   .banner-wrap {
-    padding: 20px 16px 20px 20px !important;
+    flex-direction: column !important;
     border-radius: 12px !important;
   }
-  .banner-wrap > div:last-child > span:last-child { display: none !important; }
   .banner-row {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 12px !important;
+    padding: 20px 16px 16px 20px !important;
+    gap: 14px !important;
   }
   .banner-avatar {
-    width: 60px !important;
-    height: 60px !important;
-    font-size: 1.3rem !important;
+    width: 58px !important;
+    height: 58px !important;
+    font-size: 1.25rem !important;
   }
-  .banner-hours {
+  .banner-right {
     flex-direction: row !important;
     align-items: center !important;
-    gap: 10px !important;
-    margin-left: 0 !important;
+    justify-content: space-between !important;
+    border-left: none !important;
+    border-top: 1px solid rgba(255,255,255,.1) !important;
+    padding: 14px 20px !important;
+    min-width: unset !important;
+    gap: 16px !important;
   }
-  .banner-hours > div:first-child > div:first-child {
-    font-size: 2rem !important;
+  .banner-right > div:first-child > div:first-child {
+    font-size: 1.5rem !important;
+  }
+  .banner-hours {
+    gap: 10px !important;
   }
 
   /* Login mobile */

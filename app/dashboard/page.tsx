@@ -169,65 +169,39 @@ export default async function DashboardPage() {
           borderRadius: 16,
           overflow: "hidden",
           boxShadow: "0 4px 24px rgba(0,0,0,.18)",
-          background: "linear-gradient(120deg, #0D2060 0%, #1549B8 55%, #1A5ED4 100%)",
-          padding: "28px 28px 28px 32px",
+          background: "linear-gradient(120deg, #0D2060 0%, #1549B8 60%, #1A5ED4 100%)",
+          padding: "0",
+          display: "flex",
         }}
       >
-        {/* Subtle grid texture */}
-        <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none",
-          backgroundImage: "linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px)",
-          backgroundSize: "32px 32px",
-        }} />
-
         {/* Left gold accent bar */}
         <div style={{
-          position: "absolute", left: 0, top: 0, bottom: 0, width: 5,
+          position: "absolute", left: 0, top: 0, bottom: 0, width: 5, zIndex: 2,
           background: "linear-gradient(180deg, #DBAB3A 0%, #F0D060 50%, #DBAB3A 100%)",
         }} />
 
-        {/* CIME — solid gold, clearly visible */}
+        {/* Subtle grid texture */}
         <div style={{
-          position: "absolute", right: 28, top: "50%",
-          transform: "translateY(-50%)",
-          display: "flex", flexDirection: "column", alignItems: "flex-end",
-          userSelect: "none", pointerEvents: "none",
-        }}>
-          <span style={{
-            fontFamily: "var(--font-montserrat), Montserrat, system-ui",
-            fontWeight: 900,
-            fontSize: "clamp(2.4rem, 6vw, 4rem)",
-            letterSpacing: ".18em",
-            lineHeight: 1,
-            color: "#E8C060",
-            textShadow: "0 2px 20px rgba(232,192,96,.35)",
-          }}>
-            CIME
-          </span>
-          <span style={{
-            fontFamily: "var(--f-data)",
-            fontSize: ".52rem",
-            letterSpacing: ".22em",
-            textTransform: "uppercase",
-            color: "rgba(232,192,96,.6)",
-            marginTop: 4,
-          }}>
-            Veracruz · México
-          </span>
-        </div>
+          position: "absolute", inset: 0, pointerEvents: "none", zIndex: 0,
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,.04) 1px, transparent 1px)," +
+            "linear-gradient(90deg, rgba(255,255,255,.04) 1px, transparent 1px)",
+          backgroundSize: "32px 32px",
+        }} />
 
-        {/* Content row */}
+        {/* ── LEFT: identity ─────────────────────────────── */}
         <div className="banner-row" style={{
           position: "relative", zIndex: 1,
-          display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap",
+          flex: 1, minWidth: 0,
+          display: "flex", alignItems: "center", gap: 18,
+          padding: "26px 24px 26px 32px",
         }}>
-
           {/* Avatar */}
           <div className="banner-avatar" style={{
             width: 72, height: 72, flexShrink: 0,
             borderRadius: "50%",
             border: "3px solid #E8C060",
-            boxShadow: "0 0 0 4px rgba(232,192,96,.18), 0 4px 16px rgba(0,0,0,.3)",
+            boxShadow: "0 0 0 4px rgba(232,192,96,.15), 0 4px 16px rgba(0,0,0,.3)",
             background: "linear-gradient(135deg, #1240A0 0%, #0D2060 100%)",
             display: "flex", alignItems: "center", justifyContent: "center",
             fontFamily: "var(--font-montserrat), Montserrat, system-ui",
@@ -236,16 +210,16 @@ export default async function DashboardPage() {
             {initials(usuario.nombre)}
           </div>
 
-          {/* Identity */}
-          <div style={{ flex: "1 1 180px", minWidth: 0 }}>
+          {/* Identity text */}
+          <div style={{ flex: 1, minWidth: 0 }}>
             {/* Chips */}
             <div style={{ display: "flex", alignItems: "center", gap: 7, flexWrap: "wrap", marginBottom: 8 }}>
               {usuario.numeroColegiado && (
                 <span style={{
                   fontFamily: "var(--f-mono)", fontSize: ".63rem",
-                  color: "#E8C060", letterSpacing: ".08em",
+                  color: "#E8C060", letterSpacing: ".07em",
                   background: "rgba(232,192,96,.12)",
-                  border: "1px solid rgba(232,192,96,.3)",
+                  border: "1px solid rgba(232,192,96,.28)",
                   padding: "2px 8px", borderRadius: 4,
                 }}>
                   CIME-VER-{usuario.numeroColegiado}
@@ -265,7 +239,7 @@ export default async function DashboardPage() {
 
             {/* Greeting */}
             <h1 className="font-montserrat" style={{
-              fontSize: "clamp(1.1rem, 2.2vw, 1.55rem)",
+              fontSize: "clamp(1.05rem, 2vw, 1.5rem)",
               fontWeight: 700, color: "#FFFFFF", lineHeight: 1.2,
               letterSpacing: "-.01em", margin: "0 0 7px",
             }}>
@@ -275,65 +249,109 @@ export default async function DashboardPage() {
               </span>
             </h1>
 
-            {/* Meta */}
+            {/* Meta info */}
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "3px 14px" }}>
               {usuario.especialidad && (
                 <span style={{
-                  fontFamily: "var(--f-data)", fontSize: ".72rem",
-                  color: "rgba(255,255,255,.65)",
+                  fontFamily: "var(--f-data)", fontSize: ".7rem",
+                  color: "rgba(255,255,255,.6)",
                   display: "flex", alignItems: "center", gap: 5,
                 }}>
-                  <Shield size={10} strokeWidth={2} style={{ color: "rgba(232,192,96,.6)" }} />
+                  <Shield size={10} strokeWidth={2} style={{ color: "rgba(232,192,96,.55)" }} />
                   {usuario.especialidad}
                 </span>
               )}
               {usuario.ciudad && (
                 <span style={{
                   display: "flex", alignItems: "center", gap: 4,
-                  fontFamily: "var(--f-data)", fontSize: ".7rem",
-                  color: "rgba(255,255,255,.45)",
+                  fontFamily: "var(--f-data)", fontSize: ".68rem",
+                  color: "rgba(255,255,255,.4)",
                 }}>
                   <MapPin size={10} strokeWidth={2} /> {usuario.ciudad}
                 </span>
               )}
               {usuario.alta && (
                 <span style={{
-                  fontFamily: "var(--f-data)", fontSize: ".7rem",
-                  color: "rgba(255,255,255,.35)",
+                  fontFamily: "var(--f-data)", fontSize: ".67rem",
+                  color: "rgba(255,255,255,.3)",
                 }}>
                   Alta {usuario.alta}
                 </span>
               )}
             </div>
           </div>
+        </div>
 
-          {/* Hours + mini ring */}
+        {/* ── RIGHT: CIME logo + hours ────────────────────── */}
+        <div className="banner-right" style={{
+          position: "relative", zIndex: 1,
+          flexShrink: 0,
+          display: "flex", flexDirection: "column",
+          alignItems: "flex-end", justifyContent: "center",
+          gap: 10,
+          padding: "20px 28px 20px 24px",
+          borderLeft: "1px solid rgba(255,255,255,.1)",
+          minWidth: 200,
+        }}>
+          {/* CIME logo — clearly visible, its own space */}
+          <div style={{ userSelect: "none", pointerEvents: "none", textAlign: "right" }}>
+            <div style={{
+              fontFamily: "var(--font-montserrat), Montserrat, system-ui",
+              fontWeight: 900,
+              fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)",
+              letterSpacing: ".2em",
+              lineHeight: 1,
+              color: "#E8C060",
+              textShadow: "0 2px 16px rgba(232,192,96,.3)",
+            }}>
+              CIME
+            </div>
+            <div style={{
+              fontFamily: "var(--f-data)",
+              fontSize: ".48rem",
+              letterSpacing: ".22em",
+              textTransform: "uppercase",
+              color: "rgba(232,192,96,.5)",
+              marginTop: 3,
+              textAlign: "right",
+            }}>
+              Veracruz · México
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div style={{
+            width: "100%",
+            height: 1,
+            background: "rgba(255,255,255,.1)",
+          }} />
+
+          {/* Hours + ring */}
           <div className="banner-hours" style={{
-            display: "flex", alignItems: "center", gap: 14,
-            flexShrink: 0, marginLeft: "auto",
+            display: "flex", alignItems: "center", gap: 12,
           }}>
             <div style={{ textAlign: "right" }}>
               <div style={{
                 fontFamily: "var(--font-montserrat), Montserrat, system-ui",
-                fontSize: "2.6rem", fontWeight: 800,
+                fontSize: "2.2rem", fontWeight: 800,
                 color: "#E8C060", lineHeight: 1, letterSpacing: "-.04em",
               }}>
                 {usuario.horas}
-                <span style={{ fontSize: "1.2rem", color: "rgba(232,192,96,.55)", fontWeight: 600 }}>h</span>
+                <span style={{ fontSize: "1.1rem", color: "rgba(232,192,96,.5)", fontWeight: 600 }}>h</span>
               </div>
               <div style={{
-                fontFamily: "var(--f-data)", fontSize: ".63rem",
-                color: "rgba(255,255,255,.45)", marginTop: 4,
+                fontFamily: "var(--f-data)", fontSize: ".6rem",
+                color: "rgba(255,255,255,.4)", marginTop: 4,
               }}>
                 de {usuario.horasMeta}h meta · {pct}%
               </div>
             </div>
 
             {/* Mini ring */}
-            <div style={{ position: "relative", width: 60, height: 60, flexShrink: 0 }}>
-              <svg width="60" height="60" viewBox="0 0 60 60" style={{ transform: "rotate(-90deg)" }}>
-                <circle cx="30" cy="30" r={R_MINI} fill="none" stroke="rgba(255,255,255,.12)" strokeWidth="5" />
-                <circle cx="30" cy="30" r={R_MINI} fill="none"
+            <div style={{ position: "relative", width: 54, height: 54, flexShrink: 0 }}>
+              <svg width="54" height="54" viewBox="0 0 54 54" style={{ transform: "rotate(-90deg)" }}>
+                <circle cx="27" cy="27" r={R_MINI} fill="none" stroke="rgba(255,255,255,.1)" strokeWidth="5" />
+                <circle cx="27" cy="27" r={R_MINI} fill="none"
                   stroke={progressColor} strokeWidth="5" strokeLinecap="round"
                   strokeDasharray={CIRC_MINI} strokeDashoffset={OFFSET_MINI}
                 />
@@ -342,7 +360,7 @@ export default async function DashboardPage() {
                 position: "absolute", inset: 0,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontFamily: "var(--font-montserrat), Montserrat",
-                fontWeight: 700, fontSize: ".78rem", color: "white",
+                fontWeight: 700, fontSize: ".74rem", color: "white",
               }}>
                 {pct}%
               </div>
