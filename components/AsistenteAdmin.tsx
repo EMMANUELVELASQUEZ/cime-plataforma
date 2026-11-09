@@ -111,43 +111,20 @@ export default function AsistenteAdmin() {
         body: JSON.stringify({ messages: newMessages }),
       })
 
-      if (!res.ok || !res.body) {
-        let errMsg = "Error al conectar con el asistente."
-        try {
-          const errData = await res.json()
-          if (errData?.error) errMsg = errData.error
-        } catch {}
+      const data = await res.json()
+
+      if (!res.ok || data.error) {
         setMessages(prev =>
-          prev.slice(0, -1).concat({ role: "assistant", content: errMsg })
+          prev.slice(0, -1).concat({ role: "assistant", content: data.error ?? "Error al conectar con el asistente." })
         )
-        setLoading(false)
-        return
-      }
-
-      const reader = res.body.getReader()
-      const decoder = new TextDecoder()
-      let full = ""
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        const chunk = decoder.decode(value)
-        for (const line of chunk.split("\n")) {
-          if (!line.startsWith("data:")) continue
-          const data = line.slice(5).trim()
-          if (data === "[DONE]") break
-          try {
-            const j = JSON.parse(data)
-            if (j.type === "content_block_delta" && j.delta?.type === "text_delta") {
-              full += j.delta.text
-              setMessages(prev => [...prev.slice(0, -1), { role: "assistant", content: full }])
-            }
-          } catch {}
-        }
+      } else {
+        setMessages(prev =>
+          prev.slice(0, -1).concat({ role: "assistant", content: data.content })
+        )
       }
     } catch {
       setMessages(prev =>
-        prev.slice(0, -1).concat({ role: "assistant", content: "Error al conectar con el asistente." })
+        prev.slice(0, -1).concat({ role: "assistant", content: "Error de red. Intenta de nuevo." })
       )
     } finally {
       setLoading(false)
