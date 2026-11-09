@@ -7,8 +7,8 @@ interface Conversacion {
   usuarioId:       string
   nombre:          string
   numeroColegiado: string | null
-  ultimoMensaje:   string
-  ultimaFecha:     string
+  ultimoMensaje:   string | null
+  ultimaFecha:     string | null
   noLeidos:        number
 }
 
@@ -165,7 +165,7 @@ export default function AdminMensajesPage() {
           <div style={{ flex: 1, overflowY: "auto" }}>
             {conversaciones.length === 0 ? (
               <div style={{ padding: 20, fontSize: ".82rem", color: "var(--muted)", textAlign: "center" }}>
-                Sin conversaciones aun
+                No hay colegiados registrados
               </div>
             ) : (
               conversaciones.map(c => {
@@ -223,11 +223,14 @@ export default function AdminMensajesPage() {
                           {c.numeroColegiado ? `Col. ${c.numeroColegiado}` : "Sin numero"}
                         </div>
                         <div style={{ fontSize: ".76rem", color: "var(--muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                          {c.ultimoMensaje.length > 40 ? c.ultimoMensaje.slice(0, 40) + "..." : c.ultimoMensaje}
+                          {c.ultimoMensaje
+                            ? (c.ultimoMensaje.length > 40 ? c.ultimoMensaje.slice(0, 40) + "..." : c.ultimoMensaje)
+                            : <span style={{ fontStyle: "italic" }}>Sin mensajes aún</span>
+                          }
                         </div>
                       </div>
                       <div style={{ fontSize: ".67rem", color: "var(--muted)", flexShrink: 0, marginTop: 2 }}>
-                        {formatDate(c.ultimaFecha)}
+                        {c.ultimaFecha ? formatDate(c.ultimaFecha) : ""}
                       </div>
                     </div>
                   </button>

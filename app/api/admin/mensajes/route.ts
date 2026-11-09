@@ -10,45 +10,47 @@ export async function GET() {
   if ((session.user as any)?.role !== "ADMIN")
     return NextResponse.json({ error: "Prohibido" }, { status: 403 })
 
-  // Find all colegiados that have at least one message
-  const mensajes = await prisma.mensaje.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { usuario: { select: { id: true, nombre: true, numeroColegiado: true } } },
+  // All colegiados + their messages
+  const colegiados = await prisma.usuario.findMany({
+    where: { rol: "COLEGIADO" },
+    orderBy: { nombre: "asc" },
+    select: {
+      id: true,
+      nombre: true,
+      numeroColegiado: true,
+      mensajes: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { contenido: true, createdAt: true, deAdmin: true },
+      },
+    },
   })
 
-  // Group by usuarioId
-  const map = new Map<
-    string,
-    {
-      usuarioId:        string
-      nombre:           string
-      numeroColegiado:  string | null
-      ultimoMensaje:    string
-      ultimaFecha:      Date
-      noLeidos:         number
-    }
-  >()
+  // Unread count per colegiado (messages from colegiado not yet read)
+  const noLeidosPorUsuario = await prisma.mensaje.groupBy({
+    by: ["usuarioId"],
+    where: { deAdmin: false, leido: false },
+    _count: { id: true },
+  })
+  const noLeidosMap = new Map(noLeidosPorUsuario.map(r => [r.usuarioId, r._count.id]))
 
-  for (const m of mensajes) {
-    if (!map.has(m.usuarioId)) {
-      map.set(m.usuarioId, {
-        usuarioId:       m.usuarioId,
-        nombre:          m.usuario.nombre,
-        numeroColegiado: m.usuario.numeroColegiado ?? null,
-        ultimoMensaje:   m.contenido,
-        ultimaFecha:     m.createdAt,
-        noLeidos:        0,
-      })
-    }
-    // Count unread colegiado messages (deAdmin=false, leido=false)
-    if (!m.deAdmin && !m.leido) {
-      const entry = map.get(m.usuarioId)!
-      entry.noLeidos += 1
-    }
-  }
+  const result = colegiados.map(c => ({
+    usuarioId:       c.id,
+    nombre:          c.nombre,
+    numeroColegiado: c.numeroColegiado ?? null,
+    ultimoMensaje:   c.mensajes[0]?.contenido ?? null,
+    ultimaFecha:     c.mensajes[0]?.createdAt ?? null,
+    noLeidos:        noLeidosMap.get(c.id) ?? 0,
+  }))
 
-  // Most-recent message is first (already sorted desc, first occurrence = latest)
-  const conversations = Array.from(map.values())
+  // Sort: colegiados with unread first, then by last message date, then alphabetically
+  result.sort((a, b) => {
+    if (b.noLeidos !== a.noLeidos) return b.noLeidos - a.noLeidos
+    if (a.ultimaFecha && b.ultimaFecha) return new Date(b.ultimaFecha).getTime() - new Date(a.ultimaFecha).getTime()
+    if (a.ultimaFecha) return -1
+    if (b.ultimaFecha) return 1
+    return a.nombre.localeCompare(b.nombre)
+  })
 
-  return NextResponse.json(conversations)
+  return NextResponse.json(result)
 }

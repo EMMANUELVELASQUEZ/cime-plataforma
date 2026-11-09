@@ -1,7 +1,6 @@
 "use client"
 
-import { useState, useTransition } from "react"
-import { useRouter } from "next/navigation"
+import { useState } from "react"
 import { FileText, Plus, Edit2, Trash2, ChevronDown, X, Check } from "lucide-react"
 
 // ─── Types ───────────────────────────────────────────────────────
@@ -141,9 +140,6 @@ const EMPTY_FORM: PlanForm = {
 
 // ─── Main Component ───────────────────────────────────────────────
 export default function PlanesAdminHub({ data }: Props) {
-  const router = useRouter()
-  const [isPending, startTransition] = useTransition()
-
   const [planes, setPlanes] = useState<PlanItem[]>(data)
   const [solicitudes, setSolicitudes] = useState<SolicitudItem[]>(
     data.flatMap(p => p.solicitudes)

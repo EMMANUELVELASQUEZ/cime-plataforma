@@ -10,34 +10,35 @@ async function requireAdmin() {
 
 export async function GET() {
   if (!await requireAdmin()) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
-
-  const planes = await prisma.planPago.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { _count: { select: { solicitudes: true } } },
-  })
-
-  return NextResponse.json(planes)
+  try {
+    const planes = await prisma.planPago.findMany({
+      orderBy: { createdAt: "desc" },
+      include: { _count: { select: { solicitudes: true } } },
+    })
+    return NextResponse.json(planes)
+  } catch {
+    return NextResponse.json({ error: "Error al obtener planes" }, { status: 500 })
+  }
 }
 
 export async function POST(req: Request) {
   if (!await requireAdmin()) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
-
-  const body = await req.json()
-  const { nombre, descripcion, monto, iva, tipo } = body
-
-  if (!nombre || monto == null) {
-    return NextResponse.json({ error: "Nombre y monto son obligatorios." }, { status: 400 })
+  try {
+    const body = await req.json()
+    const { nombre, descripcion, monto, iva, tipo } = body
+    if (!nombre || monto == null)
+      return NextResponse.json({ error: "Nombre y monto son obligatorios" }, { status: 400 })
+    const plan = await prisma.planPago.create({
+      data: {
+        nombre,
+        descripcion: descripcion ?? null,
+        monto: Number(monto),
+        iva: Boolean(iva),
+        tipo: tipo ?? "OTRO",
+      },
+    })
+    return NextResponse.json(plan, { status: 201 })
+  } catch {
+    return NextResponse.json({ error: "Error al crear plan" }, { status: 500 })
   }
-
-  const plan = await prisma.planPago.create({
-    data: {
-      nombre,
-      descripcion: descripcion ?? null,
-      monto: Number(monto),
-      iva: Boolean(iva),
-      tipo: tipo ?? "OTRO",
-    },
-  })
-
-  return NextResponse.json(plan, { status: 201 })
 }
