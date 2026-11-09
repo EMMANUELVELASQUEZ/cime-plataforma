@@ -42,6 +42,8 @@ export interface AppShellUser {
   cursosResumen?:   { titulo: string; horas: number; progreso: number; area: string; estado: string }[]
   avisosCount?:     number
   planesAlerta?:    number
+  totalColegiados?: number
+  padronPct?:       number
 }
 
 interface AppShellProps {
@@ -380,12 +382,12 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
           style={{ background: "rgba(255,255,255,.04)" }}>
           <div className="flex justify-between text-[.78rem] text-white/60">
             <span>Padrón al corriente</span>
-            <b className="text-white font-bold">83%</b>
+            <b className="text-white font-bold">{user.padronPct ?? 0}%</b>
           </div>
           <div className="h-[5px] rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,.1)" }}>
-            <div className="h-full w-[83%] rounded-full" style={{ background: "#C89B2A" }} />
+            <div className="h-full rounded-full" style={{ background: "#C89B2A", width: `${user.padronPct ?? 0}%` }} />
           </div>
-          <span className="text-[.71rem] text-white/36">150 colegiados registrados</span>
+          <span className="text-[.71rem] text-white/36">{user.totalColegiados ?? 0} colegiados registrados</span>
         </div>
       )}
 
