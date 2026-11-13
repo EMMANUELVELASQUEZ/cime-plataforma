@@ -9,6 +9,7 @@ import {
   Users, CreditCard, User, Moon, Sun, LogOut, Menu, X,
   ChevronRight, ChevronDown, BarChart3, Bell,
   PanelLeftClose, PanelLeftOpen, FolderOpen, FileText, Building2, BookMarked, MessageCircle,
+  Scale, FileUser, TrendingUp, PieChart, Receipt, Wallet,
 } from "lucide-react"
 
 // ─── Bottom nav items ────────────────────────────────────────
@@ -26,6 +27,22 @@ const BOTTOM_NAV_ADMIN = [
   { href: "/admin/mensajes",     icon: <MessageCircle   size={18} strokeWidth={1.75} />, label: "Mensajes", badge: true },
   { href: "/admin/cursos",       icon: <GraduationCap   size={18} strokeWidth={1.75} />, label: "Cursos"     },
   { href: null,                  icon: <Menu            size={18} strokeWidth={1.75} />, label: "Mas"        },
+]
+
+const BOTTOM_NAV_PERITO = [
+  { href: "/perito",             icon: <LayoutDashboard size={18} strokeWidth={1.75} />, label: "Inicio"    },
+  { href: "/perito/calendario",  icon: <Calendar        size={18} strokeWidth={1.75} />, label: "Agenda"    },
+  { href: "/perito/mensajes",    icon: <MessageCircle   size={18} strokeWidth={1.75} />, label: "Mensajes", badge: true },
+  { href: "/perito/avisos",      icon: <Bell            size={18} strokeWidth={1.75} />, label: "Avisos"    },
+  { href: null,                  icon: <Menu            size={18} strokeWidth={1.75} />, label: "Más"       },
+]
+
+const BOTTOM_NAV_TESORERO = [
+  { href: "/tesorero",           icon: <LayoutDashboard size={18} strokeWidth={1.75} />, label: "Panel"    },
+  { href: "/tesorero/pagos",     icon: <CreditCard      size={18} strokeWidth={1.75} />, label: "Pagos"    },
+  { href: "/tesorero/cobranza",  icon: <TrendingUp      size={18} strokeWidth={1.75} />, label: "Cobranza" },
+  { href: "/tesorero/reportes",  icon: <PieChart        size={18} strokeWidth={1.75} />, label: "Reportes" },
+  { href: null,                  icon: <Menu            size={18} strokeWidth={1.75} />, label: "Más"      },
 ]
 
 // ─── Helpers ────────────────────────────────────────────────────
@@ -51,6 +68,7 @@ export interface AppShellUser {
   email?:           string | null
   role?:            string
   numeroColegiado?: string | null
+  numeroPerito?:    string | null
   horas?:           number
   horasMeta?:       number
   vigencia?:        string | null
@@ -84,6 +102,23 @@ const TITLES: Record<string, string> = {
   "/admin/pagos":            "Gestión de Pagos",
   "/admin/planes":           "Planes de Pago",
   "/admin/mis-documentos":   "Mis Documentos",
+  "/admin/peritos":           "Peritos",
+  "/admin/peritos/nuevo":    "Alta de Perito",
+  "/admin/comunicados":      "Comunicados Masivos",
+  "/perito":                 "Inicio",
+  "/perito/calendario":      "Calendario",
+  "/perito/avisos":          "Avisos",
+  "/perito/mensajes":        "Mensajes",
+  "/perito/informacion":     "Mi Información",
+  "/perito/expedientes":     "Mis Expedientes",
+  "/perito/documentos":      "Documentos Personales",
+  "/perito/perfil":          "Mi Perfil",
+  "/tesorero":               "Panel Financiero",
+  "/tesorero/pagos":         "Gestión de Pagos",
+  "/tesorero/cobranza":      "Cobranza",
+  "/tesorero/reportes":      "Reportes Financieros",
+  "/tesorero/facturas":      "Facturas",
+  "/tesorero/mensajes":      "Mensajes",
   "/dashboard":              "Inicio",
   "/dashboard/cursos":       "Mis cursos",
   "/dashboard/calendario":   "Calendario",
@@ -113,6 +148,8 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
   const menuRef = useRef<HTMLDivElement>(null)
 
   const isAdmin      = user.role === "ADMIN"
+  const isPerito     = user.role === "PERITO"
+  const isTesorero   = user.role === "CONTADOR_TESORERO"
   const currentTitle = pageTitle
     ?? TITLES[pathname]
     ?? Object.entries(TITLES).find(([k]) => pathname.startsWith(k + "/"))?.[1]
@@ -162,22 +199,36 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
 
   const AREA_COLOR: Record<string, string> = { ELE: "#4A90D9", MEC: "#9b6fe8", SOL: "#34d399" }
 
-  const adminNav: NavGroup[] = [{
-    group: "Administración",
-    items: [
-      { href: "/admin",            icon: <BarChart3     size={18} strokeWidth={1.75} />, label: "Panel del Colegio" },
-      { href: "/admin/colegiados", icon: <Users         size={18} strokeWidth={1.75} />, label: "Colegiados" },
-      { href: "/admin/cursos",     icon: <GraduationCap size={18} strokeWidth={1.75} />, label: "Cursos" },
-      { href: "/admin/eventos",    icon: <Calendar      size={18} strokeWidth={1.75} />, label: "Eventos" },
-      { href: "/admin/avisos",       icon: <Megaphone      size={18} strokeWidth={1.75} />, label: "Avisos" },
-      { href: "/admin/mensajes",     icon: <MessageCircle  size={18} strokeWidth={1.75} />, label: "Mensajes", badge: user.mensajesNoLeidos || undefined },
-      { href: "/admin/directorio",   icon: <Building2      size={18} strokeWidth={1.75} />, label: "Directorio" },
-      { href: "/admin/expedientes",  icon: <FolderOpen  size={18} strokeWidth={1.75} />, label: "Expedientes" },
-      { href: "/admin/pagos",        icon: <CreditCard  size={18} strokeWidth={1.75} />, label: "Pagos" },
-      { href: "/admin/planes",         icon: <FileText    size={18} strokeWidth={1.75} />, label: "Planes", badge: user.planesAlerta || undefined },
-      { href: "/admin/mis-documentos", icon: <BookMarked  size={18} strokeWidth={1.75} />, label: "Mis documentos" },
-    ],
-  }]
+  const adminNav: NavGroup[] = [
+    {
+      group: "Padrón",
+      items: [
+        { href: "/admin",            icon: <BarChart3     size={18} strokeWidth={1.75} />, label: "Panel del Colegio" },
+        { href: "/admin/colegiados", icon: <Users         size={18} strokeWidth={1.75} />, label: "Colegiados" },
+        { href: "/admin/peritos",    icon: <Scale         size={18} strokeWidth={1.75} />, label: "Peritos" },
+      ],
+    },
+    {
+      group: "Gestión",
+      items: [
+        { href: "/admin/cursos",     icon: <GraduationCap size={18} strokeWidth={1.75} />, label: "Cursos" },
+        { href: "/admin/eventos",    icon: <Calendar      size={18} strokeWidth={1.75} />, label: "Eventos" },
+        { href: "/admin/avisos",     icon: <Megaphone     size={18} strokeWidth={1.75} />, label: "Avisos" },
+        { href: "/admin/mensajes",   icon: <MessageCircle size={18} strokeWidth={1.75} />, label: "Mensajes", badge: user.mensajesNoLeidos || undefined },
+        { href: "/admin/comunicados",icon: <Wallet        size={18} strokeWidth={1.75} />, label: "Comunicados" },
+      ],
+    },
+    {
+      group: "Expedientes y Finanzas",
+      items: [
+        { href: "/admin/directorio",     icon: <Building2  size={18} strokeWidth={1.75} />, label: "Directorio" },
+        { href: "/admin/expedientes",    icon: <FolderOpen size={18} strokeWidth={1.75} />, label: "Expedientes" },
+        { href: "/admin/pagos",          icon: <CreditCard size={18} strokeWidth={1.75} />, label: "Pagos" },
+        { href: "/admin/planes",         icon: <FileText   size={18} strokeWidth={1.75} />, label: "Planes", badge: user.planesAlerta || undefined },
+        { href: "/admin/mis-documentos", icon: <BookMarked size={18} strokeWidth={1.75} />, label: "Mis documentos" },
+      ],
+    },
+  ]
 
   const colegiadoNav: NavGroup[] = [
     {
@@ -204,7 +255,50 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
     },
   ]
 
-  const navGroups = isAdmin ? adminNav : colegiadoNav
+  const peritoNav: NavGroup[] = [
+    {
+      group: "Mi Portal",
+      items: [
+        { href: "/perito",            icon: <LayoutDashboard size={18} strokeWidth={1.75} />, label: "Inicio" },
+        { href: "/perito/calendario", icon: <Calendar        size={18} strokeWidth={1.75} />, label: "Calendario" },
+        { href: "/perito/avisos",     icon: <Bell            size={18} strokeWidth={1.75} />, label: "Avisos", badge: user.avisosCount || undefined },
+        { href: "/perito/mensajes",   icon: <MessageCircle   size={18} strokeWidth={1.75} />, label: "Mensajes", badge: user.mensajesNoLeidos || undefined },
+      ],
+    },
+    {
+      group: "Mi Expediente",
+      items: [
+        { href: "/perito/informacion", icon: <FileUser   size={18} strokeWidth={1.75} />, label: "Información" },
+        { href: "/perito/expedientes", icon: <FolderOpen size={18} strokeWidth={1.75} />, label: "Expedientes" },
+        { href: "/perito/documentos",  icon: <BookMarked size={18} strokeWidth={1.75} />, label: "Documentos" },
+      ],
+    },
+    {
+      group: "Cuenta",
+      items: [{ href: "/perito/perfil", icon: <User size={18} strokeWidth={1.75} />, label: "Mi Perfil" }],
+    },
+  ]
+
+  const tesoreronNav: NavGroup[] = [
+    {
+      group: "Panel Financiero",
+      items: [
+        { href: "/tesorero",           icon: <LayoutDashboard size={18} strokeWidth={1.75} />, label: "Dashboard" },
+        { href: "/tesorero/pagos",     icon: <CreditCard      size={18} strokeWidth={1.75} />, label: "Gestión de Pagos" },
+        { href: "/tesorero/cobranza",  icon: <TrendingUp      size={18} strokeWidth={1.75} />, label: "Cobranza" },
+        { href: "/tesorero/reportes",  icon: <PieChart        size={18} strokeWidth={1.75} />, label: "Reportes" },
+      ],
+    },
+    {
+      group: "Administración",
+      items: [
+        { href: "/tesorero/facturas",  icon: <Receipt        size={18} strokeWidth={1.75} />, label: "Facturas" },
+        { href: "/tesorero/mensajes",  icon: <MessageCircle  size={18} strokeWidth={1.75} />, label: "Mensajes", badge: user.mensajesNoLeidos || undefined },
+      ],
+    },
+  ]
+
+  const navGroups = isAdmin ? adminNav : isPerito ? peritoNav : isTesorero ? tesoreronNav : colegiadoNav
 
   // Sidebar content factory — called with collapsed=true/false
   const sideInner = (collapsed: boolean) => (
@@ -223,7 +317,9 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
         {!collapsed && (
           <div className="min-w-0">
             <div className="text-white font-bold text-[.87rem] tracking-[.055em] leading-tight">CIME VERACRUZ</div>
-            <div className="text-white/38 text-[.64rem] tracking-wide mt-[3px]">Portal del Colegiado</div>
+            <div className="text-white/38 text-[.64rem] tracking-wide mt-[3px]">
+              {isAdmin ? "Administración" : isPerito ? "Portal del Perito" : isTesorero ? "Panel del Tesorero" : "Portal del Colegiado"}
+            </div>
           </div>
         )}
       </div>
@@ -272,7 +368,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
       </nav>
 
       {/* ── User / Stats card ─────────────────────────── */}
-      {!isAdmin && !collapsed && (
+      {!isAdmin && !isTesorero && !collapsed && (
         <div className="relative mx-2.5 mb-3 rounded-xl border border-brand-500/[.18] flex-shrink-0 overflow-hidden"
           style={{ background: "rgba(7,15,28,.85)" }}>
 
@@ -401,7 +497,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
         </div>
       )}
 
-      {isAdmin && !collapsed && (
+      {(isAdmin || isTesorero) && !collapsed && (
         <div className="relative mx-2.5 mb-3 p-3 rounded-xl border border-white/[.08] flex flex-col gap-2 flex-shrink-0"
           style={{ background: "rgba(255,255,255,.04)" }}>
           <div className="flex justify-between text-[.78rem] text-white/60">
@@ -517,7 +613,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
                     {user.name?.split(" ").slice(0, 2).join(" ") ?? "Usuario"}
                   </b>
                   <span className="text-[.68rem]" style={{ color: "var(--muted)" }}>
-                    {isAdmin ? "Administración" : `Col. ${user.numeroColegiado ?? ""}`}
+                    {isAdmin ? "Administración" : isPerito ? `Per. ${user.numeroPerito ?? ""}` : isTesorero ? "Tesorero" : `Col. ${user.numeroColegiado ?? ""}`}
                   </span>
                 </div>
                 <ChevronDown size={13} strokeWidth={2} className="flex-shrink-0" style={{ color: "var(--muted)" }} />
@@ -584,14 +680,14 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
           alignItems: "stretch",
         }}
       >
-        {(isAdmin ? BOTTOM_NAV_ADMIN : BOTTOM_NAV_COLEGIADO).map((item, idx) => {
+        {(isAdmin ? BOTTOM_NAV_ADMIN : isPerito ? BOTTOM_NAV_PERITO : isTesorero ? BOTTOM_NAV_TESORERO : BOTTOM_NAV_COLEGIADO).map((item, idx) => {
           const isMenuBtn = item.href === null
           const active = !isMenuBtn && (
             pathname === item.href
             || (item.href !== "/" && item.href !== "/admin" && item.href !== "/dashboard"
                 && pathname.startsWith(item.href + "/"))
           )
-          const hasBadge = item.badge && (user.mensajesNoLeidos ?? 0) > 0
+          const hasBadge = (item as any).badge && (user.mensajesNoLeidos ?? 0) > 0
 
           if (isMenuBtn) {
             return (

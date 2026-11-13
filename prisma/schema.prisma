@@ -10,6 +10,7 @@ datasource db {
 model Usuario {
   id              String          @id @default(cuid())
   numeroColegiado String?         @unique
+  numeroPerito    String?         @unique
   nombre          String
   correo          String          @unique
   password        String
@@ -46,6 +47,8 @@ model Mensaje {
 enum Rol {
   ADMIN
   COLEGIADO
+  PERITO
+  CONTADOR_TESORERO
 }
 
 enum EstadoColegiado {

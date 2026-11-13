@@ -10,14 +10,16 @@ export async function GET() {
   if ((session.user as any)?.role !== "ADMIN")
     return NextResponse.json({ error: "Prohibido" }, { status: 403 })
 
-  // All colegiados + their messages
+  // All colegiados + peritos + their messages
   const colegiados = await prisma.usuario.findMany({
-    where: { rol: "COLEGIADO" },
+    where: { rol: { in: ["COLEGIADO", "PERITO"] } },
     orderBy: { nombre: "asc" },
     select: {
       id: true,
       nombre: true,
       numeroColegiado: true,
+      numeroPerito: true,
+      rol: true,
       mensajes: {
         orderBy: { createdAt: "desc" },
         take: 1,
@@ -26,7 +28,7 @@ export async function GET() {
     },
   })
 
-  // Unread count per colegiado (messages from colegiado not yet read)
+  // Unread count per member (messages from member not yet read)
   const noLeidosPorUsuario = await prisma.mensaje.groupBy({
     by: ["usuarioId"],
     where: { deAdmin: false, leido: false },
@@ -38,6 +40,8 @@ export async function GET() {
     usuarioId:       c.id,
     nombre:          c.nombre,
     numeroColegiado: c.numeroColegiado ?? null,
+    numeroPerito:    (c as any).numeroPerito ?? null,
+    rol:             (c as any).rol,
     ultimoMensaje:   c.mensajes[0]?.contenido ?? null,
     ultimaFecha:     c.mensajes[0]?.createdAt ?? null,
     noLeidos:        noLeidosMap.get(c.id) ?? 0,

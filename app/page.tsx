@@ -4,6 +4,9 @@ import { auth } from "@/lib/auth"
 export default async function Home() {
   const session = await auth()
   if (!session) redirect("/login")
-  if ((session.user as any)?.role === "ADMIN") redirect("/admin")
+  const role = (session.user as any)?.role
+  if (role === "ADMIN")             redirect("/admin")
+  if (role === "PERITO")            redirect("/perito")
+  if (role === "CONTADOR_TESORERO") redirect("/tesorero")
   redirect("/dashboard")
 }
