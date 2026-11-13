@@ -113,17 +113,7 @@ export default async function DocumentosPeritoPage() {
                       >
                         <div className="card" style={{
                           padding: 0, overflow: "hidden", cursor: "pointer",
-                          transition: "box-shadow .15s, transform .15s",
-                        }}
-                          onMouseEnter={e => {
-                            (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)"
-                            ;(e.currentTarget as HTMLElement).style.boxShadow = "0 8px 24px rgba(0,0,0,.12)"
-                          }}
-                          onMouseLeave={e => {
-                            (e.currentTarget as HTMLElement).style.transform = ""
-                            ;(e.currentTarget as HTMLElement).style.boxShadow = ""
-                          }}
-                        >
+                        }}>
                           {/* Card thumbnail */}
                           <div style={{
                             height: 100, background: isImg ? `url(${doc.url}) center/cover` : `${CAT_COLOR[doc.categoria] ?? "#0D2060"}12`,

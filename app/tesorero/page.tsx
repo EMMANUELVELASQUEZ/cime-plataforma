@@ -110,11 +110,7 @@ export default async function TesoreronPage() {
             <div className="card" style={{
               padding: "18px 20px", cursor: "pointer",
               borderLeft: `4px solid ${item.bg}`,
-              transition: "box-shadow .15s, transform .15s",
-            }}
-              onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)" }}
-              onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = "" }}
-            >
+            }}>
               <div style={{ fontSize: 24, marginBottom: 8 }}>{item.icon}</div>
               <div style={{ fontWeight: 700, fontSize: ".95rem", color: item.bg }}>{item.label}</div>
               <div style={{ fontSize: ".8rem", color: "var(--muted)", marginTop: 2 }}>{item.desc}</div>
