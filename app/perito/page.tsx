@@ -27,7 +27,7 @@ export default async function PeritoInicio() {
   const session = await auth()
   const userId  = (session?.user as any)?.id
 
-  const [usuario, eventos, avisos, mensajesNoLeidos] = await Promise.all([
+  const [usuario, eventos, avisos, mensajesNoLeidos, directorio] = await Promise.all([
     prisma.usuario.findUnique({
       where: { id: userId },
       select: {
@@ -46,6 +46,9 @@ export default async function PeritoInicio() {
       take: 5,
     }),
     prisma.mensaje.count({ where: { usuarioId: userId, deAdmin: true, leido: false } }),
+    prisma.directorioMiembro.findMany({
+      orderBy: [{ area: "asc" }, { orden: "asc" }],
+    }),
   ])
 
   if (!usuario) return null
@@ -314,6 +317,51 @@ export default async function PeritoInicio() {
           </div>
         </div>
       </div>
+
+      {/* ── Directorio Mesa Directiva ──────────────────────────────── */}
+      {directorio.length > 0 && (
+        <div style={{ marginTop: 32 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+            <h2 style={{ margin: 0, fontSize: "1rem", fontWeight: 700 }}>Mesa Directiva</h2>
+            <Link href="/perito/directorio" style={{ fontSize: ".8rem", color: "var(--brand)", fontWeight: 600, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4 }}>
+              Ver todos <ChevronRight size={13} strokeWidth={2.5} />
+            </Link>
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 14 }}>
+            {directorio.slice(0, 6).map(m => {
+              const fotoUrl = (() => { try { return m.foto ? (JSON.parse(m.foto) as { url: string }).url : null } catch { return null } })()
+              const hue = (m.nombre.charCodeAt(0) * 47) % 360
+              return (
+                <div key={m.id} style={{
+                  background: "var(--surface)", border: "1px solid var(--line)",
+                  borderRadius: 10, padding: "20px 14px 16px",
+                  display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
+                  boxShadow: "var(--shadow-sm)", textAlign: "center",
+                }}>
+                  {fotoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={fotoUrl} alt={m.nombre} style={{ width: 72, height: 72, borderRadius: "50%", objectFit: "cover", border: "3px solid var(--line)", flexShrink: 0 }} />
+                  ) : (
+                    <div style={{ width: 72, height: 72, borderRadius: "50%", background: `hsl(${hue} 38% 34%)`, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: "1.2rem", border: "3px solid #0D206030", flexShrink: 0 }}>
+                      {m.nombre.replace(/^(Ing\.|Lic\.|Dr\.|Mtro\.|Mtra\.)\s*/i, "").split(/\s+/).slice(0, 2).map(w => w[0] ?? "").join("").toUpperCase()}
+                    </div>
+                  )}
+                  <div>
+                    <div style={{ fontWeight: 700, fontSize: ".85rem", lineHeight: 1.3, color: "var(--fg)" }}>{m.nombre}</div>
+                    <div style={{ fontSize: ".75rem", color: "var(--muted)", marginTop: 3 }}>{m.cargo}</div>
+                  </div>
+                  <span style={{ fontSize: ".62rem", fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase", padding: "2px 8px", borderRadius: 4, background: "#0D206012", color: "#0D2060", border: "1px solid #0D206025" }}>
+                    {m.area}
+                  </span>
+                  {m.email && (
+                    <a href={`mailto:${m.email}`} style={{ fontSize: ".72rem", color: "var(--brand)", textDecoration: "none" }}>{m.email}</a>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
     </>
   )
 }
