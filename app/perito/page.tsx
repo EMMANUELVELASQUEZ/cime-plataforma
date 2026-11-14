@@ -5,6 +5,7 @@ import {
   Calendar, Megaphone, MessageCircle, FileUser, FolderOpen,
   BookMarked, ChevronRight, MapPin, Shield, ArrowRight, Bell,
 } from "lucide-react"
+import AvisosCarousel from "@/components/AvisosCarousel"
 
 export const dynamic = "force-dynamic"
 
@@ -27,7 +28,7 @@ export default async function PeritoInicio() {
   const session = await auth()
   const userId  = (session?.user as any)?.id
 
-  const [usuario, eventos, avisos, mensajesNoLeidos, directorio] = await Promise.all([
+  const [usuario, eventos, avisos, mensajesNoLeidos, directorio, avisosCarousel] = await Promise.all([
     prisma.usuario.findUnique({
       where: { id: userId },
       select: {
@@ -48,6 +49,10 @@ export default async function PeritoInicio() {
     prisma.mensaje.count({ where: { usuarioId: userId, deAdmin: true, leido: false } }),
     prisma.directorioMiembro.findMany({
       orderBy: [{ area: "asc" }, { orden: "asc" }],
+    }),
+    prisma.aviso.findMany({
+      orderBy: [{ fijado: "desc" }, { createdAt: "desc" }],
+      take: 8,
     }),
   ])
 
@@ -362,6 +367,12 @@ export default async function PeritoInicio() {
           </div>
         </div>
       )}
+
+      {/* ── Carousel de avisos ──────────────────────────────── */}
+      <AvisosCarousel
+        avisos={avisosCarousel.map(a => ({ ...a, createdAt: a.createdAt.toISOString() }))}
+        titulo="Avisos del Colegio"
+      />
     </>
   )
 }

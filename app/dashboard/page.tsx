@@ -6,6 +6,7 @@ import {
   ChevronRight, ArrowRight, CheckCircle2, AlertCircle, User,
   MapPin, BookOpen, Shield,
 } from "lucide-react"
+import AvisosCarousel from "@/components/AvisosCarousel"
 
 export const dynamic = "force-dynamic"
 
@@ -108,7 +109,7 @@ export default async function DashboardPage() {
   const session = await auth()
   const userId  = (session?.user as any)?.id
 
-  const [usuario, inscripciones, eventos, avisos, pagos, directorio] = await Promise.all([
+  const [usuario, inscripciones, eventos, avisos, pagos, directorio, avisosCarousel] = await Promise.all([
     prisma.usuario.findUnique({
       where: { id: userId },
       select: {
@@ -138,6 +139,10 @@ export default async function DashboardPage() {
     }),
     prisma.directorioMiembro.findMany({
       orderBy: [{ area: "asc" }, { orden: "asc" }],
+    }),
+    prisma.aviso.findMany({
+      orderBy: [{ fijado: "desc" }, { createdAt: "desc" }],
+      take: 8,
     }),
   ])
 
@@ -1076,6 +1081,17 @@ export default async function DashboardPage() {
           )}
         </div>
       )}
+
+      {/* ── Carrusel de avisos ────────────────────────────────────── */}
+      <AvisosCarousel
+        avisos={avisosCarousel.map(a => ({
+          id: a.id, tipo: a.tipo, categoria: a.categoria,
+          titulo: a.titulo, contenido: a.contenido,
+          fijado: a.fijado, imagen: a.imagen,
+          createdAt: a.createdAt.toISOString(),
+        }))}
+        titulo="Avisos del Colegio"
+      />
     </>
   )
 }
