@@ -57,7 +57,7 @@ export default function AvisosCarousel({ avisos, titulo = "Avisos del Colegio" }
 
   return (
     <div
-      style={{ marginTop: 32 }}
+      style={{ marginTop: 0 }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
