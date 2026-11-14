@@ -3,77 +3,79 @@ import { useEffect, useRef, useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
-// World nodes: [name, lat, lon, isCore?]
+// ── Ciudades CIME en Veracruz [nombre, lat, lon, esCore?]
 const NODES: [string, number, number, boolean?][] = [
-  ["Veracruz",     19.18,  -96.14, true],
-  ["México",       19.43,  -99.13],
-  ["Monterrey",    25.67, -100.31],
-  ["Nueva York",   40.71,  -74.01],
-  ["Los Ángeles",  34.05, -118.24],
-  ["Toronto",      43.65,  -79.38],
-  ["São Paulo",   -23.55,  -46.63],
-  ["Londres",      51.51,   -0.13],
-  ["Madrid",       40.42,   -3.70],
-  ["París",        48.85,    2.35],
-  ["Berlín",       52.52,   13.40],
-  ["Moscú",        55.75,   37.62],
-  ["Dubai",        25.20,   55.27],
-  ["Mumbai",       19.08,   72.88],
-  ["Singapur",      1.35,  103.82],
-  ["Tokio",        35.69,  139.69],
-  ["Shanghai",     31.23,  121.47],
-  ["Sídney",      -33.87,  151.21],
-  ["Lagos",         6.45,    3.39],
-  ["El Cairo",     30.04,   31.24],
+  ["Veracruz",           19.19, -96.14, true],
+  ["Xalapa",             19.54, -96.92],
+  ["Boca del Río",       19.10, -96.11],
+  ["Córdoba",            18.88, -96.93],
+  ["Orizaba",            18.85, -97.10],
+  ["Poza Rica",          20.53, -97.46],
+  ["Tuxpan",             20.96, -97.39],
+  ["Papantla",           20.44, -97.32],
+  ["Coatzacoalcos",      18.14, -94.45],
+  ["Minatitlán",         17.98, -94.56],
+  ["Alvarado",           18.77, -95.76],
+  ["San Andrés Tuxtla",  18.46, -95.21],
+  ["Martínez de la Torre",20.07,-97.05],
 ]
 
 const CONN: [number, number][] = [
-  [0,1],[0,2],[0,3],[1,2],[2,3],[3,4],[3,5],[3,7],[1,6],[6,5],
-  [7,8],[7,9],[9,10],[10,11],[11,12],[12,13],[13,14],[14,15],
-  [15,16],[14,17],[7,18],[18,19],[12,19],[0,7],[1,7],
+  [0, 1], [0, 2], [0, 10], [0, 11],
+  [1, 3], [1, 7], [1, 12],
+  [3, 4], [5, 6], [5, 7], [5, 12],
+  [7, 6], [8, 9], [8, 11],
+  [10, 11], [11, 8], [2, 0],
 ]
 
-// Simplified continent polygons [lon, lat]
-const LAND: [number, number][][] = [
-  // North America
-  [[-168,72],[-140,60],[-130,54],[-124,49],[-117,32],[-110,22],[-90,16],[-83,10],[-75,9],[-62,12],[-65,18],[-80,24],[-90,30],[-97,26],[-105,20],[-115,32],[-120,39],[-124,46],[-132,54],[-140,61],[-165,62],[-168,72]],
-  // Greenland
-  [[-73,83],[-28,83],[-18,70],[-45,60],[-55,65],[-66,70],[-73,83]],
-  // South America
-  [[-75,11],[-62,11],[-50,0],[-35,-8],[-38,-23],[-50,-28],[-65,-38],[-67,-54],[-75,-50],[-80,-35],[-78,-8],[-75,11]],
-  // Europe
-  [[-10,36],[-5,38],[3,43],[8,44],[15,47],[30,43],[30,60],[25,65],[15,70],[0,62],[-8,58],[-10,52],[-5,44],[-10,36]],
-  // UK
-  [[-5,50],[-1,51],[0,53],[0,58],[-5,58],[-6,55],[-5,50]],
-  // Africa
-  [[-17,15],[-14,10],[-8,5],[2,5],[8,-2],[12,-16],[18,-30],[20,-35],[27,-35],[37,-22],[40,-10],[43,12],[43,18],[38,22],[32,31],[24,35],[10,37],[0,37],[-5,34],[-17,15]],
-  // Asia
-  [[28,41],[42,40],[50,25],[57,22],[65,22],[72,20],[78,8],[80,5],[100,3],[105,5],[110,1],[120,5],[128,2],[130,10],[132,35],[140,40],[140,50],[135,55],[120,50],[115,55],[100,55],[85,50],[80,44],[68,43],[58,44],[45,43],[35,38],[28,41]],
-  // Borneo
-  [[108,7],[118,7],[118,-4],[108,-4],[108,7]],
-  // Australia
-  [[114,-22],[120,-30],[126,-34],[132,-38],[140,-36],[149,-38],[152,-27],[152,-18],[140,-15],[130,-12],[122,-16],[114,-22]],
-  // Japan
-  [[130,31],[131,33],[130,36],[132,44],[136,44],[141,44],[144,42],[142,38],[136,35],[132,32],[130,31]],
-  // Scandinavia
-  [[5,58],[5,62],[8,63],[15,70],[20,70],[28,71],[30,65],[25,60],[20,56],[15,56],[5,58]],
-  // Iceland
-  [[-24,64],[-14,66],[-13,65],[-20,63],[-24,64]],
+// ── Polígono aproximado del estado de Veracruz [lon, lat]
+const VER: [number, number][] = [
+  [-98.9,21.8],[-98.6,21.9],[-98.2,21.8],[-97.9,21.6],
+  [-97.6,22.0],[-97.4,22.3],[-97.2,22.2],
+  [-97.0,21.7],[-97.1,21.1],[-97.3,20.8],
+  [-97.4,20.3],[-97.1,19.8],[-96.8,19.5],
+  [-96.5,19.3],[-96.2,19.1],[-96.1,18.9],
+  [-95.9,18.8],[-95.6,18.5],[-95.2,18.3],
+  [-94.8,18.1],[-94.4,18.0],[-94.1,18.2],
+  [-93.7,17.9],[-93.5,17.5],
+  [-93.9,17.4],[-94.5,17.3],[-95.0,17.5],
+  [-95.5,17.9],[-96.1,18.4],[-96.6,18.8],
+  [-97.0,19.1],[-97.3,19.5],[-97.6,20.0],
+  [-97.9,20.5],[-98.2,21.0],[-98.5,21.4],
+  [-98.9,21.8],
 ]
+
+// ── Estados vecinos (muy tenues, para contexto geográfico)
+const NEIGHBORS: [number,number][][] = [
+  // Tamaulipas (norte)
+  [[-98.9,22.0],[-97.4,22.5],[-97.0,23.5],[-99.5,23.0],[-99.5,22.0],[-98.9,22.0]],
+  // San Luis Potosí (noroeste)
+  [[-99.5,22.0],[-100.5,22.5],[-100.5,21.0],[-99.0,21.0],[-98.9,21.8],[-99.5,22.0]],
+  // Hidalgo / Puebla (oeste)
+  [[-99.5,21.0],[-100.0,20.5],[-100.0,18.5],[-98.0,18.0],[-97.3,19.5],[-98.9,21.8],[-99.5,21.0]],
+  // Oaxaca (sur)
+  [[-93.5,17.5],[-93.0,16.5],[-96.5,16.0],[-98.0,17.5],[-96.0,18.0],[-95.0,17.5],[-93.5,17.5]],
+  // Tabasco (sureste)
+  [[-93.5,17.5],[-93.0,17.0],[-91.5,17.5],[-91.5,18.5],[-93.5,18.5],[-93.5,17.5]],
+]
+
+// Bounding box del mapa (con margen)
+const LON_MIN = -99.6, LON_MAX = -92.8
+const LAT_MIN = 16.5,  LAT_MAX = 23.0
 
 export default function LoginClient() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rafRef    = useRef(0)
   const router    = useRouter()
 
-  const [identifier,    setIdentifier]   = useState("")
-  const [password,      setPassword]     = useState("")
-  const [showPass,      setShowPass]     = useState(false)
-  const [error,         setError]        = useState("")
-  const [loading,       setLoading]      = useState(false)
-  const [mode,          setMode]         = useState<"login" | "recover">("login")
-  const [recoverEmail,  setRecoverEmail] = useState("")
-  const [recoverMsg,    setRecoverMsg]   = useState("")
+  const [identifier,   setIdentifier]  = useState("")
+  const [password,     setPassword]    = useState("")
+  const [showPass,     setShowPass]    = useState(false)
+  const [error,        setError]       = useState("")
+  const [loading,      setLoading]     = useState(false)
+  const [mode,         setMode]        = useState<"login" | "recover">("login")
+  const [recoverEmail, setRecoverEmail]= useState("")
+  const [recoverMsg,   setRecoverMsg]  = useState("")
 
   useEffect(() => {
     const cv = canvasRef.current
@@ -81,13 +83,70 @@ export default function LoginClient() {
     const ctx = cv.getContext("2d")!
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches
 
+    // Partículas en conexiones
     const packets = CONN.flatMap((_, i) => [
-      { e: i, t: Math.random(), v: 0.0005 + Math.random() * 0.0009, dir: 1 as const },
-      { e: i, t: Math.random(), v: 0.0004 + Math.random() * 0.0007, dir: -1 as const },
+      { e: i, t: Math.random(), v: 0.0004 + Math.random() * 0.0007, dir:  1 as 1 | -1 },
+      { e: i, t: Math.random(), v: 0.0003 + Math.random() * 0.0005, dir: -1 as 1 | -1 },
     ])
 
+    // Estrellas de fondo fijas
+    const stars = Array.from({ length: 60 }, () => ({
+      rx: Math.random(), ry: Math.random(),
+      r: 0.4 + Math.random() * 0.9,
+      a: 0.1 + Math.random() * 0.3,
+      phase: Math.random() * Math.PI * 2,
+    }))
+
     function proj(lon: number, lat: number, w: number, h: number): [number, number] {
-      return [(lon + 180) / 360 * w, (90 - lat) / 180 * h]
+      const px = 0.07, py = 0.06
+      const uw = w * (1 - px * 2), uh = h * (1 - py * 2)
+      return [
+        px * w + (lon - LON_MIN) / (LON_MAX - LON_MIN) * uw,
+        py * h + (LAT_MAX - lat) / (LAT_MAX - LAT_MIN) * uh,
+      ]
+    }
+
+    function drawGear(x: number, y: number, r: number, teeth: number, t: number) {
+      ctx.save()
+      ctx.translate(x, y)
+      ctx.rotate(t)
+      ctx.beginPath()
+      for (let i = 0; i < teeth * 2; i++) {
+        const angle = (i / (teeth * 2)) * Math.PI * 2
+        const rad = i % 2 === 0 ? r : r * 0.72
+        i === 0 ? ctx.moveTo(Math.cos(angle) * rad, Math.sin(angle) * rad)
+                : ctx.lineTo(Math.cos(angle) * rad, Math.sin(angle) * rad)
+      }
+      ctx.closePath()
+      ctx.strokeStyle = "rgba(240,180,41,0.35)"
+      ctx.lineWidth = 0.8
+      ctx.stroke()
+      ctx.beginPath()
+      ctx.arc(0, 0, r * 0.38, 0, Math.PI * 2)
+      ctx.strokeStyle = "rgba(240,180,41,0.25)"
+      ctx.stroke()
+      ctx.restore()
+    }
+
+    function drawBolt(x: number, y: number, s: number, alpha: number) {
+      ctx.save()
+      ctx.translate(x, y)
+      ctx.strokeStyle = `rgba(109,166,230,${alpha})`
+      ctx.lineWidth = 1
+      ctx.beginPath()
+      ctx.moveTo(s * 0.3, -s * 0.5)
+      ctx.lineTo(-s * 0.1, 0)
+      ctx.lineTo(s * 0.2, 0)
+      ctx.lineTo(-s * 0.3, s * 0.5)
+      ctx.stroke()
+      ctx.restore()
+    }
+
+    function quadPt(x1: number, y1: number, mx: number, my: number, x2: number, y2: number, t: number): [number, number] {
+      return [
+        (1-t)*(1-t)*x1 + 2*(1-t)*t*mx + t*t*x2,
+        (1-t)*(1-t)*y1 + 2*(1-t)*t*my + t*t*y2,
+      ]
     }
 
     function frame() {
@@ -95,61 +154,118 @@ export default function LoginClient() {
       const dpr = Math.min(devicePixelRatio || 1, 2)
       const w = cv.clientWidth, h = cv.clientHeight
       if (!w || !h) { rafRef.current = requestAnimationFrame(frame); return }
-      if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) {
+      if (cv.width  !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) {
         cv.width  = Math.round(w * dpr)
         cv.height = Math.round(h * dpr)
       }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       ctx.clearRect(0, 0, w, h)
 
-      // ── Graticule ────────────────────────────────────
-      ctx.lineWidth = 0.5
-      for (let lat = -60; lat <= 60; lat += 30) {
-        const [, y] = proj(0, lat, w, h)
-        ctx.strokeStyle = lat === 0 ? "rgba(74,144,217,.2)" : "rgba(74,144,217,.08)"
-        ctx.lineWidth   = lat === 0 ? 1 : 0.5
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke()
-      }
-      for (let lon = -180; lon <= 180; lon += 30) {
-        const [x] = proj(lon, 0, w, h)
-        ctx.strokeStyle = "rgba(74,144,217,.07)"
-        ctx.lineWidth   = 0.5
+      const now = performance.now()
+
+      // ── Estrellas de fondo ───────────────────────────────
+      stars.forEach(s => {
+        const alpha = s.a * (0.6 + 0.4 * Math.sin(now * 0.001 + s.phase))
+        ctx.fillStyle = `rgba(255,255,255,${alpha.toFixed(2)})`
+        ctx.beginPath()
+        ctx.arc(s.rx * w, s.ry * h, s.r, 0, Math.PI * 2)
+        ctx.fill()
+      })
+
+      // ── Grid sutil ───────────────────────────────────────
+      ctx.lineWidth = 0.4
+      for (let lon = -100; lon <= -92; lon += 1) {
+        const [x] = proj(lon, 20, w, h)
+        ctx.strokeStyle = "rgba(74,144,217,0.055)"
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke()
       }
+      for (let lat = 17; lat <= 23; lat += 1) {
+        const [, y] = proj(-96, lat, w, h)
+        ctx.strokeStyle = "rgba(74,144,217,0.055)"
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke()
+      }
 
-      // ── Continents ───────────────────────────────────
-      LAND.forEach(poly => {
+      // ── Estados vecinos (contexto) ───────────────────────
+      NEIGHBORS.forEach(poly => {
         ctx.beginPath()
         poly.forEach(([lon, lat], i) => {
           const [x, y] = proj(lon, lat, w, h)
           i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
         })
         ctx.closePath()
-        ctx.fillStyle   = "rgba(74,144,217,.09)"
-        ctx.strokeStyle = "rgba(74,144,217,.28)"
-        ctx.lineWidth   = 0.8
-        ctx.fill()
+        ctx.fillStyle   = "rgba(30,55,100,0.18)"
+        ctx.strokeStyle = "rgba(74,144,217,0.1)"
+        ctx.lineWidth   = 0.5
+        ctx.fill(); ctx.stroke()
+      })
+
+      // ── Polígono de Veracruz ─────────────────────────────
+      ctx.beginPath()
+      VER.forEach(([lon, lat], i) => {
+        const [x, y] = proj(lon, lat, w, h)
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y)
+      })
+      ctx.closePath()
+
+      // Relleno con gradiente radial desde Veracruz city
+      const [vx, vy] = proj(-96.14, 19.19, w, h)
+      const grad = ctx.createRadialGradient(vx, vy, 0, vx, vy, w * 0.6)
+      grad.addColorStop(0, "rgba(13,32,96,0.82)")
+      grad.addColorStop(1, "rgba(5,14,46,0.65)")
+      ctx.fillStyle   = grad
+      ctx.strokeStyle = "rgba(109,166,230,0.5)"
+      ctx.lineWidth   = 1.2
+      ctx.fill()
+      ctx.stroke()
+
+      // ── Golfo de México label ────────────────────────────
+      const [gx, gy] = proj(-94.5, 20.5, w, h)
+      ctx.save()
+      ctx.font      = `italic 500 ${Math.round(h * 0.022)}px 'Inter',system-ui,sans-serif`
+      ctx.fillStyle = "rgba(109,166,230,0.22)"
+      ctx.textAlign = "center"
+      ctx.fillText("GOLFO", gx, gy - 8)
+      ctx.fillText("DE MÉXICO", gx, gy + 10)
+      ctx.restore()
+
+      // ── Montañas decorativas (Sierra Madre) ─────────────
+      const mtPts: [number, number][] = [
+        [-98.0,20.8],[-97.6,20.2],[-97.2,19.6],[-97.0,19.2],
+        [-96.8,18.9],[-96.6,18.6],[-96.3,18.4],
+      ]
+      mtPts.forEach(([lon, lat]) => {
+        const [mx, my] = proj(lon, lat, w, h)
+        const ms = Math.round(h * 0.018)
+        ctx.beginPath()
+        ctx.moveTo(mx, my)
+        ctx.lineTo(mx - ms, my + ms)
+        ctx.lineTo(mx + ms, my + ms)
+        ctx.closePath()
+        ctx.strokeStyle = "rgba(74,144,217,0.15)"
+        ctx.lineWidth = 0.6
         ctx.stroke()
       })
 
-      // ── Connection arcs ───────────────────────────────
-      ctx.setLineDash([3, 7])
-      ctx.lineWidth = 0.8
+      // ── Conexiones arco ──────────────────────────────────
+      ctx.setLineDash([3, 6])
+      ctx.lineWidth = 0.9
       CONN.forEach(([i, j]) => {
         const [x1, y1] = proj(NODES[i][2], NODES[i][1], w, h)
         const [x2, y2] = proj(NODES[j][2], NODES[j][1], w, h)
-        if (Math.abs(x1 - x2) > w * 0.55) return
         const mx = (x1 + x2) / 2
-        const my = (y1 + y2) / 2 - Math.abs(x2 - x1) * 0.12
-        ctx.strokeStyle = "rgba(109,166,230,.18)"
-        ctx.beginPath()
-        ctx.moveTo(x1, y1)
-        ctx.quadraticCurveTo(mx, my, x2, y2)
-        ctx.stroke()
+        const my = (y1 + y2) / 2 - Math.hypot(x2 - x1, y2 - y1) * 0.18
+        ctx.strokeStyle = "rgba(109,166,230,0.2)"
+        ctx.beginPath(); ctx.moveTo(x1, y1)
+        ctx.quadraticCurveTo(mx, my, x2, y2); ctx.stroke()
+
+        // Rayo eléctrico decorativo en mitad de conexión
+        const [bx, by] = quadPt(x1, y1, mx, my, x2, y2, 0.5)
+        const pulse = 0.12 + 0.08 * Math.sin(now * 0.002 + i * 0.7)
+        drawBolt(bx, by, h * 0.013, pulse)
       })
       ctx.setLineDash([])
 
-      // ── Animated packets ──────────────────────────────
+      // ── Partículas animadas ───────────────────────────────
       packets.forEach(p => {
         if (!reduce) {
           p.t += p.v * p.dir
@@ -159,48 +275,93 @@ export default function LoginClient() {
         const [i, j] = CONN[p.e]
         const [x1, y1] = proj(NODES[i][2], NODES[i][1], w, h)
         const [x2, y2] = proj(NODES[j][2], NODES[j][1], w, h)
-        if (Math.abs(x1 - x2) > w * 0.55) return
         const mx = (x1 + x2) / 2
-        const my = (y1 + y2) / 2 - Math.abs(x2 - x1) * 0.12
-        const t  = p.t
-        const px = (1-t)*(1-t)*x1 + 2*(1-t)*t*mx + t*t*x2
-        const py = (1-t)*(1-t)*y1 + 2*(1-t)*t*my + t*t*y2
-        ctx.fillStyle = p.dir > 0 ? "#F0B429" : "#6DA6E6"
-        ctx.beginPath(); ctx.arc(px, py, 1.8, 0, 7); ctx.fill()
+        const my = (y1 + y2) / 2 - Math.hypot(x2 - x1, y2 - y1) * 0.18
+        const [px, py] = quadPt(x1, y1, mx, my, x2, y2, p.t)
+        const isGold = p.dir > 0
+        const col = isGold ? `rgba(240,180,41,0.9)` : `rgba(109,166,230,0.85)`
+        const trail = isGold ? `rgba(240,180,41,0.0)` : `rgba(109,166,230,0.0)`
+        const tr = p.t - p.dir * 0.06
+        const [tx, ty] = quadPt(x1, y1, mx, my, x2, y2, Math.min(1, Math.max(0, tr)))
+        const tg = ctx.createLinearGradient(tx, ty, px, py)
+        tg.addColorStop(0, trail); tg.addColorStop(1, col)
+        ctx.strokeStyle = tg; ctx.lineWidth = 1.6
+        ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(px, py); ctx.stroke()
+        ctx.fillStyle = col
+        ctx.beginPath(); ctx.arc(px, py, 2.2, 0, Math.PI * 2); ctx.fill()
       })
 
-      // ── Nodes ─────────────────────────────────────────
-      NODES.forEach(([, lat, lon, core]) => {
+      // ── Nodos ciudad ─────────────────────────────────────
+      NODES.forEach(([name, lat, lon, core], idx) => {
         const [x, y] = proj(lon, lat, w, h)
-        const r = core ? 6 : 3.5
+        const r = core ? 7 : 3.8
 
         if (core) {
-          const now = performance.now()
-          const p1 = 18 + (reduce ? 0 : (now / 55) % 20)
-          const p2 = 10 + (reduce ? 0 : (now / 80) % 14)
-          ctx.lineWidth = 1.5
-          ctx.strokeStyle = `rgba(240,180,41,${(0.5*(1-(p1-18)/20)).toFixed(2)})`
-          ctx.beginPath(); ctx.arc(x, y, p1, 0, Math.PI*2); ctx.stroke()
-          ctx.strokeStyle = `rgba(240,180,41,${(0.35*(1-(p2-10)/14)).toFixed(2)})`
-          ctx.beginPath(); ctx.arc(x, y, p2, 0, Math.PI*2); ctx.stroke()
+          // Anillo radar giratorio
+          const angle = (now / 2800) % (Math.PI * 2)
+          ctx.beginPath()
+          ctx.arc(x, y, r + 14, angle, angle + Math.PI * 1.3)
+          ctx.strokeStyle = "rgba(240,180,41,0.5)"
+          ctx.lineWidth = 1.4; ctx.stroke()
+
+          // Pulsos concéntricos
+          ;[22, 32, 44].forEach((pr, pi) => {
+            const phase = (now / (1000 + pi * 300)) % 1
+            const alpha = (1 - phase) * 0.4
+            ctx.beginPath()
+            ctx.arc(x, y, pr * phase + r, 0, Math.PI * 2)
+            ctx.strokeStyle = `rgba(240,180,41,${alpha.toFixed(2)})`
+            ctx.lineWidth = 1; ctx.stroke()
+          })
+
+          // Gear giratorio
+          drawGear(x, y, r + 10, 8, now * 0.0004)
         }
 
+        // Círculo del nodo
+        ctx.beginPath()
+        ctx.arc(x, y, r, 0, Math.PI * 2)
         ctx.fillStyle   = "#07101D"
-        ctx.strokeStyle = core ? "#F0B429" : "rgba(109,166,230,.75)"
+        ctx.strokeStyle = core ? "#F0B429" : "rgba(109,166,230,0.8)"
         ctx.lineWidth   = core ? 2 : 1
-        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill(); ctx.stroke()
+        ctx.fill(); ctx.stroke()
+
+        // Punto interior
         if (core) {
-          ctx.fillStyle = "#F0B429"
-          ctx.beginPath(); ctx.arc(x, y, 2.5, 0, Math.PI*2); ctx.fill()
+          ctx.beginPath(); ctx.arc(x, y, 2.8, 0, Math.PI * 2)
+          ctx.fillStyle = "#F0B429"; ctx.fill()
+        } else {
+          const pulse = 0.6 + 0.4 * Math.sin(now * 0.0015 + idx * 1.1)
+          ctx.beginPath(); ctx.arc(x, y, 1.4, 0, Math.PI * 2)
+          ctx.fillStyle = `rgba(109,166,230,${pulse.toFixed(2)})`; ctx.fill()
+        }
+
+        // Etiqueta ciudad
+        const show = core || [1, 5, 7, 8].includes(idx)
+        if (show) {
+          const fs = core ? Math.round(h * 0.018) : Math.round(h * 0.014)
+          ctx.font      = `${core ? 700 : 500} ${fs}px 'Inter',system-ui,sans-serif`
+          ctx.fillStyle = core ? "#F0B429" : "rgba(200,220,255,0.65)"
+          ctx.textAlign = "left"
+          const lx = x + r + 5
+          const ly = y + 4
+          if (core) {
+            ctx.fillText(`Veracruz · CIME`, lx, ly)
+          } else {
+            ctx.fillText(name, lx, ly)
+          }
         }
       })
 
-      // ── Veracruz label ────────────────────────────────
-      const [vx, vy] = proj(NODES[0][2], NODES[0][1], w, h)
-      ctx.font      = "600 11px 'Inter',system-ui,sans-serif"
-      ctx.fillStyle = "#F0B429"
-      ctx.textAlign = "left"
-      ctx.fillText("Veracruz · CIME", vx + 12, vy + 4)
+      // ── VERACRUZ label en el estado ───────────────────────
+      const [slx, sly] = proj(-96.8, 20.2, w, h)
+      ctx.save()
+      ctx.font      = `800 ${Math.round(h * 0.028)}px 'Inter',system-ui,sans-serif`
+      ctx.fillStyle = "rgba(255,255,255,0.045)"
+      ctx.textAlign = "center"
+      ctx.letterSpacing = "0.15em"
+      ctx.fillText("VERACRUZ", slx, sly)
+      ctx.restore()
 
       if (!reduce) rafRef.current = requestAnimationFrame(frame)
     }
@@ -232,7 +393,7 @@ export default function LoginClient() {
 
   return (
     <div className="login">
-      {/* Panel izquierdo — mapa mundial */}
+      {/* Panel izquierdo — mapa de Veracruz */}
       <div className="login-art">
         <canvas id="topo-canvas" ref={canvasRef} aria-hidden="true" />
         <div className="brand">
@@ -242,7 +403,6 @@ export default function LoginClient() {
             <div className="brand-sub">Colegio de Ingenieros Mecánicos y Electricistas</div>
           </div>
         </div>
-
         <div className="login-hero">
           <h1>Tu ejercicio profesional, <em>conectado.</em></h1>
         </div>
