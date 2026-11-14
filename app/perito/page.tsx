@@ -193,6 +193,12 @@ export default async function PeritoInicio() {
         </div>
       </div>
 
+      {/* ── Carousel de avisos ──────────────────────────────── */}
+      <AvisosCarousel
+        avisos={avisosCarousel.map(a => ({ ...a, createdAt: a.createdAt.toISOString() }))}
+        titulo="Avisos del Colegio"
+      />
+
       {/* ── Grid principal ──────────────────────────────────── */}
       <div className="grid grid-cols-1 lg:grid-cols-12" style={{ gap: 24, alignItems: "start" }}>
 
@@ -368,11 +374,6 @@ export default async function PeritoInicio() {
         </div>
       )}
 
-      {/* ── Carousel de avisos ──────────────────────────────── */}
-      <AvisosCarousel
-        avisos={avisosCarousel.map(a => ({ ...a, createdAt: a.createdAt.toISOString() }))}
-        titulo="Avisos del Colegio"
-      />
     </>
   )
 }

@@ -377,6 +377,17 @@ export default async function DashboardPage() {
         </div>
       </div>
 
+      {/* ── Carrusel de avisos ────────────────────────────────────── */}
+      <AvisosCarousel
+        avisos={avisosCarousel.map(a => ({
+          id: a.id, tipo: a.tipo, categoria: a.categoria,
+          titulo: a.titulo, contenido: a.contenido,
+          fijado: a.fijado, imagen: a.imagen,
+          createdAt: a.createdAt.toISOString(),
+        }))}
+        titulo="Avisos del Colegio"
+      />
+
       {/* ══════════════════════════════════════════════════════════
           MAIN GRID  —  8-col content + 4-col sidebar
          ══════════════════════════════════════════════════════════ */}
@@ -1082,16 +1093,6 @@ export default async function DashboardPage() {
         </div>
       )}
 
-      {/* ── Carrusel de avisos ────────────────────────────────────── */}
-      <AvisosCarousel
-        avisos={avisosCarousel.map(a => ({
-          id: a.id, tipo: a.tipo, categoria: a.categoria,
-          titulo: a.titulo, contenido: a.contenido,
-          fijado: a.fijado, imagen: a.imagen,
-          createdAt: a.createdAt.toISOString(),
-        }))}
-        titulo="Avisos del Colegio"
-      />
     </>
   )
 }
