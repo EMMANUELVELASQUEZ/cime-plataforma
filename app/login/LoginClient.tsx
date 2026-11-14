@@ -67,14 +67,11 @@ export default function LoginClient() {
   const rafRef    = useRef(0)
   const router    = useRouter()
 
-  const [identifier,   setIdentifier]  = useState("")
-  const [password,     setPassword]    = useState("")
-  const [showPass,     setShowPass]    = useState(false)
-  const [error,        setError]       = useState("")
-  const [loading,      setLoading]     = useState(false)
-  const [mode,         setMode]        = useState<"login" | "recover">("login")
-  const [recoverEmail, setRecoverEmail]= useState("")
-  const [recoverMsg,   setRecoverMsg]  = useState("")
+  const [identifier, setIdentifier] = useState("")
+  const [password,   setPassword]   = useState("")
+  const [showPass,   setShowPass]   = useState(false)
+  const [error,      setError]      = useState("")
+  const [loading,    setLoading]    = useState(false)
 
   useEffect(() => {
     const cv = canvasRef.current
@@ -349,14 +346,6 @@ export default function LoginClient() {
     router.push("/")
   }
 
-  async function handleRecover(e: React.FormEvent) {
-    e.preventDefault()
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(recoverEmail)) {
-      setRecoverMsg("Escribe un correo válido."); return
-    }
-    setRecoverMsg("Si el correo está registrado, recibirás el enlace en unos minutos.")
-  }
-
   return (
     <div className="login">
       {/* Panel izquierdo — mapa animado */}
@@ -421,93 +410,61 @@ export default function LoginClient() {
 
           <header style={{ textAlign: "center" }}>
             <span className="eyebrow">Acceso seguro</span>
-            {mode === "login"
-              ? <h2>Inicio de <b>sesión</b></h2>
-              : <h2>Recupera tu <b>acceso</b></h2>}
+            <h2>Inicio de <b>sesión</b></h2>
             <p className="muted" style={{ fontSize: ".9rem" }}>
-              {mode === "login"
-                ? "Entra con tu número de colegiado o correo registrado."
-                : "Te enviaremos un enlace válido por 30 minutos al correo registrado."}
+              Entra con tu número de colegiado o correo registrado.
             </p>
           </header>
 
-          {mode === "login" ? (
-            <form onSubmit={handleSubmit} style={{ display: "grid", gap: 20 }} noValidate>
-              {error && (
-                <div className="form-err" role="alert">
-                  <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 9v4" /><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z" /><path d="M12 16h.01" /></svg>
-                  <span>{error}</span>
+          <form onSubmit={handleSubmit} style={{ display: "grid", gap: 20 }} noValidate>
+            {error && (
+              <div className="form-err" role="alert">
+                <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 9v4" /><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z" /><path d="M12 16h.01" /></svg>
+                <span>{error}</span>
+              </div>
+            )}
+
+            <div style={{ display: "grid", gap: 16 }}>
+              <div className="field">
+                <label htmlFor="identifier">Número de colegiado o correo</label>
+                <div className="input-wrap">
+                  <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M3 4m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v10a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z" /><path d="M9 10m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M15 8l2 0" /><path d="M15 12l2 0" /><path d="M7 16l10 0" /></svg>
+                  <input
+                    className="input" id="identifier" type="text"
+                    autoComplete="username" placeholder="Ej. 0427 o nombre@correo.mx"
+                    value={identifier} onChange={e => setIdentifier(e.target.value)} required
+                  />
                 </div>
-              )}
+              </div>
 
-              <div style={{ display: "grid", gap: 16 }}>
-                <div className="field">
-                  <label htmlFor="identifier">Número de colegiado o correo</label>
-                  <div className="input-wrap">
-                    <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M3 4m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v10a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z" /><path d="M9 10m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M15 8l2 0" /><path d="M15 12l2 0" /><path d="M7 16l10 0" /></svg>
-                    <input
-                      className="input" id="identifier" type="text"
-                      autoComplete="username" placeholder="Ej. 0427 o nombre@correo.mx"
-                      value={identifier} onChange={e => setIdentifier(e.target.value)} required
-                    />
-                  </div>
-                </div>
-
-                <div className="field">
-                  <label htmlFor="password">Contraseña</label>
-                  <div className="input-wrap">
-                    <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" /><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /><path d="M8 11v-4a4 4 0 1 1 8 0v4" /></svg>
-                    <input
-                      className="input" id="password"
-                      type={showPass ? "text" : "password"}
-                      autoComplete="current-password" placeholder="Tu contraseña"
-                      style={{ paddingRight: 48 }}
-                      value={password} onChange={e => setPassword(e.target.value)} required
-                    />
-                    <button type="button" className="icon-btn reveal" onClick={() => setShowPass(v => !v)} aria-label={showPass ? "Ocultar" : "Mostrar"}>
-                      {showPass
-                        ? <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M10.585 10.587a2 2 0 0 0 2.829 2.828" /><path d="M16.681 16.673a8.717 8.717 0 0 1 -4.681 1.327c-3.6 0 -6.6 -2 -9 -6c1.272 -2.12 2.712 -3.678 4.32 -4.674m2.86 -1.146a9.055 9.055 0 0 1 1.82 -.18c3.6 0 6.6 2 9 6c-.666 1.11 -1.379 2.067 -2.138 2.87" /><path d="M3 3l18 18" /></svg>
-                        : <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
-                      }
-                    </button>
-                  </div>
-                </div>
-
-                <button
-                  className="btn primary block" type="submit"
-                  style={{ height: 46 }} disabled={loading}
-                >
-                  {loading ? "Verificando…" : "Entrar al portal →"}
-                </button>
-
-                <div style={{ textAlign: "center" }}>
-                  <button
-                    type="button"
-                    className="link-btn"
-                    style={{ fontSize: ".85rem", color: "var(--muted)" }}
-                    onClick={() => { setMode("recover"); setError("") }}
-                  >
-                    ¿Problemas para ingresar?
+              <div className="field">
+                <label htmlFor="password">Contraseña</label>
+                <div className="input-wrap">
+                  <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" /><path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" /><path d="M8 11v-4a4 4 0 1 1 8 0v4" /></svg>
+                  <input
+                    className="input" id="password"
+                    type={showPass ? "text" : "password"}
+                    autoComplete="current-password" placeholder="Tu contraseña"
+                    style={{ paddingRight: 48 }}
+                    value={password} onChange={e => setPassword(e.target.value)} required
+                  />
+                  <button type="button" className="icon-btn reveal" onClick={() => setShowPass(v => !v)} aria-label={showPass ? "Ocultar" : "Mostrar"}>
+                    {showPass
+                      ? <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M10.585 10.587a2 2 0 0 0 2.829 2.828" /><path d="M16.681 16.673a8.717 8.717 0 0 1 -4.681 1.327c-3.6 0 -6.6 -2 -9 -6c1.272 -2.12 2.712 -3.678 4.32 -4.674m2.86 -1.146a9.055 9.055 0 0 1 1.82 -.18c3.6 0 6.6 2 9 6c-.666 1.11 -1.379 2.067 -2.138 2.87" /><path d="M3 3l18 18" /></svg>
+                      : <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
+                    }
                   </button>
                 </div>
               </div>
-            </form>
-          ) : (
-            <form onSubmit={handleRecover} style={{ display: "grid", gap: 16 }} noValidate>
-              {recoverMsg && <div className={recoverMsg.startsWith("Si") ? "form-ok" : "form-err"}>{recoverMsg}</div>}
-              <div className="field">
-                <label htmlFor="rmail">Correo registrado</label>
-                <div className="input-wrap">
-                  <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" /><path d="M3 7l9 6l9 -6" /></svg>
-                  <input className="input" id="rmail" type="email" placeholder="nombre@correo.mx" value={recoverEmail} onChange={e => setRecoverEmail(e.target.value)} />
-                </div>
-              </div>
-              <button className="btn primary block" type="submit" style={{ height: 46 }}>Enviar enlace de recuperación</button>
-              <button className="btn ghost block" type="button" onClick={() => { setMode("login"); setRecoverMsg("") }}>
-                ← Volver al inicio de sesión
+
+              <button
+                className="btn primary block" type="submit"
+                style={{ height: 46 }} disabled={loading}
+              >
+                {loading ? "Verificando…" : "Entrar al portal →"}
               </button>
-            </form>
-          )}
+            </div>
+          </form>
 
           <p className="login-foot">
             Conexión cifrada · Sesión protegida<br />
