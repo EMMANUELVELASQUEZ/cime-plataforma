@@ -398,10 +398,31 @@ export default function LoginClient() {
       {/* Panel derecho — formulario */}
       <div className="login-panel">
         <div className="login-card">
-          <header>
+          {/* Logo CIME centrado — como EMINUS */}
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, marginBottom: 8 }}>
+            <img
+              src="/cimelogo.jpeg"
+              alt="CIME Veracruz"
+              style={{
+                width: 120, height: 120,
+                objectFit: "contain",
+                mixBlendMode: "multiply",
+              }}
+            />
+            <div style={{ textAlign: "center" }}>
+              <div style={{ fontWeight: 800, fontSize: "1.05rem", letterSpacing: ".04em", color: "var(--fg)" }}>
+                CIME VERACRUZ
+              </div>
+              <div style={{ fontSize: ".8rem", color: "var(--muted)", marginTop: 2 }}>
+                Colegio de Ingenieros Mecánicos y Electricistas
+              </div>
+            </div>
+          </div>
+
+          <header style={{ textAlign: "center" }}>
             <span className="eyebrow">Acceso seguro</span>
             {mode === "login"
-              ? <h2>Inicia <b>sesión</b></h2>
+              ? <h2>Inicio de <b>sesión</b></h2>
               : <h2>Recupera tu <b>acceso</b></h2>}
             <p className="muted" style={{ fontSize: ".9rem" }}>
               {mode === "login"
@@ -452,21 +473,23 @@ export default function LoginClient() {
                   </div>
                 </div>
 
-                <div className="row-between">
-                  <label className="check">
-                    <input type="checkbox" defaultChecked /> Recordarme en este equipo
-                  </label>
-                  <button type="button" className="link-btn" onClick={() => { setMode("recover"); setError("") }}>
-                    ¿Olvidaste tu contraseña?
-                  </button>
-                </div>
-
                 <button
                   className="btn primary block" type="submit"
                   style={{ height: 46 }} disabled={loading}
                 >
                   {loading ? "Verificando…" : "Entrar al portal →"}
                 </button>
+
+                <div style={{ textAlign: "center" }}>
+                  <button
+                    type="button"
+                    className="link-btn"
+                    style={{ fontSize: ".85rem", color: "var(--muted)" }}
+                    onClick={() => { setMode("recover"); setError("") }}
+                  >
+                    ¿Problemas para ingresar?
+                  </button>
+                </div>
               </div>
             </form>
           ) : (
