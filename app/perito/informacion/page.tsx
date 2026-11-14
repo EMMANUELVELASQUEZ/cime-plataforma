@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import {
   MapPin, Phone, Mail, Award, Shield, Calendar,
-  BookOpen, Edit, CheckCircle2, Clock, FileText,
+  BookOpen, Edit, CheckCircle2, FileText,
 } from "lucide-react"
 
 export const dynamic = "force-dynamic"
@@ -32,7 +32,7 @@ export default async function PeritoInformacionPage() {
       select: {
         nombre: true, correo: true, telefono: true, ciudad: true,
         especialidad: true, cedula: true, alta: true, vigencia: true,
-        estado: true, horas: true, horasMeta: true,
+        estado: true,
         numeroPerito: true, numeroColegiado: true,
       },
     }),
@@ -59,7 +59,6 @@ export default async function PeritoInformacionPage() {
 
   const hue  = avatarHue(usuario.nombre)
   const est  = ESTC[usuario.estado] ?? ESTC.VIGENTE
-  const pct  = Math.min(100, Math.round((usuario.horas / usuario.horasMeta) * 100))
 
   const ENTRADA_CFG: Record<string, { color: string; bg: string }> = {
     NOTA:        { color: "#2563eb", bg: "#EFF6FF" },
@@ -222,28 +221,6 @@ export default async function PeritoInformacionPage() {
             </div>
           </div>
 
-          {/* Horas de actualización */}
-          <div style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 12, overflow: "hidden", boxShadow: "var(--shadow-sm)" }}>
-            <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 8 }}>
-              <Clock size={15} strokeWidth={2} style={{ color: "#F59E0B" }} />
-              <h2 className="font-montserrat" style={{ fontSize: ".92rem", fontWeight: 700, color: "var(--fg)", margin: 0 }}>Actualización profesional</h2>
-            </div>
-            <div style={{ padding: "16px 18px" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10 }}>
-                <span style={{ fontFamily: "var(--f-data)", fontSize: ".8rem", color: "var(--muted)" }}>Horas acreditadas</span>
-                <span className="font-montserrat" style={{ fontWeight: 800, fontSize: "1.4rem", color: pct >= 100 ? "#059669" : "#D97706" }}>
-                  {usuario.horas}<span style={{ fontSize: ".7rem", fontWeight: 500 }}>h</span>
-                </span>
-              </div>
-              <div style={{ height: 8, background: "var(--surface-3)", borderRadius: 4, overflow: "hidden", marginBottom: 8 }}>
-                <div style={{ height: "100%", width: `${pct}%`, borderRadius: 4, background: pct >= 100 ? "linear-gradient(90deg,#059669,#10B981)" : "linear-gradient(90deg,#D97706,#F59E0B)" }} />
-              </div>
-              <div style={{ fontFamily: "var(--f-data)", fontSize: ".74rem", color: "var(--muted)" }}>
-                {pct}% de {usuario.horasMeta}h meta · {pct >= 100 ? "¡Meta alcanzada!" : `Faltan ${usuario.horasMeta - usuario.horas}h`}
-              </div>
-            </div>
-          </div>
-
           {/* Avisos recientes */}
           <div style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 12, overflow: "hidden", boxShadow: "var(--shadow-sm)" }}>
             <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
@@ -299,16 +276,6 @@ export default async function PeritoInformacionPage() {
                     </div>
                   </div>
                 ))}
-              </div>
-              {/* Separador */}
-              <div style={{ height: 1, background: "rgba(255,255,255,.1)", margin: "16px 0" }} />
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{ fontFamily: "var(--f-data)", fontSize: ".7rem", color: "rgba(255,255,255,.45)" }}>
-                  Horas de actualización
-                </span>
-                <span className="font-montserrat" style={{ fontWeight: 800, fontSize: "1.2rem", color: "#E8C060" }}>
-                  {usuario.horas}h
-                </span>
               </div>
             </div>
           </div>

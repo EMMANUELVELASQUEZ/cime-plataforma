@@ -2,6 +2,10 @@ import { prisma } from "@/lib/prisma"
 
 export const dynamic = "force-dynamic"
 
+function parseDocUrl(raw: string): { url: string; nombre: string; tipo: string } | null {
+  try { return JSON.parse(raw) } catch { return null }
+}
+
 const TIPO_ICON: Record<string, string> = {
   "application/pdf":    "📄",
   "image/jpeg":         "🖼️",
@@ -99,16 +103,18 @@ export default async function DocumentosPeritoPage() {
 
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 14 }}>
                   {docs.map(doc => {
-                    const icon = TIPO_ICON[doc.tipoMime] ?? "📎"
-                    const isPdf = doc.tipoMime === "application/pdf"
-                    const isImg = doc.tipoMime.startsWith("image/")
+                    const parsed  = parseDocUrl(doc.url)
+                    const dataUrl = parsed?.url ?? null
+                    const dlName  = parsed?.nombre ?? doc.nombreArchivo
+                    const icon    = TIPO_ICON[doc.tipoMime] ?? "📎"
+                    const isPdf   = doc.tipoMime === "application/pdf"
+                    const isImg   = doc.tipoMime.startsWith("image/")
 
                     return (
                       <a
                         key={doc.id}
-                        href={doc.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href={dataUrl ?? "#"}
+                        download={dataUrl ? dlName : undefined}
                         style={{ textDecoration: "none", color: "inherit" }}
                       >
                         <div className="card" style={{
@@ -116,7 +122,7 @@ export default async function DocumentosPeritoPage() {
                         }}>
                           {/* Card thumbnail */}
                           <div style={{
-                            height: 100, background: isImg ? `url(${doc.url}) center/cover` : `${CAT_COLOR[doc.categoria] ?? "#0D2060"}12`,
+                            height: 100, background: isImg && dataUrl ? `url(${dataUrl}) center/cover` : `${CAT_COLOR[doc.categoria] ?? "#0D2060"}12`,
                             display: "flex", alignItems: "center", justifyContent: "center",
                             position: "relative",
                           }}>

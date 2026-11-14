@@ -14,9 +14,9 @@ export default async function PagosPage() {
     orderBy: { createdAt: "desc" },
   })
 
-  const pendientes = pagos.filter(p => p.estado === "Pendiente")
+  const pendientes = pagos.filter(p => p.estado === "PENDIENTE")
   const totalPendiente = pendientes.reduce((s, p) => s + p.monto, 0)
-  const pagados = pagos.filter(p => p.estado === "Pagado")
+  const pagados = pagos.filter(p => p.estado === "PAGADO")
   const totalPagado = pagados.reduce((s, p) => s + p.monto, 0)
 
   return (
@@ -82,7 +82,7 @@ export default async function PagosPage() {
                     <td className="mono" style={{ fontSize: ".8rem" }}>{p.folio}</td>
                     <td className="num">{new Date(p.createdAt).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}</td>
                     <td className="mono">{money(p.monto)}</td>
-                    <td><span className={`chip nodot ${p.estado === "Pagado" ? "ok" : "warn"}`}>{p.estado}</span></td>
+                    <td><span className={`chip nodot ${p.estado === "PAGADO" ? "ok" : p.estado === "PENDIENTE" ? "warn" : ""}`}>{p.estado}</span></td>
                   </tr>
                 ))}
               </tbody>
