@@ -392,15 +392,19 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
                   {user.name?.split(" ").slice(0, 3).join(" ")}
                 </div>
                 <div className="text-white/34 font-mono text-[.62rem] tracking-[.04em] mt-[2px]">
-                  {user.numeroColegiado ? `CIME-VER-${user.numeroColegiado}` : "Sin número"}
+                  {user.numeroColegiado
+                    ? `CIME-VER-${user.numeroColegiado}`
+                    : user.numeroPerito
+                      ? `CIME-PER-${user.numeroPerito}`
+                      : "Sin número asignado"}
                 </div>
               </div>
             </div>
 
             <div className="h-px bg-white/[.06]" />
 
-            {/* Animated ring + hours summary */}
-            <div className="flex items-center gap-3">
+            {/* Animated ring + hours summary — solo colegiados */}
+            {!isPerito && <div className="flex items-center gap-3">
               <div className="relative w-12 h-12 flex-shrink-0">
                 <svg width="48" height="48" viewBox="0 0 48 48" className="-rotate-90">
                   <circle cx="24" cy="24" r="20" fill="none" stroke="rgba(255,255,255,.08)" strokeWidth="4.5" />
@@ -431,7 +435,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
                   {faltanH > 0 ? `Faltan ${faltanH}h para tu meta` : "¡Meta alcanzada!"}
                 </p>
               </div>
-            </div>
+            </div>}
 
             {/* Course list */}
             {cursosResumen !== undefined && (

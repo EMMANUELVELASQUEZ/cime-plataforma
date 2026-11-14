@@ -34,7 +34,7 @@ export default async function PeritoInicio() {
       select: {
         nombre: true, numeroPerito: true, especialidad: true,
         alta: true, cedula: true, vigencia: true, ciudad: true,
-        horas: true, horasMeta: true, estado: true,
+        estado: true,
       },
     }),
     prisma.evento.findMany({
@@ -184,11 +184,28 @@ export default async function PeritoInicio() {
             </div>
           </div>
           <div style={{ width: "100%", height: 1, background: "rgba(255,255,255,.1)" }} />
-          <div style={{ textAlign: "right" }}>
-            <div style={{ fontFamily: "var(--f-data)", fontSize: ".6rem", color: "rgba(255,255,255,.4)", marginBottom: 3 }}>Horas acreditadas</div>
-            <div style={{ fontFamily: "var(--font-montserrat), Montserrat", fontSize: "1.8rem", fontWeight: 800, color: "#E8C060", lineHeight: 1 }}>
-              {usuario.horas}<span style={{ fontSize: ".9rem", fontWeight: 600, color: "rgba(232,192,96,.5)" }}>h</span>
+          <div style={{ textAlign: "right", display: "flex", flexDirection: "column", gap: 6 }}>
+            <div>
+              <div style={{ fontFamily: "var(--f-data)", fontSize: ".58rem", color: "rgba(255,255,255,.35)", letterSpacing: ".05em", textTransform: "uppercase", marginBottom: 3 }}>Estatus</div>
+              <div style={{
+                display: "inline-flex", alignItems: "center", gap: 5,
+                fontFamily: "var(--f-data)", fontSize: ".7rem", fontWeight: 800,
+                letterSpacing: ".06em", textTransform: "uppercase",
+                padding: "4px 10px", borderRadius: 99,
+                background: est.bg, color: est.text,
+              }}>
+                <span style={{ width: 5, height: 5, borderRadius: "50%", background: est.text }} />
+                {est.label}
+              </div>
             </div>
+            {usuario.vigencia && (
+              <div>
+                <div style={{ fontFamily: "var(--f-data)", fontSize: ".58rem", color: "rgba(255,255,255,.35)", letterSpacing: ".05em", textTransform: "uppercase", marginBottom: 3 }}>Vigencia</div>
+                <div style={{ fontFamily: "var(--font-montserrat), Montserrat", fontSize: "1.1rem", fontWeight: 800, color: "#E8C060", lineHeight: 1 }}>
+                  {usuario.vigencia}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
