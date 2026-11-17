@@ -23,29 +23,9 @@ export async function register() {
         }
       }
 
-      // Create admin user if no admin exists
-      const { prisma } = await import("./lib/prisma")
-      const bcrypt = (await import("bcryptjs")).default
-
-      const adminCount = await prisma.usuario.count({ where: { rol: "ADMIN" } })
-      if (adminCount === 0) {
-        const hash = await bcrypt.hash("CimeVer@2026!", 12)
-        await prisma.usuario.create({
-          data: {
-            nombre: "Administración CIME Veracruz",
-            correo: "administracion@cime-veracruz.mx",
-            password: hash,
-            rol: "ADMIN",
-            estado: "VIGENTE",
-            numeroColegiado: null,
-            telefono: "229 100 0000",
-            ciudad: "Xalapa",
-          },
-        })
-        console.log("[setup] ✓ Admin creado: administracion@cime-veracruz.mx")
-      } else {
-        console.log("[setup] ✓ Admin ya existe")
-      }
+      // Administrador principal: datos desde variables de entorno (nunca en el código)
+      const { syncAdminPrincipal } = await import("./lib/adminSync")
+      await syncAdminPrincipal()
     } catch (e) {
       console.error("[setup] Error:", e)
     }

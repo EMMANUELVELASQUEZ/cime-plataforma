@@ -75,6 +75,7 @@ export interface AppShellUser {
   vigencia?:        string | null
   estado?:          string
   especialidad?:    string | null
+  cargo?:           string | null
   cursosResumen?:   { titulo: string; horas: number; progreso: number; area: string; estado: string }[]
   avisosCount?:       number
   planesAlerta?:      number
@@ -393,7 +394,9 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
                   {user.name?.split(" ").slice(0, 3).join(" ")}
                 </div>
                 <div className="text-white/34 font-mono text-[.62rem] tracking-[.04em] mt-[2px]">
-                  {user.numeroColegiado
+                  {isAdmin && user.cargo
+                    ? user.cargo.split(" · ")[0]
+                    : user.numeroColegiado
                     ? `CIME-VER-${user.numeroColegiado}`
                     : user.numeroPerito
                       ? `CIME-PER-${user.numeroPerito}`
@@ -618,7 +621,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
                     {user.name?.split(" ").slice(0, 2).join(" ") ?? "Usuario"}
                   </b>
                   <span className="text-[.68rem]" style={{ color: "var(--muted)" }}>
-                    {isAdmin ? "Administración" : isPerito ? `Per. ${user.numeroPerito ?? ""}` : isTesorero ? "Tesorero" : `Col. ${user.numeroColegiado ?? ""}`}
+                    {isAdmin ? (user.cargo?.split(" · ")[0] ?? "Administración") : isPerito ? `Per. ${user.numeroPerito ?? ""}` : isTesorero ? "Tesorero" : `Col. ${user.numeroColegiado ?? ""}`}
                   </span>
                 </div>
                 <ChevronDown size={13} strokeWidth={2} className="flex-shrink-0" style={{ color: "var(--muted)" }} />
@@ -629,6 +632,9 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
                   style={{ background: "var(--surface)", borderColor: "var(--line)", boxShadow: "var(--shadow-lg)" }}>
                   <div className="px-4 py-3 border-b" style={{ background: "var(--surface-2)", borderColor: "var(--line)" }}>
                     <b className="text-[.88rem] block" style={{ color: "var(--fg)" }}>{user.name}</b>
+                    {isAdmin && user.cargo && (
+                      <span className="text-[.74rem] block" style={{ color: "var(--muted)" }}>{user.cargo}</span>
+                    )}
                     <span className="text-[.76rem]" style={{ color: "var(--muted)" }}>{user.email}</span>
                   </div>
                   <div className="p-1.5 grid gap-0.5">
