@@ -12,6 +12,7 @@ model Usuario {
   numeroColegiado String?         @unique
   numeroPerito    String?         @unique
   nombre          String
+  cargo           String?
   correo          String          @unique
   password        String
   rol             Rol             @default(COLEGIADO)

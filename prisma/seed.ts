@@ -4,24 +4,11 @@ import bcrypt from "bcryptjs"
 const prisma = new PrismaClient()
 
 async function main() {
-  const adminHash = await bcrypt.hash("CimeVer@2026!", 12)
   const colHash   = await bcrypt.hash("Colegiado@2026", 12)
 
-  // Administrador principal del Colegio
-  await prisma.usuario.upsert({
-    where: { correo: "administracion@cime-veracruz.mx" },
-    update: {},
-    create: {
-      numeroColegiado: null,
-      nombre: "Administración CIME Veracruz",
-      correo: "administracion@cime-veracruz.mx",
-      password: adminHash,
-      rol: Rol.ADMIN,
-      estado: EstadoColegiado.VIGENTE,
-      telefono: "229 100 0000",
-      ciudad: "Xalapa",
-    },
-  })
+  // Administrador principal del Colegio (correo y contraseña desde ADMIN_CORREO / ADMIN_PASSWORD)
+  const { syncAdminPrincipal } = await import("../lib/adminSync")
+  await syncAdminPrincipal()
 
   // Colegiado de ejemplo para validación interna
   await prisma.usuario.upsert({

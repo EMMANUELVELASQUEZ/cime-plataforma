@@ -10,16 +10,21 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!session) redirect("/login")
   if ((session.user as any)?.role !== "ADMIN") redirect("/dashboard")
 
-  const [planesAlerta, totalColegiados, vigentes, mensajesNoLeidos] = await Promise.all([
+  const adminId = (session.user as any)?.id as string | undefined
+  const [planesAlerta, totalColegiados, vigentes, mensajesNoLeidos, perfil] = await Promise.all([
     prisma.solicitudPlan.count({ where: { estado: "PENDIENTE" } }),
     prisma.usuario.count({ where: { rol: "COLEGIADO" } }),
     prisma.usuario.count({ where: { rol: "COLEGIADO", estado: "VIGENTE" } }),
     prisma.mensaje.count({ where: { deAdmin: false, leido: false } }),
+    adminId
+      ? prisma.usuario.findUnique({ where: { id: adminId }, select: { nombre: true, correo: true, cargo: true } })
+      : null,
   ])
 
   const user = {
-    name: session.user?.name,
-    email: session.user?.email,
+    name: perfil?.nombre ?? session.user?.name,
+    email: perfil?.correo ?? session.user?.email,
+    cargo: perfil?.cargo ?? null,
     role: (session.user as any)?.role,
     numeroColegiado: (session.user as any)?.numeroColegiado,
     planesAlerta: planesAlerta > 0 ? planesAlerta : undefined,
