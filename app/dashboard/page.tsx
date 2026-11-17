@@ -156,7 +156,7 @@ export default async function DashboardPage() {
   const pagosPend   = pagos.filter(p => ["PENDIENTE","pendiente","VENCIDO","vencido"].includes(p.estado))
   const est         = estadoOf(usuario.estado)
 
-  const hour   = new Date().getHours()
+  const hour   = Number(new Intl.DateTimeFormat("es-MX", { hour: "numeric", hourCycle: "h23", timeZone: "America/Mexico_City" }).format(new Date()))
   const saludo = hour < 12 ? "Buenos días" : hour < 19 ? "Buenas tardes" : "Buenas noches"
 
   // SVG circular progress — both computed server-side (no JS needed)

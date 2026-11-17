@@ -60,7 +60,7 @@ export default async function PeritoInicio() {
   if (!usuario) return null
 
   const est = ESTC[usuario.estado] ?? ESTC.VIGENTE
-  const hour = new Date().getHours()
+  const hour = Number(new Intl.DateTimeFormat("es-MX", { hour: "numeric", hourCycle: "h23", timeZone: "America/Mexico_City" }).format(new Date()))
   const saludo = hour < 12 ? "Buenos días" : hour < 19 ? "Buenas tardes" : "Buenas noches"
 
   const EV_COLOR: Record<string, { bg: string; text: string }> = {
