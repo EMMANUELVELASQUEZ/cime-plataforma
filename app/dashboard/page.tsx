@@ -7,6 +7,7 @@ import {
   MapPin, BookOpen, Shield,
 } from "lucide-react"
 import AvisosCarousel from "@/components/AvisosCarousel"
+import CimeLogo3D from "@/components/CimeLogo3D"
 
 export const dynamic = "force-dynamic"
 
@@ -301,31 +302,8 @@ export default async function DashboardPage() {
           borderLeft: "1px solid rgba(255,255,255,.1)",
           minWidth: 200,
         }}>
-          {/* CIME logo — clearly visible, its own space */}
-          <div style={{ userSelect: "none", pointerEvents: "none", textAlign: "right" }}>
-            <div style={{
-              fontFamily: "var(--font-montserrat), Montserrat, system-ui",
-              fontWeight: 900,
-              fontSize: "clamp(1.8rem, 3.5vw, 2.8rem)",
-              letterSpacing: ".2em",
-              lineHeight: 1,
-              color: "#E8C060",
-              textShadow: "0 2px 16px rgba(232,192,96,.3)",
-            }}>
-              CIME
-            </div>
-            <div style={{
-              fontFamily: "var(--f-data)",
-              fontSize: ".48rem",
-              letterSpacing: ".22em",
-              textTransform: "uppercase",
-              color: "rgba(232,192,96,.5)",
-              marginTop: 3,
-              textAlign: "right",
-            }}>
-              Veracruz · México
-            </div>
-          </div>
+          {/* Logo CIME 3D — gira lentamente */}
+          <CimeLogo3D size={118} spin glow alt="CIME Veracruz" />
 
           {/* Divider */}
           <div style={{

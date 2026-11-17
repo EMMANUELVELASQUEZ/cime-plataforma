@@ -11,6 +11,7 @@ import {
   PanelLeftClose, PanelLeftOpen, FolderOpen, FileText, Building2, BookMarked, MessageCircle,
   Scale, FileUser, TrendingUp, PieChart, Receipt, Wallet,
 } from "lucide-react"
+import CimeLogo3D from "@/components/CimeLogo3D"
 
 // ─── Bottom nav items ────────────────────────────────────────
 const BOTTOM_NAV_COLEGIADO = [
@@ -313,7 +314,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
         "relative flex items-center gap-3 border-b border-white/[.06] flex-shrink-0",
         collapsed ? "justify-center px-3 py-[18px]" : "px-4 py-[18px]"
       )}>
-        <img src="/logo.jpeg" alt="CIME" className="w-10 h-10 rounded-xl object-cover flex-shrink-0 border border-white/10" />
+        <CimeLogo3D variant="emblem" size={40} priority alt="CIME" />
         {!collapsed && (
           <div className="min-w-0">
             <div className="text-white font-bold text-[.87rem] tracking-[.055em] leading-tight">CIME VERACRUZ</div>
