@@ -186,20 +186,23 @@ model Evento {
   titulo    String
   hora      String
   lugar     String
+  audiencia String   @default("todos")
   createdAt DateTime @default(now())
 
   @@index([fecha])
 }
 
 model Aviso {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   tipo      String
   categoria String
   titulo    String
   contenido String
-  fijado    Boolean  @default(false)
-  imagen    String?  // JSON payload: {url, nombre, tipo, bytes}
-  createdAt DateTime @default(now())
+  fijado    Boolean   @default(false)
+  imagen    String?   // JSON payload: {url, nombre, tipo, bytes}
+  audiencia String    @default("todos")
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
 
   @@index([createdAt])
 }

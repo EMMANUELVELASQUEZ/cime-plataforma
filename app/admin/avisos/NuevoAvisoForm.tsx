@@ -2,11 +2,18 @@
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation"
 
+const AUDIENCIAS = [
+  { label: "Todos", value: "todos" },
+  { label: "Colegiados", value: "colegiados" },
+  { label: "Peritos", value: "peritos" },
+  { label: "Tesorero", value: "tesorero" },
+]
+
 export default function NuevoAvisoForm() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState("")
-  const [form, setForm] = useState({ titulo: "", contenido: "", categoria: "Evento", tipo: "conferencia", fijado: false })
+  const [form, setForm] = useState({ titulo: "", contenido: "", categoria: "Evento", tipo: "conferencia", fijado: false, audiencia: "todos", expiresAt: "" })
   const [imagen, setImagen] = useState<string | null>(null)
   const [imgPreview, setImgPreview] = useState<string | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
@@ -46,7 +53,7 @@ export default function NuevoAvisoForm() {
       body: JSON.stringify({ ...form, imagen }),
     })
     setLoading(false); setMsg("Aviso publicado.")
-    setForm({ titulo: "", contenido: "", categoria: "Evento", tipo: "conferencia", fijado: false })
+    setForm({ titulo: "", contenido: "", categoria: "Evento", tipo: "conferencia", fijado: false, audiencia: "todos", expiresAt: "" })
     clearImagen()
     router.refresh()
   }
@@ -79,6 +86,33 @@ export default function NuevoAvisoForm() {
                 <option value="conferencia">Conferencia</option><option value="visita">Visita</option>
                 <option value="examen">Examen</option><option value="sistema">Sistema</option>
               </select>
+            </div>
+          </div>
+
+          <div className="field">
+            <label>Audiencia</label>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 4 }}>
+              {AUDIENCIAS.map(a => (
+                <button
+                  key={a.value}
+                  type="button"
+                  onClick={() => set("audiencia", a.value)}
+                  style={{
+                    padding: "3px 10px",
+                    borderRadius: 20,
+                    border: `1.5px solid ${form.audiencia === a.value ? "#0D2060" : "var(--line)"}`,
+                    background: form.audiencia === a.value ? "#0D2060" : "transparent",
+                    color: form.audiencia === a.value ? "#fff" : "var(--muted)",
+                    fontSize: ".75rem",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "all .15s",
+                    letterSpacing: ".03em",
+                  }}
+                >
+                  {a.label}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -132,6 +166,16 @@ export default function NuevoAvisoForm() {
                 </button>
               </div>
             )}
+          </div>
+
+          <div className="field">
+            <label>Vigente hasta (opcional)</label>
+            <input
+              className="input"
+              type="date"
+              value={form.expiresAt}
+              onChange={e => set("expiresAt", e.target.value)}
+            />
           </div>
 
           <label className="check">

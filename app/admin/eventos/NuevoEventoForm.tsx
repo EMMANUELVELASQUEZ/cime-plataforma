@@ -2,11 +2,20 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
+const TIPOS_SUGERIDOS = ["Asamblea", "Curso", "Conferencia", "Visita técnica", "Evaluación", "Taller", "Congreso"]
+
+const AUDIENCIAS = [
+  { label: "Todos", value: "todos" },
+  { label: "Colegiados", value: "colegiados" },
+  { label: "Peritos", value: "peritos" },
+  { label: "Tesorero", value: "tesorero" },
+]
+
 export default function NuevoEventoForm() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState("")
-  const [form, setForm] = useState({ titulo: "", fecha: "", hora: "18:00", lugar: "", tipo: "asamblea" })
+  const [form, setForm] = useState({ titulo: "", fecha: "", hora: "18:00", lugar: "", tipo: "", audiencia: "todos" })
 
   function set(k: string, v: string) { setForm(p => ({ ...p, [k]: v })) }
 
@@ -15,7 +24,7 @@ export default function NuevoEventoForm() {
     setLoading(true)
     await fetch("/api/admin/eventos", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) })
     setLoading(false); setMsg("Evento agregado.")
-    setForm({ titulo: "", fecha: "", hora: "18:00", lugar: "", tipo: "asamblea" })
+    setForm({ titulo: "", fecha: "", hora: "18:00", lugar: "", tipo: "", audiencia: "todos" })
     router.refresh()
   }
 
@@ -41,13 +50,66 @@ export default function NuevoEventoForm() {
           </div>
           <div className="field">
             <label>Tipo</label>
-            <select className="input" value={form.tipo} onChange={e => set("tipo", e.target.value)}>
-              <option value="asamblea">Asamblea</option>
-              <option value="curso">Curso</option>
-              <option value="conferencia">Conferencia</option>
-              <option value="visita">Visita técnica</option>
-              <option value="examen">Evaluación</option>
-            </select>
+            <input
+              className="input"
+              list="tipos-sugeridos"
+              value={form.tipo}
+              onChange={e => set("tipo", e.target.value)}
+              placeholder="Ej. Asamblea, Curso, Congreso…"
+              autoComplete="off"
+            />
+            <datalist id="tipos-sugeridos">
+              {TIPOS_SUGERIDOS.map(t => <option key={t} value={t} />)}
+            </datalist>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8 }}>
+              {TIPOS_SUGERIDOS.map(t => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => set("tipo", t)}
+                  style={{
+                    padding: "3px 10px",
+                    borderRadius: 20,
+                    border: `1.5px solid ${form.tipo === t ? "var(--accent)" : "var(--line)"}`,
+                    background: form.tipo === t ? "var(--accent)" : "transparent",
+                    color: form.tipo === t ? "#fff" : "var(--muted)",
+                    fontSize: ".75rem",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "all .15s",
+                    letterSpacing: ".03em",
+                  }}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="field">
+            <label>Audiencia</label>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 4 }}>
+              {AUDIENCIAS.map(a => (
+                <button
+                  key={a.value}
+                  type="button"
+                  onClick={() => set("audiencia", a.value)}
+                  style={{
+                    padding: "3px 10px",
+                    borderRadius: 20,
+                    border: `1.5px solid ${form.audiencia === a.value ? "#0D2060" : "var(--line)"}`,
+                    background: form.audiencia === a.value ? "#0D2060" : "transparent",
+                    color: form.audiencia === a.value ? "#fff" : "var(--muted)",
+                    fontSize: ".75rem",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    transition: "all .15s",
+                    letterSpacing: ".03em",
+                  }}
+                >
+                  {a.label}
+                </button>
+              ))}
+            </div>
           </div>
           <div className="field">
             <label>Lugar</label>

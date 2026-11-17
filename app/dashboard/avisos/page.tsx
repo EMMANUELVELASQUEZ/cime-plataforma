@@ -1,14 +1,33 @@
 import { prisma } from "@/lib/prisma"
-import AvisosGrid from "@/components/AvisosGrid"
+import ComunicadosGrid, { type Item } from "@/components/ComunicadosGrid"
 
 export const dynamic = "force-dynamic"
 
 export default async function AvisosPage() {
-  const avisos = await prisma.aviso.findMany({
-    orderBy: [{ fijado: "desc" }, { createdAt: "desc" }],
-  })
+  const [avisos, eventos] = await Promise.all([
+    prisma.aviso.findMany({
+      where: { audiencia: { in: ["todos", "colegiados"] } },
+      orderBy: [{ fijado: "desc" }, { createdAt: "desc" }],
+    }),
+    prisma.evento.findMany({
+      where: { audiencia: { in: ["todos", "colegiados"] } },
+      orderBy: { fecha: "asc" },
+    }),
+  ])
 
-  const data = avisos.map(a => ({
+  const eventoItems: Item[] = eventos.map(e => ({
+    id:        e.id,
+    tipo:      e.tipo,
+    titulo:    e.titulo,
+    fecha:     e.fecha.toISOString(),
+    hora:      e.hora,
+    lugar:     e.lugar,
+    createdAt: e.createdAt.toISOString(),
+    audiencia: e.audiencia,
+    _kind:     "evento" as const,
+  }))
+
+  const avisoItems: Item[] = avisos.map(a => ({
     id:        a.id,
     tipo:      a.tipo,
     categoria: a.categoria,
@@ -17,7 +36,13 @@ export default async function AvisosPage() {
     fijado:    a.fijado,
     imagen:    a.imagen,
     createdAt: a.createdAt.toISOString(),
+    audiencia: a.audiencia,
+    expiresAt: a.expiresAt?.toISOString() ?? null,
+    _kind:     "aviso" as const,
   }))
+
+  const items: Item[] = [...eventoItems, ...avisoItems]
+  const total = items.length
 
   return (
     <>
@@ -30,11 +55,11 @@ export default async function AvisosPage() {
           <p style={{ color: "var(--muted)" }}>Convocatorias, cuotas, eventos y comunicados emitidos por el Consejo Directivo.</p>
         </div>
         <span className="chip nodot" style={{ background: "#0D206018", color: "#0D2060", fontWeight: 700, alignSelf: "flex-start" }}>
-          {avisos.length} aviso{avisos.length !== 1 ? "s" : ""}
+          {total} comunicado{total !== 1 ? "s" : ""}
         </span>
       </div>
 
-      <AvisosGrid avisos={data} />
+      <ComunicadosGrid items={items} />
     </>
   )
 }

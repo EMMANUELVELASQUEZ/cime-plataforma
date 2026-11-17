@@ -9,11 +9,20 @@ async function requireAdmin() {
 
 export async function POST(req: Request) {
   if (!await requireAdmin()) return NextResponse.json({ error: "No autorizado" }, { status: 401 })
-  const { titulo, contenido, categoria, tipo, fijado, imagen } = await req.json()
+  const { titulo, contenido, categoria, tipo, fijado, imagen, audiencia, expiresAt } = await req.json()
   if (!titulo || !contenido) return NextResponse.json({ error: "Faltan campos obligatorios" }, { status: 400 })
   try {
     const aviso = await prisma.aviso.create({
-      data: { titulo, contenido, categoria: categoria ?? "Evento", tipo: tipo ?? "conferencia", fijado: !!fijado, imagen: imagen ?? null },
+      data: {
+        titulo,
+        contenido,
+        categoria: categoria ?? "Evento",
+        tipo: tipo ?? "conferencia",
+        fijado: !!fijado,
+        imagen: imagen ?? null,
+        audiencia: audiencia ?? "todos",
+        expiresAt: expiresAt ? new Date(expiresAt) : null,
+      },
     })
     return NextResponse.json(aviso, { status: 201 })
   } catch {
