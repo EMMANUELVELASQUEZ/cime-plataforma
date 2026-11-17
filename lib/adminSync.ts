@@ -16,8 +16,11 @@ export const ADMIN_PRINCIPAL = {
 const CORREO_ANTERIOR = "administracion@cime-veracruz.mx"
 
 export async function syncAdminPrincipal() {
-  const correo   = process.env.ADMIN_CORREO?.trim().toLowerCase()
-  const password = process.env.ADMIN_PASSWORD
+  // Limpia comillas o saltos de línea que a veces se cuelan al pegar en Railway
+  const limpiar = (v?: string) => v?.replace(/^\s+|\s+$/g, "").replace(/^["']|["']$/g, "")
+  const correo   = limpiar(process.env.ADMIN_CORREO)?.toLowerCase()
+  const password = limpiar(process.env.ADMIN_PASSWORD)
+  console.log(`[admin] Revisando administrador principal (ADMIN_CORREO ${correo ? "definido" : "FALTA"}, ADMIN_PASSWORD ${password ? "definido" : "FALTA"})`)
 
   if (!correo || !password) {
     console.warn("[admin] ADMIN_CORREO / ADMIN_PASSWORD no definidos: no se modifica la cuenta de administración")
