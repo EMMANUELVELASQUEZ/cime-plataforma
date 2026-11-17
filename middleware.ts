@@ -1,4 +1,8 @@
-import { auth } from "@/lib/auth"
+import NextAuth from "next-auth"
+import { authConfig } from "@/lib/auth.config"
+
+// Middleware ligero: solo valida la cookie JWT (sin Prisma ni bcrypt en cada petición)
+const { auth } = NextAuth(authConfig)
 import { NextResponse } from "next/server"
 
 export default auth((req) => {

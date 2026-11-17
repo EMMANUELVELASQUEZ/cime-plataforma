@@ -43,8 +43,7 @@ export default async function AdminDashboard() {
 
   const [
     adminUser,
-    totalColegiados, vigentesC, porRenovarC, suspendidosC,
-    totalPeritos, vigentesP, porRenovarP,
+    conteoPadron,
     pagosPendientesData,
     mensajesSinLeer,
     totalCursos, cursosActivos,
@@ -56,14 +55,12 @@ export default async function AdminDashboard() {
   ] = await Promise.all([
     prisma.usuario.findUnique({ where: { id: userId }, select: { nombre: true, correo: true } }),
 
-    prisma.usuario.count({ where: { rol: "COLEGIADO" } }),
-    prisma.usuario.count({ where: { rol: "COLEGIADO", estado: "VIGENTE" } }),
-    prisma.usuario.count({ where: { rol: "COLEGIADO", estado: "POR_RENOVAR" } }),
-    prisma.usuario.count({ where: { rol: "COLEGIADO", estado: "SUSPENDIDO" } }),
-
-    prisma.usuario.count({ where: { rol: "PERITO" } }),
-    prisma.usuario.count({ where: { rol: "PERITO", estado: "VIGENTE" } }),
-    prisma.usuario.count({ where: { rol: "PERITO", estado: "POR_RENOVAR" } }),
+    // Un solo query para todo el padrón (antes eran 7 conteos separados)
+    prisma.usuario.groupBy({
+      by: ["rol", "estado"],
+      where: { rol: { in: ["COLEGIADO", "PERITO"] } },
+      _count: { _all: true },
+    }),
 
     prisma.pago.aggregate({
       where: { estado: { in: ["PENDIENTE", "pendiente", "VENCIDO", "vencido"] } },
@@ -99,10 +96,22 @@ export default async function AdminDashboard() {
     }),
   ])
 
+  const cuenta = (rol: string, estado?: string) =>
+    conteoPadron
+      .filter((g: { rol: string; estado: string }) => g.rol === rol && (!estado || g.estado === estado))
+      .reduce((n: number, g: { _count: { _all: number } }) => n + g._count._all, 0)
+  const totalColegiados = cuenta("COLEGIADO")
+  const vigentesC       = cuenta("COLEGIADO", "VIGENTE")
+  const porRenovarC     = cuenta("COLEGIADO", "POR_RENOVAR")
+  const suspendidosC    = cuenta("COLEGIADO", "SUSPENDIDO")
+  const totalPeritos    = cuenta("PERITO")
+  const vigentesP       = cuenta("PERITO", "VIGENTE")
+  const porRenovarP     = cuenta("PERITO", "POR_RENOVAR")
+
   const nombre   = adminUser?.nombre ?? session?.user?.name ?? "Administración"
-  const hour     = new Date().getHours()
+  const hour     = Number(new Intl.DateTimeFormat("es-MX", { hour: "numeric", hourCycle: "h23", timeZone: "America/Mexico_City" }).format(new Date()))
   const saludo   = hour < 12 ? "Buenos días" : hour < 19 ? "Buenas tardes" : "Buenas noches"
-  const hoy      = new Date().toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long", year: "numeric" })
+  const hoy      = new Date().toLocaleDateString("es-MX", { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "America/Mexico_City" })
 
   const pagosPendCount = pagosPendientesData._count
   const pagosPendMonto = pagosPendientesData._sum.monto ?? 0

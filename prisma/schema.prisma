@@ -33,6 +33,8 @@ model Usuario {
   expediente    Expediente?
   solicitudes   SolicitudPlan[]
   mensajes      Mensaje[]
+
+  @@index([rol, estado])
 }
 
 model Mensaje {
@@ -43,6 +45,9 @@ model Mensaje {
   usuarioId  String
   createdAt  DateTime @default(now())
   usuario    Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId, createdAt])
+  @@index([deAdmin, leido])
 }
 
 enum Rol {
@@ -96,6 +101,8 @@ model ModuloCurso {
   orden   Int
   curso   Curso     @relation(fields: [cursoId], references: [id], onDelete: Cascade)
   lecciones Leccion[]
+
+  @@index([cursoId])
 }
 
 enum TipoRecurso {
@@ -117,6 +124,8 @@ model Leccion {
   completadas LeccionCompletada[]
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
+
+  @@index([moduloId])
 }
 
 model RecursoLeccion {
@@ -159,6 +168,8 @@ model InscripcionCurso {
   leccionesCompletadas LeccionCompletada[]
 
   @@unique([usuarioId, cursoId])
+
+  @@index([cursoId])
 }
 
 enum EstadoInscripcion {
@@ -176,6 +187,8 @@ model Evento {
   hora      String
   lugar     String
   createdAt DateTime @default(now())
+
+  @@index([fecha])
 }
 
 model Aviso {
@@ -187,6 +200,8 @@ model Aviso {
   fijado    Boolean  @default(false)
   imagen    String?  // JSON payload: {url, nombre, tipo, bytes}
   createdAt DateTime @default(now())
+
+  @@index([createdAt])
 }
 
 model DirectorioMiembro {
@@ -217,6 +232,10 @@ model Pago {
 
   usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   curso   Curso?  @relation(fields: [cursoId], references: [id], onDelete: SetNull)
+
+  @@index([usuarioId, createdAt])
+  @@index([estado])
+  @@index([cursoId])
 }
 
 // ─── Expedientes ─────────────────────────────────────────────────
@@ -258,6 +277,8 @@ model EntradaExpediente {
   createdAt    DateTime    @default(now())
 
   expediente Expediente @relation(fields: [expedienteId], references: [id], onDelete: Cascade)
+
+  @@index([expedienteId, createdAt])
 }
 
 model PlanPago {
@@ -285,6 +306,9 @@ model SolicitudPlan {
   updatedAt DateTime @updatedAt
 
   @@unique([planId, usuarioId])
+
+  @@index([usuarioId])
+  @@index([estado])
 }
 
 model DocumentoAdmin {
