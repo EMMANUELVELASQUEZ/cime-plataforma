@@ -257,85 +257,70 @@ export default async function AdminDashboard() {
             label: "Colegiados", val: totalColegiados, unit: "",
             sub: `${vigentesC} vigentes · ${pct(vigentesC, totalColegiados)}%`,
             icon: <Users size={20} strokeWidth={1.75} />,
-            cardBg: "linear-gradient(145deg,#EFF6FF,#DBEAFE)",
-            iconBg: "#BFDBFE", iconColor: "#1D4ED8",
-            accent: "#1D4ED8", valColor: "#1E3A8A",
+            accent: "#1D4ED8",
           },
           {
             label: "Peritos registrados", val: totalPeritos, unit: "",
             sub: `${vigentesP} vigentes`,
             icon: <Shield size={20} strokeWidth={1.75} />,
-            cardBg: "linear-gradient(145deg,#ECFDF5,#D1FAE5)",
-            iconBg: "#A7F3D0", iconColor: "#059669",
-            accent: "#059669", valColor: "#064E3B",
+            accent: "#059669",
           },
           {
             label: pagosPendCount > 0 ? "Pagos pendientes" : "Cobranza",
             val: pagosPendCount, unit: "",
             sub: pagosPendCount > 0 ? fmtMoney(pagosPendMonto) : "Sin adeudos",
             icon: <CreditCard size={20} strokeWidth={1.75} />,
-            cardBg: pagosPendCount > 0 ? "linear-gradient(145deg,#FFFBEB,#FEF3C7)" : "linear-gradient(145deg,#ECFDF5,#D1FAE5)",
-            iconBg:   pagosPendCount > 0 ? "#FDE68A" : "#A7F3D0",
-            iconColor:pagosPendCount > 0 ? "#B45309" : "#059669",
-            accent:   pagosPendCount > 0 ? "#B45309" : "#059669",
-            valColor: pagosPendCount > 0 ? "#78350F" : "#064E3B",
+            accent: pagosPendCount > 0 ? "#B45309" : "#059669",
           },
           {
             label: mensajesSinLeer > 0 ? "Mensajes nuevos" : "Mensajes",
             val: mensajesSinLeer > 0 ? mensajesSinLeer : "✓", unit: "",
             sub: mensajesSinLeer > 0 ? "Sin responder" : "Al día",
             icon: <MessageCircle size={20} strokeWidth={1.75} />,
-            cardBg: mensajesSinLeer > 0 ? "linear-gradient(145deg,#FFF1F2,#FFE4E6)" : "linear-gradient(145deg,#EFF6FF,#DBEAFE)",
-            iconBg:   mensajesSinLeer > 0 ? "#FECDD3" : "#BFDBFE",
-            iconColor:mensajesSinLeer > 0 ? "#BE123C" : "#1D4ED8",
-            accent:   mensajesSinLeer > 0 ? "#BE123C" : "#1D4ED8",
-            valColor: mensajesSinLeer > 0 ? "#881337" : "#1E3A8A",
+            accent: mensajesSinLeer > 0 ? "#BE123C" : "#1D4ED8",
           },
           {
             label: "Cursos activos", val: cursosActivos, unit: "",
             sub: `${totalCursos} en catálogo`,
             icon: <GraduationCap size={20} strokeWidth={1.75} />,
-            cardBg: "linear-gradient(145deg,#F5F3FF,#EDE9FE)",
-            iconBg: "#DDD6FE", iconColor: "#6D28D9",
-            accent: "#6D28D9", valColor: "#3B0764",
+            accent: "#6D28D9",
           },
           {
             label: "Avisos publicados", val: totalAvisos, unit: "",
             sub: "Comunicados activos",
             icon: <Bell size={20} strokeWidth={1.75} />,
-            cardBg: "linear-gradient(145deg,#FFFBEB,#FEF3C7)",
-            iconBg: "#FDE68A", iconColor: "#B45309",
-            accent: "#B45309", valColor: "#78350F",
+            accent: "#B45309",
           },
         ].map(kpi => (
           <div key={kpi.label} style={{
-            background: kpi.cardBg,
-            border: `1px solid ${kpi.accent}28`,
+            background: "var(--surface)",
+            border: "1px solid var(--line)",
             borderLeft: `4px solid ${kpi.accent}`,
             borderRadius: 12, padding: "16px 14px",
             display: "flex", flexDirection: "column", gap: 10,
+            boxShadow: "var(--shadow-sm)",
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
               <span style={{
                 fontFamily: "var(--f-data)", fontSize: ".6rem", fontWeight: 700,
-                color: kpi.accent, letterSpacing: ".06em", textTransform: "uppercase", lineHeight: 1.3,
+                color: "var(--muted)", letterSpacing: ".06em", textTransform: "uppercase", lineHeight: 1.3,
               }}>{kpi.label}</span>
               <div style={{
                 width: 34, height: 34, borderRadius: 8, flexShrink: 0,
                 display: "grid", placeItems: "center",
-                background: kpi.iconBg, color: kpi.iconColor,
+                background: `${kpi.accent}14`, color: kpi.accent,
               }}>{kpi.icon}</div>
             </div>
             <div>
               <div style={{
                 fontFamily: "var(--font-montserrat), Montserrat",
                 fontSize: "2rem", fontWeight: 800,
-                color: kpi.valColor, lineHeight: 1, letterSpacing: "-.05em",
+                color: "var(--fg)", lineHeight: 1, letterSpacing: "-.05em",
               }}>
                 {kpi.val}
                 {kpi.unit && <span style={{ fontSize: "1rem", fontWeight: 600, color: kpi.accent, marginLeft: 2 }}>{kpi.unit}</span>}
               </div>
-              <div style={{ fontFamily: "var(--f-data)", fontSize: ".67rem", color: kpi.accent, marginTop: 5, opacity: .75 }}>
+              <div style={{ fontFamily: "var(--f-data)", fontSize: ".67rem", color: "var(--muted)", marginTop: 5 }}>
                 {kpi.sub}
               </div>
             </div>
