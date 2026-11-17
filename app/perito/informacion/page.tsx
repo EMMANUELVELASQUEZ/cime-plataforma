@@ -5,6 +5,7 @@ import {
   MapPin, Phone, Mail, Award, Shield, Calendar,
   BookOpen, Edit, CheckCircle2, FileText,
 } from "lucide-react"
+import CimeLogo3D from "@/components/CimeLogo3D"
 
 export const dynamic = "force-dynamic"
 
@@ -106,13 +107,8 @@ export default async function PeritoInformacionPage() {
             color: "#E8C060", background: "rgba(232,192,96,.12)",
             border: "1px solid rgba(232,192,96,.3)", padding: "4px 12px", borderRadius: 4,
           }}>CIME · PERITO CERTIFICADO</div>
-          {/* Logo CIME */}
-          <div style={{
-            position: "absolute", right: 24, top: "50%", transform: "translateY(-50%)",
-            fontFamily: "var(--font-montserrat), Montserrat",
-            fontWeight: 900, fontSize: "2.5rem", letterSpacing: ".2em", lineHeight: 1,
-            color: "rgba(232,192,96,.25)",
-          }}>CIME</div>
+          {/* Logo CIME 3D */}
+          <CimeLogo3D size={104} spin glow style={{ position: "absolute", right: 24, top: "50%", transform: "translateY(-50%)" }} />
         </div>
 
         {/* Avatar + nombre */}

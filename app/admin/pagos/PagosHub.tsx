@@ -292,7 +292,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
 .hdr-dots{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.07) 1px,transparent 1px);background-size:18px 18px}
 .hdr-stripe{position:absolute;right:-20px;top:0;bottom:0;width:140px;background:rgba(255,255,255,.04);transform:skewX(-10deg)}
 .logo-row{display:flex;align-items:center;gap:14px;margin-bottom:18px;position:relative}
-.logo-sm{width:46px;height:46px;border-radius:9px;border:2px solid rgba(255,255,255,.18);object-fit:cover}
+.logo-sm{width:48px;height:48px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.35))}
 .inst{color:white;font-weight:800;font-size:14.5px;line-height:1.3}
 .inst-city{color:rgba(255,255,255,.45);font-size:10px;margin-top:4px;letter-spacing:.05em}
 .sep{height:1px;background:rgba(255,255,255,.12);margin-bottom:14px}
@@ -337,7 +337,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
   <div class="hdr">
     <div class="hdr-dots"></div><div class="hdr-stripe"></div>
     <div class="logo-row">
-      <img src="${origin}/logo.jpeg" alt="CIME" class="logo-sm"/>
+      <img src="${origin}/brand/cime-3d-emblem.png" alt="CIME" class="logo-sm"/>
       <div>
         <div class="inst">COLEGIO DE INGENIEROS MECÁNICOS</div>
         <div class="inst">Y ELECTRICISTAS DE VERACRUZ A.C.</div>
@@ -382,7 +382,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
       <div style="text-align:right"><span class="total-v">${fmt$(pago.monto)}</span><span class="total-cur">MXN</span></div>
     </div>
     <div class="logo-footer">
-      <img src="${origin}/logo.jpeg" alt="CIME Veracruz"/>
+      <img src="${origin}/brand/cime-3d.png" alt="CIME Veracruz"/>
     </div>
     <div class="legal">
       Este documento es un comprobante oficial emitido por CIME Veracruz A.C.<br>
@@ -453,8 +453,8 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
             {/* Logo + nombre institución */}
             <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 14, marginBottom: 18 }}>
               <img
-                src="/logo.jpeg" alt="CIME"
-                style={{ width: 46, height: 46, borderRadius: 9, objectFit: "cover", border: "2px solid rgba(255,255,255,.18)", flexShrink: 0 }}
+                src="/brand/cime-3d-emblem.png" alt="CIME"
+                style={{ width: 48, height: 48, objectFit: "contain", filter: "drop-shadow(0 2px 6px rgba(0,0,0,.35))", flexShrink: 0 }}
               />
               <div>
                 <div style={{ color: "white", fontWeight: 800, fontSize: ".92rem", lineHeight: 1.25, letterSpacing: ".01em" }}>
@@ -603,7 +603,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
 
             {/* Logo institucional */}
             <div style={{ textAlign: "center", paddingTop: 16, borderTop: "1px solid #EEF2F7" }}>
-              <img src="/logo.jpeg" alt="CIME Veracruz" style={{ width: 92, height: 92, objectFit: "contain" }} />
+              <img src="/brand/cime-3d.png" alt="CIME Veracruz" style={{ width: 92, height: 92, objectFit: "contain" }} />
             </div>
 
             {/* Pie legal */}
