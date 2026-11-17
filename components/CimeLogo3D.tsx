@@ -15,8 +15,8 @@ const SPRITE = {
   src: "/brand/cime-3d-spin.webp",
   frames: 120,
   cols: 12,
-  cellW: 206,
-  cellH: 240,
+  cellW: 276,
+  cellH: 320,
   fps: 12,
 }
 
@@ -47,8 +47,12 @@ type Props = {
   size?: number
   spin?: boolean
   variant?: "full" | "emblem"
-  /** Resplandor dorado detrás del logo (para fondos oscuros) */
+  /** Resplandor dorado detrás del logo */
   glow?: boolean
+  /** Levitación suave (sube y baja) */
+  float?: boolean
+  /** Sombra de piso bajo el logo, sincronizada con la levitación */
+  shadow?: boolean
   priority?: boolean
   alt?: string
   className?: string
@@ -60,6 +64,8 @@ export default function CimeLogo3D({
   spin = false,
   variant = "full",
   glow = false,
+  float = false,
+  shadow = false,
   priority = false,
   alt = "CIME Veracruz",
   className,
@@ -160,6 +166,8 @@ export default function CimeLogo3D({
           }}
         />
       )}
+      {shadow && <div aria-hidden="true" className={float ? "cime3d-shadow cime3d-shadow--anim" : "cime3d-shadow"} />}
+      <div className={float ? "cime3d-float" : undefined} style={{ position: "absolute", inset: 0 }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={STATIC_SRC[variant]}
@@ -196,6 +204,7 @@ export default function CimeLogo3D({
           }}
         />
       )}
+      </div>
     </div>
   )
 }

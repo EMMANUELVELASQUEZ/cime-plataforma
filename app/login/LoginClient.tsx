@@ -79,6 +79,10 @@ export default function LoginClient() {
     if (!cv) return
     const ctx = cv.getContext("2d")!
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches
+    // Emblema 3D CIME para el nodo principal del mapa
+    const emblem = new Image()
+    emblem.decoding = "async"
+    emblem.src = "/brand/cime-3d-emblem.webp"
 
     // 4 partículas por conexión — velocidad alta
     const packets = CONN.flatMap((_, i) => [
@@ -296,6 +300,18 @@ export default function LoginClient() {
         ctx.fill()
         ctx.restore()
 
+        // Emblema 3D CIME flotando sobre la sede
+        if (core && emblem.complete && emblem.naturalWidth) {
+          const eh = Math.max(30, h * 0.052)
+          const ew = eh * emblem.naturalWidth / emblem.naturalHeight
+          const bob = reduce ? 0 : Math.sin(now / 900) * 2
+          ctx.save()
+          ctx.shadowColor = "rgba(255,210,0,.55)"
+          ctx.shadowBlur  = 16
+          ctx.drawImage(emblem, x - ew / 2, y - eh / 2 + bob, ew, eh)
+          ctx.restore()
+        }
+
         // ── Nombre del municipio (TODOS) ──────────────────
         const fs = core ? Math.round(h*0.017) : Math.round(h*0.0125)
         ctx.save()
@@ -304,9 +320,16 @@ export default function LoginClient() {
         ctx.shadowBlur  = 5
 
         if (core) {
-          ctx.textAlign = "center"
           ctx.fillStyle = "#ffd200"
-          ctx.fillText("Veracruz · CIME", x, y - r - 10)
+          if (emblem.complete && emblem.naturalWidth) {
+            // etiqueta a la derecha del emblema, entre Xalapa y Boca del Río
+            const eh = Math.max(30, h * 0.052)
+            ctx.textAlign = "left"
+            ctx.fillText("Veracruz · CIME", x + eh * 0.62, y - eh * 0.28)
+          } else {
+            ctx.textAlign = "center"
+            ctx.fillText("Veracruz · CIME", x, y - r - 10)
+          }
         } else {
           // Poner etiqueta en el lado menos congestionado
           const isEast = lon > -95.5
@@ -355,7 +378,7 @@ export default function LoginClient() {
 
         {/* Marca — emblema 3D con fondo transparente */}
         <div className="brand">
-          <CimeLogo3D variant="emblem" size={64} priority alt="CIME" style={{ filter: "drop-shadow(0 0 18px rgba(232,192,96,.35))" }} />
+          <CimeLogo3D variant="emblem" size={68} float priority alt="CIME" className="brand-emblem" />
           <div>
             <div className="brand-name">CIME VERACRUZ</div>
             <div className="brand-sub">Colegio de Ingenieros Mecánicos y Electricistas</div>
@@ -372,7 +395,9 @@ export default function LoginClient() {
         <div className="login-card">
           {/* Logo CIME centrado — como EMINUS */}
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 10, marginBottom: 8 }}>
-            <CimeLogo3D size={156} spin priority alt="CIME Veracruz" />
+            <div className="login-logo-stage">
+              <CimeLogo3D size={164} spin float shadow priority alt="CIME Veracruz" />
+            </div>
             <div style={{ textAlign: "center" }}>
               <div style={{ fontWeight: 800, fontSize: "1.05rem", letterSpacing: ".04em", color: "var(--fg)" }}>
                 CIME VERACRUZ

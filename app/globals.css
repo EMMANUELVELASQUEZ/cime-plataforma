@@ -1123,3 +1123,35 @@ dialog[open] { animation: dialogIn .18s cubic-bezier(.22,1,.36,1); }
 @media (min-width: 769px) {
   .bottom-nav { display: none !important; }
 }
+
+/* ── Logo 3D CIME ─────────────────────────────────────────── */
+.cime3d-float { animation: cime3d-float 5s ease-in-out infinite; will-change: transform; }
+.cime3d-shadow {
+  position: absolute; left: 50%; bottom: -14px; width: 62%; height: 14px;
+  transform: translateX(-50%);
+  background: radial-gradient(closest-side, rgba(13,32,96,.32), rgba(13,32,96,0));
+  filter: blur(2px);
+}
+.cime3d-shadow--anim { animation: cime3d-shadow 5s ease-in-out infinite; }
+@keyframes cime3d-float  { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-7px) } }
+@keyframes cime3d-shadow { 0%,100% { transform: translateX(-50%) scale(1); opacity: 1 } 50% { transform: translateX(-50%) scale(.82); opacity: .6 } }
+.login-logo-stage { position: relative; isolation: isolate; display: grid; place-items: center; padding: 20px 0 26px; }
+.login-logo-stage::before {
+  content: ""; position: absolute; top: 50%; left: 50%; width: 214px; height: 214px; margin: -114px 0 0 -107px;
+  border-radius: 50%; padding: 1.5px;
+  background: conic-gradient(from 0deg, rgba(232,192,96,0) 0deg, rgba(232,192,96,.9) 70deg, rgba(232,192,96,0) 140deg, rgba(27,79,145,.45) 250deg, rgba(232,192,96,0) 330deg);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  animation: login-ring 14s linear infinite;
+}
+.login-logo-stage::after {
+  content: ""; position: absolute; top: 50%; left: 50%; width: 190px; height: 190px; margin: -102px 0 0 -95px;
+  border-radius: 50%; z-index: -1;
+  background: radial-gradient(closest-side, rgba(232,192,96,.16), rgba(27,79,145,.06) 60%, transparent 100%);
+}
+@keyframes login-ring { to { transform: rotate(360deg) } }
+.login .brand-emblem { filter: drop-shadow(0 0 16px rgba(232,192,96,.35)); }
+@media (prefers-reduced-motion: reduce) {
+  .cime3d-float, .cime3d-shadow--anim, .login-logo-stage::before { animation: none; }
+}
