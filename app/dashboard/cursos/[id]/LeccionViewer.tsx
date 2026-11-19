@@ -22,6 +22,9 @@ function getEmbedUrl(url: string): string | null {
   // Vimeo
   const vm = url.match(/vimeo\.com\/([0-9]+)/)
   if (vm) return `https://player.vimeo.com/video/${vm[1]}`
+  // Google Drive  (share link → /preview embed)
+  const gd = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/)
+  if (gd) return `https://drive.google.com/file/d/${gd[1]}/preview`
   return null
 }
 

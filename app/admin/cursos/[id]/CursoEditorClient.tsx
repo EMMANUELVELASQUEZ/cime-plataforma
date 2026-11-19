@@ -73,6 +73,26 @@ function getYoutubeThumb(url: string): string | null {
   return m ? `https://img.youtube.com/vi/${m[1]}/mqdefault.jpg` : null
 }
 
+function getVideoEmbed(url: string): string | null {
+  // YouTube
+  const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([a-zA-Z0-9_-]{11})/)
+  if (yt) return `https://www.youtube.com/embed/${yt[1]}?rel=0&modestbranding=1`
+  // Vimeo
+  const vm = url.match(/vimeo\.com\/([0-9]+)/)
+  if (vm) return `https://player.vimeo.com/video/${vm[1]}`
+  // Google Drive
+  const gd = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/)
+  if (gd) return `https://drive.google.com/file/d/${gd[1]}/preview`
+  return null
+}
+
+function detectVideoSource(url: string): "youtube" | "vimeo" | "drive" | null {
+  if (/youtu\.be\/|youtube\.com/.test(url)) return "youtube"
+  if (/vimeo\.com/.test(url)) return "vimeo"
+  if (/drive\.google\.com/.test(url)) return "drive"
+  return null
+}
+
 /* ─── Component ────────────────────────────────────────── */
 export default function CursoEditorClient({ cursoId, curso }: { cursoId: string; curso: { modulos: Modulo[] } }) {
   const [modulos, setModulos] = useState<Modulo[]>(curso.modulos)
@@ -529,16 +549,41 @@ export default function CursoEditorClient({ cursoId, curso }: { cursoId: string;
           {/* Content by type */}
           {(recursoTipo === "VIDEO_LINK") && (
             <div className="field">
-              <label>URL del video (YouTube / Vimeo)</label>
+              <label>URL del video</label>
               <input
                 className="input"
-                placeholder="https://youtube.com/watch?v=..."
+                placeholder="YouTube, Vimeo o Google Drive..."
                 value={recursoUrl}
                 onChange={e => setRecursoUrl(e.target.value)}
               />
-              {recursoUrl && getYoutubeThumb(recursoUrl) && (
-                <img src={getYoutubeThumb(recursoUrl)!} alt="" style={{ borderRadius: "var(--r-sm)", marginTop: 4, height: 90, objectFit: "cover" }} />
+              {/* YouTube thumbnail preview */}
+              {recursoUrl && detectVideoSource(recursoUrl) === "youtube" && getYoutubeThumb(recursoUrl) && (
+                <img src={getYoutubeThumb(recursoUrl)!} alt="" style={{ borderRadius: "var(--r-sm)", marginTop: 8, height: 90, objectFit: "cover" }} />
               )}
+              {/* Drive / Vimeo embed preview */}
+              {recursoUrl && detectVideoSource(recursoUrl) !== "youtube" && getVideoEmbed(recursoUrl) && (
+                <div style={{ marginTop: 8, borderRadius: "var(--r-sm)", overflow: "hidden", aspectRatio: "16/9", background: "#000" }}>
+                  <iframe src={getVideoEmbed(recursoUrl)!} style={{ width: "100%", height: "100%", border: 0 }} allowFullScreen allow="autoplay" />
+                </div>
+              )}
+              {/* Drive instructions */}
+              {recursoUrl && detectVideoSource(recursoUrl) === "drive" && (
+                <div style={{ marginTop: 6, padding: "8px 12px", background: "#fef9c3", border: "1px solid #fde047", borderRadius: "var(--r-sm)", fontSize: ".76rem", color: "#713f12" }}>
+                  Asegúrate de que el archivo en Drive tenga acceso <b>"Cualquier persona con el enlace"</b> para que los alumnos puedan verlo.
+                </div>
+              )}
+              {/* Source chips */}
+              <div style={{ display: "flex", gap: 6, marginTop: 6, flexWrap: "wrap" }}>
+                {[
+                  { label: "YouTube", hint: "youtube.com/watch?v=...", color: "#ef4444" },
+                  { label: "Google Drive", hint: "drive.google.com/file/d/...", color: "#1a73e8" },
+                  { label: "Vimeo", hint: "vimeo.com/...", color: "#1ab7ea" },
+                ].map(s => (
+                  <span key={s.label} style={{ fontSize: ".7rem", padding: "2px 8px", borderRadius: 999, background: `${s.color}12`, color: s.color, border: `1px solid ${s.color}30` }}>
+                    {s.label}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
 
