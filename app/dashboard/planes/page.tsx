@@ -7,6 +7,7 @@ export const dynamic = "force-dynamic"
 export default async function PlanesPage() {
   const session = await auth()
   const userId = (session?.user as any)?.id as string
+  const userName: string = (session?.user as any)?.name ?? "Colegiado/a"
 
   const planes = await prisma.planPago.findMany({
     where: { activo: true },
@@ -26,11 +27,11 @@ export default async function PlanesPage() {
     <>
       <div className="page-head">
         <div>
-          <h1>Planes de pago</h1>
-          <p>Inscríbete a los planes de membresía y servicios del colegio.</p>
+          <h1>Planes e inscripciones</h1>
+          <p>Selecciona el plan de tu interés y contáctanos para coordinar tu inscripción.</p>
         </div>
       </div>
-      <PlanesView planes={serialized} userId={userId} />
+      <PlanesView planes={serialized} userId={userId} userName={userName} />
     </>
   )
 }
