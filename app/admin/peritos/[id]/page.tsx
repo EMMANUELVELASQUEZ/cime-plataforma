@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import EditarPeritoForm from "./EditarPeritoForm"
+import ExpedientePeritoHub from "./ExpedientePeritoHub"
 
 export const dynamic = "force-dynamic"
 
@@ -34,6 +35,7 @@ export default async function EditarPeritoPage({ params }: { params: { id: strin
         cedula: perito.cedula ?? undefined,
         vigencia: perito.vigencia ?? undefined,
       }} />
+      <ExpedientePeritoHub peritoId={perito.id} peritoNombre={perito.nombre} />
     </>
   )
 }

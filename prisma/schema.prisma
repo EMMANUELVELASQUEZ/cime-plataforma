@@ -28,11 +28,13 @@ model Usuario {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
-  inscripciones InscripcionCurso[]
-  pagos         Pago[]
-  expediente    Expediente?
-  solicitudes   SolicitudPlan[]
-  mensajes      Mensaje[]
+  inscripciones       InscripcionCurso[]
+  pagos               Pago[]
+  expediente          Expediente?
+  solicitudes         SolicitudPlan[]
+  mensajes            Mensaje[]
+  especialidadesPerito EspecialidadPerito[]
+  formacionPerito      FormacionPerito[]
 
   @@index([rol, estado])
 }
@@ -325,4 +327,30 @@ model DocumentoAdmin {
   bytes         Int
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+model EspecialidadPerito {
+  id            String   @id @default(cuid())
+  usuarioId     String
+  numero        Int
+  nombre        String
+  claveRegistro String
+  createdAt     DateTime @default(now())
+  usuario       Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+}
+
+model FormacionPerito {
+  id        String   @id @default(cuid())
+  usuarioId String
+  anio      Int
+  mes       String?
+  nombre    String
+  estado    String   @default("REGISTRADO")
+  orden     Int      @default(0)
+  createdAt DateTime @default(now())
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId, anio])
 }

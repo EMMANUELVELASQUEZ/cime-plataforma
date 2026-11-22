@@ -9,7 +9,7 @@ import {
   Users, CreditCard, User, Moon, Sun, LogOut, Menu, X,
   ChevronRight, ChevronDown, BarChart3, Bell,
   PanelLeftClose, PanelLeftOpen, FolderOpen, FileText, Building2, BookMarked, MessageCircle,
-  Scale, FileUser, TrendingUp, PieChart, Receipt, Wallet,
+  Scale, FileUser, TrendingUp, PieChart, Receipt, Wallet, Award,
 } from "lucide-react"
 import CimeLogo3D from "@/components/CimeLogo3D"
 
@@ -112,6 +112,7 @@ const TITLES: Record<string, string> = {
   "/perito/avisos":          "Avisos",
   "/perito/mensajes":        "Mensajes",
   "/perito/informacion":     "Mi Información",
+  "/perito/expediente-profesional": "Expediente Profesional",
   "/perito/expedientes":     "Mis Expedientes",
   "/perito/documentos":      "Documentos Personales",
   "/perito/perfil":          "Mi Perfil",
@@ -270,9 +271,10 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
     {
       group: "Mi Expediente",
       items: [
-        { href: "/perito/informacion", icon: <FileUser   size={18} strokeWidth={1.75} />, label: "Información" },
-        { href: "/perito/expedientes", icon: <FolderOpen size={18} strokeWidth={1.75} />, label: "Expedientes" },
-        { href: "/perito/documentos",  icon: <BookMarked size={18} strokeWidth={1.75} />, label: "Documentos" },
+        { href: "/perito/informacion",            icon: <FileUser   size={18} strokeWidth={1.75} />, label: "Información" },
+        { href: "/perito/expediente-profesional", icon: <Award      size={18} strokeWidth={1.75} />, label: "Expediente Profesional" },
+        { href: "/perito/expedientes",            icon: <FolderOpen size={18} strokeWidth={1.75} />, label: "Expedientes" },
+        { href: "/perito/documentos",             icon: <BookMarked size={18} strokeWidth={1.75} />, label: "Documentos" },
       ],
     },
     {

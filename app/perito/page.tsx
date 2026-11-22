@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import {
   Calendar, Megaphone, MessageCircle, FileUser, FolderOpen,
-  BookMarked, ChevronRight, MapPin, Shield, ArrowRight, Bell,
+  BookMarked, ChevronRight, MapPin, Shield, ArrowRight, Bell, Award,
 } from "lucide-react"
 import AvisosCarousel from "@/components/AvisosCarousel"
 import CimeLogo3D from "@/components/CimeLogo3D"
@@ -216,12 +216,13 @@ export default async function PeritoInicio() {
           {/* Accesos rápidos */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 12 }}>
             {[
-              { href: "/perito/calendario",  icon: <Calendar    size={22} strokeWidth={1.75} />, label: "Calendario",         sub: `${eventos.length} próximos`, iconBg: "#EDE9FE", iconColor: "#7C3AED", accent: "#7C3AED" },
-              { href: "/perito/avisos",      icon: <Bell        size={22} strokeWidth={1.75} />, label: "Avisos",             sub: `${avisos.length} publicados`, iconBg: "#FEF3C7", iconColor: "#D97706", accent: "#D97706" },
-              { href: "/perito/mensajes",    icon: <MessageCircle size={22} strokeWidth={1.75} />, label: "Mensajes",        sub: mensajesNoLeidos > 0 ? `${mensajesNoLeidos} sin leer` : "Sin pendientes", iconBg: mensajesNoLeidos > 0 ? "#FEE2E2" : "#DBEAFE", iconColor: mensajesNoLeidos > 0 ? "#DC2626" : "#1D4ED8", accent: mensajesNoLeidos > 0 ? "#DC2626" : "#1D4ED8" },
-              { href: "/perito/informacion", icon: <FileUser    size={22} strokeWidth={1.75} />, label: "Mi Información",    sub: "Perfil profesional",          iconBg: "#D1FAE5", iconColor: "#059669", accent: "#059669" },
-              { href: "/perito/expedientes", icon: <FolderOpen  size={22} strokeWidth={1.75} />, label: "Mis Expedientes",   sub: "Historial de trámites",       iconBg: "#E0F2FE", iconColor: "#0284C7", accent: "#0284C7" },
-              { href: "/perito/documentos",  icon: <BookMarked  size={22} strokeWidth={1.75} />, label: "Documentos",        sub: "Documentos personales",       iconBg: "#F3E8FF", iconColor: "#7C3AED", accent: "#7C3AED" },
+              { href: "/perito/calendario",             icon: <Calendar      size={22} strokeWidth={1.75} />, label: "Calendario",              sub: `${eventos.length} próximos`, iconBg: "#EDE9FE", iconColor: "#7C3AED", accent: "#7C3AED" },
+              { href: "/perito/avisos",                icon: <Bell          size={22} strokeWidth={1.75} />, label: "Avisos",                  sub: `${avisos.length} publicados`, iconBg: "#FEF3C7", iconColor: "#D97706", accent: "#D97706" },
+              { href: "/perito/mensajes",              icon: <MessageCircle size={22} strokeWidth={1.75} />, label: "Mensajes",                sub: mensajesNoLeidos > 0 ? `${mensajesNoLeidos} sin leer` : "Sin pendientes", iconBg: mensajesNoLeidos > 0 ? "#FEE2E2" : "#DBEAFE", iconColor: mensajesNoLeidos > 0 ? "#DC2626" : "#1D4ED8", accent: mensajesNoLeidos > 0 ? "#DC2626" : "#1D4ED8" },
+              { href: "/perito/informacion",           icon: <FileUser      size={22} strokeWidth={1.75} />, label: "Mi Información",          sub: "Perfil profesional",          iconBg: "#D1FAE5", iconColor: "#059669", accent: "#059669" },
+              { href: "/perito/expediente-profesional", icon: <Award        size={22} strokeWidth={1.75} />, label: "Expediente Profesional",  sub: "Pericias y formación",        iconBg: "#FEF3C7", iconColor: "#D97706", accent: "#D97706" },
+              { href: "/perito/expedientes",           icon: <FolderOpen    size={22} strokeWidth={1.75} />, label: "Mis Expedientes",         sub: "Historial de trámites",       iconBg: "#E0F2FE", iconColor: "#0284C7", accent: "#0284C7" },
+              { href: "/perito/documentos",            icon: <BookMarked    size={22} strokeWidth={1.75} />, label: "Documentos",              sub: "Documentos personales",       iconBg: "#F3E8FF", iconColor: "#7C3AED", accent: "#7C3AED" },
             ].map(item => (
               <Link key={item.href} href={item.href} style={{
                 display: "flex", alignItems: "center", gap: 14, padding: "14px 16px",
