@@ -2,19 +2,19 @@
 import { useState, useCallback } from "react"
 import Link from "next/link"
 import {
-  ChevronLeft, ChevronRight, ChevronDown,
-  Check, Circle, Video, FileText, Image, Link2, AlignLeft,
-  Download, ExternalLink, BookOpen, Trophy, Archive, Paperclip,
+ ChevronLeft, ChevronRight, ChevronDown,
+ Check, Circle, Video, FileText, Image, Link2, AlignLeft,
+ Download, ExternalLink, BookOpen, Trophy, Archive, Paperclip,
 } from "lucide-react"
 
-/* ─── Types ───────────────────────────────────────────── */
+/* Types  */
 type TipoRecurso = "VIDEO_LINK" | "DOCUMENTO" | "IMAGEN" | "TEXTO" | "LINK_EXTERNO"
 interface Recurso { id: string; tipo: TipoRecurso; titulo: string; url: string | null; contenido: string | null; tamano: number | null }
 interface Leccion { id: string; titulo: string; descripcion: string | null; orden: number; recursos: Recurso[] }
 interface Modulo { id: string; titulo: string; orden: number; lecciones: Leccion[] }
 interface Curso { id: string; titulo: string; instructor: string; horas: number; modulos: Modulo[] }
 
-/* ─── Helpers ─────────────────────────────────────────── */
+/* Helpers  */
 function getEmbedUrl(url: string): string | null {
   // YouTube
   const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([a-zA-Z0-9_-]{11})/)
@@ -77,7 +77,7 @@ function formatBytes(bytes: number) {
 
 const resourceHeaderIcon = { width: 28, height: 28, borderRadius: 7, display: "grid", placeItems: "center", flexShrink: 0 }
 
-/* ─── Resource renderers ──────────────────────────────── */
+/* Resource renderers  */
 function RecursoVideo({ recurso }: { recurso: Recurso }) {
   const embed = recurso.url ? getEmbedUrl(recurso.url) : null
   return (
@@ -249,7 +249,7 @@ function RenderRecurso({ recurso }: { recurso: Recurso }) {
   }
 }
 
-/* ─── Main Viewer ─────────────────────────────────────── */
+/* Main Viewer  */
 export default function LeccionViewer({
   curso,
   inscripcionId,
@@ -304,7 +304,7 @@ export default function LeccionViewer({
         />
       )}
 
-      {/* ── Sidebar ─────────────────────────────────────── */}
+      {/* Sidebar  */}
       <aside className={`viewer-nav ${sidebarOpen ? "open" : ""}`}>
         {/* Course info */}
         <div style={{ padding: "16px 16px 12px", borderBottom: "1px solid var(--line)", background: "var(--surface-2)" }}>
@@ -388,7 +388,7 @@ export default function LeccionViewer({
         </div>
       </aside>
 
-      {/* ── Main content ─────────────────────────────────── */}
+      {/* Main content  */}
       <div className="viewer-content">
         {cursoCompletado && (
           <div style={{ background: "var(--ok-bg)", border: "1px solid var(--ok-ring)", borderRadius: "var(--r)", padding: "14px 18px", display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
@@ -414,7 +414,7 @@ export default function LeccionViewer({
                   <BookOpen size={14} strokeWidth={2} />
                 </button>
                 <span style={{ fontSize: ".76rem", color: "var(--muted)", fontFamily: "var(--f-mono)" }}>
-                  Lección {idxActual + 1} de {todasLecciones.length}
+ Lección {idxActual + 1} de {todasLecciones.length}
                 </span>
                 {isCompleta && (
                   <span className="chip nodot ok" style={{ height: 20, fontSize: ".68rem" }}>
@@ -461,7 +461,7 @@ export default function LeccionViewer({
                 <button className="btn primary" onClick={marcarCompleta} disabled={marking}>
                   {marking
                     ? "Guardando..."
-                    : leccionSiguiente ? "Completar y continuar →" : "Completar lección ✓"
+                    : leccionSiguiente ? "Completar y continuar →" : "Completar lección "
                   }
                 </button>
               )}
@@ -471,7 +471,7 @@ export default function LeccionViewer({
                 onClick={() => leccionSiguiente && setLeccionId(leccionSiguiente.id)}
                 disabled={!leccionSiguiente}
               >
-                Siguiente <ChevronRight size={16} strokeWidth={2} />
+ Siguiente <ChevronRight size={16} strokeWidth={2} />
               </button>
             </div>
           </>

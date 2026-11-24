@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react"
  * Logo 3D de CIME Veracruz (renderizado en Blender).
  *
  * - `spin`: muestra el giro lento en loop usando un sprite (120 cuadros, 10 s por vuelta).
- *   Se pausa solo cuando no está en pantalla o la pestaña está oculta, y respeta
+ * Se pausa solo cuando no está en pantalla o la pestaña está oculta, y respeta
  *   `prefers-reduced-motion` (en ese caso queda fijo de frente).
  * - `variant="emblem"`: solo la nube con C·I·M·E, sin la placa VERACRUZ (ideal para tamaños chicos).
  */

@@ -47,7 +47,7 @@ export default async function ExpedienteProfesionalPage() {
         </div>
         <span className="chip nodot" style={{ background: "var(--surface-raised)", color: "var(--muted)", alignSelf: "flex-start" }}>
           <svg style={{ width: 14, height: 14, marginRight: 4, verticalAlign: "middle" }} fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 9h.01" /><path d="M11 12h1v4h1" /></svg>
-          Solo lectura
+ Solo lectura
         </span>
       </div>
       <ExpedienteProView

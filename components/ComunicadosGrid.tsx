@@ -1,7 +1,7 @@
 "use client"
 import { useState } from "react"
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// Types 
 
 export interface AvisoItem {
   id: string
@@ -31,7 +31,7 @@ export interface EventoItem {
 
 export type Item = AvisoItem | EventoItem
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// Helpers 
 
 const MES3 = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"]
 
@@ -75,7 +75,7 @@ function audienciaLabel(aud: string): string | null {
   return aud
 }
 
-// ─── Modal ────────────────────────────────────────────────────────────────────
+// Modal 
 
 function ModalAviso({ aviso, onClose }: { aviso: AvisoItem; onClose: () => void }) {
   const fotoUrl = parseFotoUrl(aviso.imagen)
@@ -128,7 +128,7 @@ function ModalAviso({ aviso, onClose }: { aviso: AvisoItem; onClose: () => void 
             <span style={{ fontSize: ".8rem", color: "var(--muted)" }}>{fmtFecha(aviso.createdAt)}</span>
             {aviso.expiresAt && (
               <span style={{ fontSize: ".75rem", color: "var(--muted)" }}>
-                Vigente hasta: {fmtFecha(aviso.expiresAt)}
+ Vigente hasta: {fmtFecha(aviso.expiresAt)}
               </span>
             )}
           </div>
@@ -139,7 +139,7 @@ function ModalAviso({ aviso, onClose }: { aviso: AvisoItem; onClose: () => void 
             onClick={onClose}
             style={{ marginTop: 28, padding: "10px 24px", borderRadius: 8, background: "#0D2060", color: "#fff", border: "none", fontWeight: 700, fontSize: ".9rem", cursor: "pointer", width: "100%" }}
           >
-            Cerrar
+ Cerrar
           </button>
         </div>
       </div>
@@ -215,7 +215,7 @@ function ModalEvento({ evento, onClose }: { evento: EventoItem; onClose: () => v
             onClick={onClose}
             style={{ padding: "10px 24px", borderRadius: 8, background: "#0D2060", color: "#fff", border: "none", fontWeight: 700, fontSize: ".9rem", cursor: "pointer", width: "100%" }}
           >
-            Cerrar
+ Cerrar
           </button>
         </div>
       </div>
@@ -229,7 +229,7 @@ function ModalEvento({ evento, onClose }: { evento: EventoItem; onClose: () => v
   )
 }
 
-// ─── Cards ────────────────────────────────────────────────────────────────────
+// Cards 
 
 function EventoCard({ evento, onClick, archived }: { evento: EventoItem; onClick: () => void; archived?: boolean }) {
   const d = new Date(evento.fecha)
@@ -338,7 +338,7 @@ function AvisoCard({ aviso, onClick, archived }: { aviso: AvisoItem; onClick: ()
           <img src={fotoUrl} alt="" style={{ width: 44, height: 44, borderRadius: 8, objectFit: "cover" }} />
         ) : (
           <div style={{ width: 36, height: 36, borderRadius: 8, background: aviso.fijado ? "#E8C06020" : "var(--surface-raised)", display: "grid", placeItems: "center", fontSize: "1.1rem" }}>
-            {aviso.fijado ? "📌" : "📋"}
+            {aviso.fijado ? "" : ""}
           </div>
         )}
         {aviso.fijado && !archived && (
@@ -367,7 +367,7 @@ function AvisoCard({ aviso, onClick, archived }: { aviso: AvisoItem; onClick: ()
   )
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// Main Component 
 
 export default function ComunicadosGrid({ items }: { items: Item[] }) {
   const [selectedAviso, setSelectedAviso] = useState<AvisoItem | null>(null)
@@ -392,7 +392,7 @@ export default function ComunicadosGrid({ items }: { items: Item[] }) {
   if (items.length === 0) {
     return (
       <div style={{ textAlign: "center", padding: "80px 24px", color: "var(--muted)" }}>
-        <div style={{ fontSize: 48, marginBottom: 12 }}>📭</div>
+        <div style={{ fontSize: 48, marginBottom: 12 }}></div>
         <div style={{ fontWeight: 700, marginBottom: 4 }}>Sin comunicados por el momento</div>
         <div style={{ fontSize: ".85rem" }}>Cuando haya eventos o avisos aparecerán aquí.</div>
       </div>
@@ -406,7 +406,7 @@ export default function ComunicadosGrid({ items }: { items: Item[] }) {
         <div style={{ marginBottom: 36 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
             <span style={{ fontSize: ".7rem", fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", color: "#0D2060" }}>
-              Proximos y Recientes
+ Proximos y Recientes
             </span>
             <div style={{ flex: 1, height: 1, background: "var(--line)" }} />
             <span style={{ fontSize: ".72rem", color: "var(--muted)" }}>{activosSorted.length}</span>
@@ -445,7 +445,7 @@ export default function ComunicadosGrid({ items }: { items: Item[] }) {
             }}
           >
             <span style={{ fontSize: ".7rem", fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", color: "var(--muted)" }}>
-              {archivedOpen ? "▾" : "▸"} Ver archivo ({archivados.length})
+              {archivedOpen ? "" : ""} Ver archivo ({archivados.length})
             </span>
             <div style={{ flex: 1, height: 1, background: "var(--line)" }} />
           </button>

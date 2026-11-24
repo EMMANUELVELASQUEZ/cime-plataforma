@@ -25,7 +25,7 @@ export default async function ColegiadosPage({ searchParams }: { searchParams: S
   const where = {
     rol: "COLEGIADO" as const,
     ...(q && {
-      OR: [
+ OR: [
         { nombre: { contains: q, mode: "insensitive" as const } },
         { numeroColegiado: { contains: q, mode: "insensitive" as const } },
         { correo: { contains: q, mode: "insensitive" as const } },
@@ -65,11 +65,11 @@ export default async function ColegiadosPage({ searchParams }: { searchParams: S
         <div className="actions">
           <Link href="/admin/colegiados" className="btn">
             <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
-            Exportar CSV
+ Exportar CSV
           </Link>
           <Link href="/admin/colegiados/nuevo" className="btn primary">
             <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-            Nuevo colegiado
+ Nuevo colegiado
           </Link>
         </div>
       </div>

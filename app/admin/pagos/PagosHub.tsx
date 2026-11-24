@@ -3,13 +3,13 @@
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import {
-  CreditCard, ChevronDown, ChevronUp, Plus, Printer,
-  Upload, ExternalLink, Trash2, Lock, Unlock,
-  FileText, AlertCircle, CheckCircle2, Clock, X,
-  Download, FileSpreadsheet, FileType2, Search,
+ CreditCard, ChevronDown, ChevronUp, Plus, Printer,
+ Upload, ExternalLink, Trash2, Lock, Unlock,
+ FileText, AlertCircle, CheckCircle2, Clock, X,
+ Download, FileSpreadsheet, FileType2, Search,
 } from "lucide-react"
 
-// ─── Types ──────────────────────────────────────────────────────────────────
+// Types 
 type PagoData = {
   id: string
   concepto: string
@@ -48,7 +48,7 @@ type ColegiadoData = {
   inscripciones: InscripcionData[]
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// Helpers 
 const HUES = [211, 142, 262, 24, 199, 327, 38, 172]
 const avatarHue = (n: string) => HUES[n.charCodeAt(0) % HUES.length]
 
@@ -82,34 +82,34 @@ function autoFolio(nombre: string) {
   return `PAG-CIME-${dateStr}-${initN}-${rand}`
 }
 
-// ─── Estado chip config ───────────────────────────────────────────────────────
+// Estado chip config 
 const ESTADO_CFG: Record<string, { label: string; color: string; bg: string; dot: string }> = {
-  PAGADO:    { label: "Pagado",    color: "#059669", bg: "rgba(5,150,105,.12)",  dot: "#10b981" },
-  PENDIENTE: { label: "Pendiente", color: "#d97706", bg: "rgba(217,119,6,.12)",  dot: "#f59e0b" },
-  VENCIDO:   { label: "Vencido",  color: "#dc2626", bg: "rgba(220,38,38,.12)",  dot: "#ef4444" },
-  CANCELADO: { label: "Cancelado", color: "#6b7280", bg: "rgba(107,114,128,.12)", dot: "#9ca3af" },
+ PAGADO:    { label: "Pagado",    color: "#059669", bg: "rgba(5,150,105,.12)",  dot: "#10b981" },
+ PENDIENTE: { label: "Pendiente", color: "#d97706", bg: "rgba(217,119,6,.12)",  dot: "#f59e0b" },
+ VENCIDO:   { label: "Vencido",  color: "#dc2626", bg: "rgba(220,38,38,.12)",  dot: "#ef4444" },
+ CANCELADO: { label: "Cancelado", color: "#6b7280", bg: "rgba(107,114,128,.12)", dot: "#9ca3af" },
 }
 
 const COLEGIADO_ESTADO_CFG: Record<string, { label: string; color: string; bg: string }> = {
-  VIGENTE:     { label: "Vigente",     color: "#059669", bg: "rgba(5,150,105,.1)"  },
-  POR_RENOVAR: { label: "Por renovar", color: "#d97706", bg: "rgba(217,119,6,.1)"  },
-  SUSPENDIDO:  { label: "Suspendido",  color: "#dc2626", bg: "rgba(220,38,38,.1)"  },
+ VIGENTE:     { label: "Vigente",     color: "#059669", bg: "rgba(5,150,105,.1)" },
+ POR_RENOVAR: { label: "Por renovar", color: "#d97706", bg: "rgba(217,119,6,.1)" },
+ SUSPENDIDO:  { label: "Suspendido",  color: "#dc2626", bg: "rgba(220,38,38,.1)" },
 }
 
 const AREA_CFG: Record<string, { label: string; color: string; bg: string }> = {
-  ELE: { label: "ELE", color: "#2563eb", bg: "rgba(37,99,235,.1)"  },
-  MEC: { label: "MEC", color: "#7c3aed", bg: "rgba(124,58,237,.1)" },
-  SOL: { label: "SOL", color: "#059669", bg: "rgba(5,150,105,.1)"  },
+ ELE: { label: "ELE", color: "#2563eb", bg: "rgba(37,99,235,.1)" },
+ MEC: { label: "MEC", color: "#7c3aed", bg: "rgba(124,58,237,.1)" },
+ SOL: { label: "SOL", color: "#059669", bg: "rgba(5,150,105,.1)" },
 }
 
 const INSCRIPCION_ESTADO_CFG: Record<string, { label: string; color: string; bg: string }> = {
-  INSCRITO:   { label: "Inscrito",   color: "#2563eb", bg: "rgba(37,99,235,.1)"  },
-  EN_CURSO:   { label: "En curso",   color: "#d97706", bg: "rgba(217,119,6,.1)"  },
-  COMPLETADO: { label: "Completado", color: "#059669", bg: "rgba(5,150,105,.1)"  },
-  BLOQUEADO:  { label: "Bloqueado",  color: "#dc2626", bg: "rgba(220,38,38,.1)"  },
+ INSCRITO:   { label: "Inscrito",   color: "#2563eb", bg: "rgba(37,99,235,.1)" },
+ EN_CURSO:   { label: "En curso",   color: "#d97706", bg: "rgba(217,119,6,.1)" },
+ COMPLETADO: { label: "Completado", color: "#059669", bg: "rgba(5,150,105,.1)" },
+ BLOQUEADO:  { label: "Bloqueado",  color: "#dc2626", bg: "rgba(220,38,38,.1)" },
 }
 
-// ─── Comprobante helpers ──────────────────────────────────────────────────────
+// Comprobante helpers 
 type ComprobanteInfo = { url: string; nombre: string; tipo: string; bytes: number }
 
 function parseComprobante(raw: string | null): ComprobanteInfo | null {
@@ -149,7 +149,7 @@ function comprobanteLabel(raw: string | null): string {
   return info.nombre ?? "Archivo adjunto"
 }
 
-// ─── Export functions ─────────────────────────────────────────────────────────
+// Export functions 
 function exportCSV(data: ColegiadoData[]) {
   const rows: string[][] = [
     ["No. Colegiado", "Nombre", "Folio", "Concepto", "Monto", "Estado", "Fecha", "Comprobante"],
@@ -175,13 +175,13 @@ function exportCSV(data: ColegiadoData[]) {
   const csv = rows
     .map((r) => r.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(","))
     .join("\n")
-  const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" })
+  const blob = new Blob(["" + csv], { type: "text/csv;charset=utf-8;" })
   const url = URL.createObjectURL(blob)
   const a = document.createElement("a")
   a.href = url
   a.download = `pagos-cime-${new Date().toISOString().slice(0, 10)}.csv`
   a.click()
-  URL.revokeObjectURL(url)
+ URL.revokeObjectURL(url)
 }
 
 function exportWord(data: ColegiadoData[]) {
@@ -211,10 +211,10 @@ function exportWord(data: ColegiadoData[]) {
   a.href = url
   a.download = `reporte-pagos-cime-${new Date().toISOString().slice(0, 10)}.doc`
   a.click()
-  URL.revokeObjectURL(url)
+ URL.revokeObjectURL(url)
 }
 
-// ─── Toast ───────────────────────────────────────────────────────────────────
+// Toast 
 type Toast = { id: number; msg: string; type: "ok" | "err" }
 
 function ToastContainer({ toasts, remove }: { toasts: Toast[]; remove: (id: number) => void }) {
@@ -249,7 +249,7 @@ function ToastContainer({ toasts, remove }: { toasts: Toast[]; remove: (id: numb
   )
 }
 
-// ─── Ticket Modal ─────────────────────────────────────────────────────────────
+// Ticket Modal 
 function TicketModal({
   pago,
   colegiado,
@@ -263,10 +263,10 @@ function TicketModal({
   const GOLD  = "#C89B2A"
 
   const estadoMap: Record<string, { label: string; bg: string; color: string; border: string }> = {
-    PAGADO:    { label: "PAGADO",    bg: "#ECFDF5", color: "#065F46", border: "#6EE7B7" },
-    PENDIENTE: { label: "PENDIENTE", bg: "#FFFBEB", color: "#92400E", border: "#FCD34D" },
-    VENCIDO:   { label: "VENCIDO",   bg: "#FEF2F2", color: "#991B1B", border: "#FCA5A5" },
-    CANCELADO: { label: "CANCELADO", bg: "#F9FAFB", color: "#6B7280", border: "#D1D5DB" },
+ PAGADO:    { label: "PAGADO",    bg: "#ECFDF5", color: "#065F46", border: "#6EE7B7" },
+ PENDIENTE: { label: "PENDIENTE", bg: "#FFFBEB", color: "#92400E", border: "#FCD34D" },
+ VENCIDO:   { label: "VENCIDO",   bg: "#FEF2F2", color: "#991B1B", border: "#FCA5A5" },
+ CANCELADO: { label: "CANCELADO", bg: "#F9FAFB", color: "#6B7280", border: "#D1D5DB" },
   }
   const ec = estadoMap[pago.estado] ?? estadoMap.PENDIENTE
 
@@ -385,8 +385,8 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
       <img src="${origin}/brand/cime-3d.png" alt="CIME Veracruz"/>
     </div>
     <div class="legal">
-      Este documento es un comprobante oficial emitido por CIME Veracruz A.C.<br>
-      Xalapa, Veracruz · portal.cimeveracruz.mx
+ Este documento es un comprobante oficial emitido por CIME Veracruz A.C.<br>
+ Xalapa, Veracruz · portal.cimeveracruz.mx
     </div>
   </div>
 </div>
@@ -436,7 +436,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
           fontFamily: "'Segoe UI', system-ui, sans-serif",
         }}>
 
-          {/* ── Header navy ─────────────────────────────────── */}
+          {/* Header navy  */}
           <div style={{ background: NAV, padding: "22px 28px 18px", position: "relative", overflow: "hidden" }}>
             {/* Fondo textura sutil */}
             <div style={{
@@ -458,13 +458,13 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
               />
               <div>
                 <div style={{ color: "white", fontWeight: 800, fontSize: ".92rem", lineHeight: 1.25, letterSpacing: ".01em" }}>
-                  COLEGIO DE INGENIEROS MECÁNICOS
+ COLEGIO DE INGENIEROS MECÁNICOS
                 </div>
                 <div style={{ color: "white", fontWeight: 800, fontSize: ".92rem", lineHeight: 1.25 }}>
-                  Y ELECTRICISTAS DE VERACRUZ A.C.
+ Y ELECTRICISTAS DE VERACRUZ A.C.
                 </div>
                 <div style={{ color: "rgba(255,255,255,.45)", fontSize: ".67rem", marginTop: 4, letterSpacing: ".05em" }}>
-                  Xalapa, Veracruz
+ Xalapa, Veracruz
                 </div>
               </div>
             </div>
@@ -476,15 +476,15 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
             <div style={{ position: "relative", display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
               <div>
                 <div style={{ color: "rgba(255,255,255,.45)", fontSize: ".58rem", letterSpacing: ".18em", textTransform: "uppercase", marginBottom: 4 }}>
-                  Documento oficial
+ Documento oficial
                 </div>
                 <div style={{ color: "white", fontWeight: 800, fontSize: "1.05rem", letterSpacing: ".07em", textTransform: "uppercase" }}>
-                  Recibo de Pago
+ Recibo de Pago
                 </div>
               </div>
               <div style={{ textAlign: "right" }}>
                 <div style={{ color: "rgba(255,255,255,.4)", fontSize: ".58rem", letterSpacing: ".14em", textTransform: "uppercase", marginBottom: 4 }}>
-                  Folio
+ Folio
                 </div>
                 <div style={{ color: GOLD, fontWeight: 800, fontSize: ".95rem", fontFamily: "monospace", letterSpacing: ".06em" }}>
                   {pago.folio}
@@ -493,7 +493,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
             </div>
           </div>
 
-          {/* ── Cuerpo ──────────────────────────────────────── */}
+          {/* Cuerpo  */}
           <div style={{ padding: "0 28px 24px" }}>
 
             {/* Colegiado / Fecha */}
@@ -503,7 +503,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
             }}>
               <div>
                 <div style={{ fontSize: ".58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".14em", color: "#94A3B8", marginBottom: 10 }}>
-                  Datos del colegiado
+ Datos del colegiado
                 </div>
                 <table style={{ borderCollapse: "collapse", width: "100%" }}>
                   <tbody>
@@ -530,14 +530,14 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
               </div>
               <div style={{ textAlign: "right", paddingLeft: 16, borderLeft: "1px solid #EEF2F7" }}>
                 <div style={{ fontSize: ".58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".14em", color: "#94A3B8", marginBottom: 8 }}>
-                  Expedido
+ Expedido
                 </div>
                 <div style={{ fontSize: ".9rem", fontWeight: 800, color: "#0F172A", fontVariantNumeric: "tabular-nums" }}>
                   {issuedDate}
                 </div>
                 <div style={{ marginTop: 14 }}>
                   <div style={{ fontSize: ".58rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".14em", color: "#94A3B8", marginBottom: 7 }}>
-                    Estado
+ Estado
                   </div>
                   <span style={{
                     display: "inline-block",
@@ -569,7 +569,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
                       {pago.concepto}
                     </div>
                     <div style={{ fontSize: ".72rem", color: "#94A3B8", marginTop: 5 }}>
-                      Registrado el {issuedLong}
+ Registrado el {issuedLong}
                     </div>
                   </div>
                   <div style={{ textAlign: "right", fontFamily: "monospace", fontWeight: 700, fontSize: ".9rem", color: "#0F172A" }}>
@@ -591,7 +591,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
               alignItems: "center", marginBottom: 24,
             }}>
               <span style={{ color: "rgba(255,255,255,.65)", fontWeight: 700, fontSize: ".78rem", textTransform: "uppercase", letterSpacing: ".1em" }}>
-                Total a Pagar
+ Total a Pagar
               </span>
               <div style={{ textAlign: "right" }}>
                 <span style={{ color: "white", fontWeight: 900, fontSize: "1.1rem", fontFamily: "monospace" }}>
@@ -611,12 +611,12 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
               marginTop: 16, paddingTop: 10, borderTop: "1px solid #EEF2F7",
               textAlign: "center", fontSize: ".64rem", color: "#94A3B8", lineHeight: 1.6,
             }}>
-              Este documento es un comprobante oficial emitido por CIME Veracruz A.C.<br/>
-              Xalapa, Veracruz · portal.cimeveracruz.mx
+ Este documento es un comprobante oficial emitido por CIME Veracruz A.C.<br/>
+ Xalapa, Veracruz · portal.cimeveracruz.mx
             </div>
           </div>
 
-          {/* ── Pie de modal ──────────────────────────────────── */}
+          {/* Pie de modal  */}
           <div style={{
             display: "flex", gap: 10, padding: "14px 28px",
             borderTop: "1px solid #EEF2F7", background: "#F8FAFC", justifyContent: "flex-end",
@@ -629,7 +629,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
                 cursor: "pointer", fontSize: ".86rem", fontWeight: 600, color: "#374151",
               }}
             >
-              Cerrar
+ Cerrar
             </button>
             <button
               onClick={handlePrint}
@@ -649,7 +649,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:white}
   )
 }
 
-// ─── Comprobante Upload Modal ─────────────────────────────────────────────────
+// Comprobante Upload Modal 
 function ComprobanteModal({
   pago,
   onClose,
@@ -712,7 +712,7 @@ function ComprobanteModal({
         </div>
         <div style={{ padding: 20 }}>
           <div style={{ marginBottom: 12, fontSize: ".84rem", color: "var(--muted)" }}>
-            Folio: <strong style={{ color: "var(--fg)", fontFamily: "monospace" }}>{pago.folio}</strong>
+ Folio: <strong style={{ color: "var(--fg)", fontFamily: "monospace" }}>{pago.folio}</strong>
           </div>
 
           {pago.comprobante && (
@@ -751,7 +751,7 @@ function ComprobanteModal({
               {file ? file.name : "Haz clic para seleccionar archivo"}
             </div>
             <div style={{ fontSize: ".76rem", color: "var(--muted)", marginTop: 4 }}>
-              Imagen (JPG, PNG, WEBP) o PDF · máx. 4.5 MB
+ Imagen (JPG, PNG, WEBP) o PDF · máx. 4.5 MB
             </div>
             <input
               ref={inputRef}
@@ -780,7 +780,7 @@ function ComprobanteModal({
             onClick={onClose}
             style={{ padding: "8px 18px", borderRadius: 8, border: "1px solid var(--line)", background: "var(--surface-2)", cursor: "pointer", fontSize: ".86rem", fontWeight: 600, color: "var(--fg)" }}
           >
-            Cancelar
+ Cancelar
           </button>
           <button
             onClick={handleUpload}
@@ -807,7 +807,7 @@ function ComprobanteModal({
   )
 }
 
-// ─── Registrar Pago Modal ─────────────────────────────────────────────────────
+// Registrar Pago Modal 
 function RegistrarPagoModal({
   colegiado,
   onClose,
@@ -964,7 +964,7 @@ function RegistrarPagoModal({
                     flexShrink: 0,
                   }}
                 >
-                  Auto
+ Auto
                 </button>
               </div>
             </div>
@@ -980,7 +980,7 @@ function RegistrarPagoModal({
               onClick={onClose}
               style={{ padding: "8px 18px", borderRadius: 8, border: "1px solid var(--line)", background: "var(--surface-2)", cursor: "pointer", fontSize: ".86rem", fontWeight: 600, color: "var(--fg)" }}
             >
-              Cancelar
+ Cancelar
             </button>
             <button
               type="submit"
@@ -1008,7 +1008,7 @@ function RegistrarPagoModal({
   )
 }
 
-// ─── Colegiado Row ────────────────────────────────────────────────────────────
+// Colegiado Row 
 function ColegiadoRow({
   col,
   onUpdatePago,
@@ -1249,11 +1249,11 @@ function ColegiadoRow({
             padding: "0 0 16px",
           }}
         >
-          {/* ── Historial de pagos ── */}
+          {/* Historial de pagos  */}
           <div style={{ padding: "16px 20px 8px" }}>
             <div style={{ fontSize: ".76rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "var(--muted)", marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
               <CreditCard size={14} style={{ color: "var(--brand)" }} />
-              Historial de pagos
+ Historial de pagos
               <span style={{ marginLeft: "auto", padding: "2px 8px", borderRadius: 20, background: "var(--surface)", border: "1px solid var(--line)", fontSize: ".7rem", color: "var(--muted)", fontWeight: 600 }}>
                 {pagos.length} registro{pagos.length !== 1 ? "s" : ""}
               </span>
@@ -1312,7 +1312,7 @@ function ColegiadoRow({
                                   onClick={() => setComprobanteTarget(pago)}
                                   style={{ background: "none", border: "none", cursor: "pointer", color: "var(--muted)", fontSize: ".76rem", padding: 0 }}
                                 >
-                                  Cambiar
+ Cambiar
                                 </button>
                               </div>
                             ) : (
@@ -1369,13 +1369,13 @@ function ColegiadoRow({
             )}
           </div>
 
-          {/* ── Cursos inscritos ── */}
+          {/* Cursos inscritos  */}
           {inscripciones.length > 0 && (
             <div style={{ padding: "12px 20px 0" }}>
               <div style={{ height: 1, background: "var(--line)", marginBottom: 14 }} />
               <div style={{ fontSize: ".76rem", fontWeight: 800, textTransform: "uppercase", letterSpacing: ".1em", color: "var(--muted)", marginBottom: 12, display: "flex", alignItems: "center", gap: 8 }}>
                 <FileText size={14} style={{ color: "var(--brand)" }} />
-                Cursos inscritos
+ Cursos inscritos
                 <span style={{ marginLeft: "auto", padding: "2px 8px", borderRadius: 20, background: "var(--surface)", border: "1px solid var(--line)", fontSize: ".7rem", color: "var(--muted)", fontWeight: 600 }}>
                   {inscripciones.length} curso{inscripciones.length !== 1 ? "s" : ""}
                 </span>
@@ -1474,7 +1474,7 @@ function ColegiadoRow({
   )
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// Main Component 
 export default function PagosHub({ data }: { data: ColegiadoData[] }) {
   const router = useRouter()
   const [search, setSearch] = useState("")
@@ -1568,9 +1568,9 @@ export default function PagosHub({ data }: { data: ColegiadoData[] }) {
   ]
 
   const TABS: { key: typeof tab; label: string }[] = [
-    { key: "todos",          label: "Todos"         },
-    { key: "al_corriente",   label: "Al corriente"  },
-    { key: "con_atraso",     label: "Con atraso"    },
+    { key: "todos",          label: "Todos" },
+    { key: "al_corriente",   label: "Al corriente" },
+    { key: "con_atraso",     label: "Con atraso" },
     { key: "sin_historial",  label: "Sin historial" },
   ]
 
@@ -1586,14 +1586,14 @@ export default function PagosHub({ data }: { data: ColegiadoData[] }) {
         />
       )}
 
-      {/* ── Page header ─────────────────────────────────────── */}
+      {/* Page header  */}
       <div className="page-head">
         <div>
           <h1 style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <span style={{ width: 36, height: 36, borderRadius: 9, background: "rgba(27,79,145,.12)", display: "grid", placeItems: "center", color: "var(--brand)" }}>
               <CreditCard size={19} strokeWidth={1.75} />
             </span>
-            Gestión de Pagos
+ Gestión de Pagos
           </h1>
           <p>Historial, comprobantes y estado de pagos de los colegiados</p>
         </div>
@@ -1655,7 +1655,7 @@ export default function PagosHub({ data }: { data: ColegiadoData[] }) {
         </div>
       </div>
 
-      {/* ── KPI strip ───────────────────────────────────────── */}
+      {/* KPI strip  */}
       <div className="grid g-4">
         {kpis.map((k) => (
           <div key={k.label} className="card stat">
@@ -1667,7 +1667,7 @@ export default function PagosHub({ data }: { data: ColegiadoData[] }) {
         ))}
       </div>
 
-      {/* ── Filter bar ──────────────────────────────────────── */}
+      {/* Filter bar  */}
       <div className="card" style={{ padding: "14px 20px" }}>
         <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
           {/* Search */}
@@ -1735,7 +1735,7 @@ export default function PagosHub({ data }: { data: ColegiadoData[] }) {
         </div>
       </div>
 
-      {/* ── Colegiado rows ──────────────────────────────────── */}
+      {/* Colegiado rows  */}
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {filtered.length === 0 ? (
           <div className="card" style={{ textAlign: "center", padding: "48px 20px", color: "var(--muted)" }}>

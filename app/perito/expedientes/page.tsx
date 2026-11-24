@@ -5,19 +5,19 @@ import { prisma } from "@/lib/prisma"
 export const dynamic = "force-dynamic"
 
 const TIPO_ICON: Record<string, string> = {
-  NOTA:        "📝",
-  INSTRUCCION: "📋",
-  DOCUMENTO:   "📄",
-  OBSERVACION: "🔍",
-  REPORTE:     "📊",
+ NOTA:        "",
+ INSTRUCCION: "",
+ DOCUMENTO:   "",
+ OBSERVACION: "",
+ REPORTE:     "",
 }
 
 const TIPO_COLOR: Record<string, string> = {
-  NOTA:        "#3b82f6",
-  INSTRUCCION: "#8b5cf6",
-  DOCUMENTO:   "#0D2060",
-  OBSERVACION: "#f59e0b",
-  REPORTE:     "#10b981",
+ NOTA:        "#3b82f6",
+ INSTRUCCION: "#8b5cf6",
+ DOCUMENTO:   "#0D2060",
+ OBSERVACION: "#f59e0b",
+ REPORTE:     "#10b981",
 }
 
 export default async function ExpedientesPeritoPage() {
@@ -47,7 +47,7 @@ export default async function ExpedientesPeritoPage() {
         </div>
         <span className="chip nodot" style={{ background: "var(--surface-raised)", color: "var(--muted)", alignSelf: "flex-start" }}>
           <svg style={{ width: 14, height: 14, marginRight: 4, verticalAlign: "middle" }} fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" /><path d="M12 9h.01" /><path d="M11 12h1v4h1" /></svg>
-          Solo lectura
+ Solo lectura
         </span>
       </div>
 
@@ -86,7 +86,7 @@ export default async function ExpedientesPeritoPage() {
                 <div>
                   <div style={{ fontWeight: 700, fontSize: "1.05rem" }}>{expediente.nombre}</div>
                   <div style={{ fontSize: ".8rem", color: "var(--muted)" }}>
-                    Abierto {new Date(expediente.createdAt).toLocaleDateString("es-MX", { year: "numeric", month: "long", day: "numeric" })}
+ Abierto {new Date(expediente.createdAt).toLocaleDateString("es-MX", { year: "numeric", month: "long", day: "numeric" })}
                   </div>
                 </div>
               </div>
@@ -165,7 +165,7 @@ export default async function ExpedientesPeritoPage() {
                           fontSize: ".8rem", color: "var(--muted)",
                         }}>
                           <svg style={{ width: 14, height: 14 }} fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /></svg>
-                          Archivo adjunto
+ Archivo adjunto
                         </div>
                       )}
                     </div>

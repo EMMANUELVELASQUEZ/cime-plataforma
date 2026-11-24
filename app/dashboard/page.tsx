@@ -2,48 +2,48 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import {
-  GraduationCap, Clock, Award, CreditCard, Calendar, Megaphone,
-  ChevronRight, ArrowRight, CheckCircle2, AlertCircle, User,
-  MapPin, BookOpen, Shield,
+ GraduationCap, Clock, Award, CreditCard, Calendar, Megaphone,
+ ChevronRight, ArrowRight, CheckCircle2, AlertCircle, User,
+ MapPin, BookOpen, Shield,
 } from "lucide-react"
 import AvisosCarousel from "@/components/AvisosCarousel"
 import CimeLogo3D from "@/components/CimeLogo3D"
 
 export const dynamic = "force-dynamic"
 
-// ─── Area config (Classroom-style header colours) ──────────────────────────
+// Area config (Classroom-style header colours) 
 const AREA: Record<string, {
   label: string; headerBg: string; chipBg: string; chipText: string
 }> = {
-  ELE: { label: "Eléctrica",        headerBg: "#1E40AF", chipBg: "rgba(147,197,253,.22)", chipText: "#93C5FD" },
-  MEC: { label: "Mecánica",         headerBg: "#5B21B6", chipBg: "rgba(196,181,253,.22)", chipText: "#C4B5FD" },
-  SOL: { label: "Sol / Renovable",  headerBg: "#064E3B", chipBg: "rgba(110,231,183,.22)", chipText: "#6EE7B7" },
+ ELE: { label: "Eléctrica",        headerBg: "#1E40AF", chipBg: "rgba(147,197,253,.22)", chipText: "#93C5FD" },
+ MEC: { label: "Mecánica",         headerBg: "#5B21B6", chipBg: "rgba(196,181,253,.22)", chipText: "#C4B5FD" },
+ SOL: { label: "Sol / Renovable",  headerBg: "#064E3B", chipBg: "rgba(110,231,183,.22)", chipText: "#6EE7B7" },
 }
 const areaOf = (a: string) => AREA[a] ?? { label: a, headerBg: "#1E3A8A", chipBg: "rgba(147,197,253,.2)", chipText: "#93C5FD" }
 
-// ─── Status config ──────────────────────────────────────────────────────────
+// Status config 
 const ESTC: Record<string, { label: string; bg: string; text: string; ring: string }> = {
-  VIGENTE:     { label: "Vigente",     bg: "rgba(16,185,129,.12)", text: "#34D399", ring: "rgba(52,211,153,.3)"  },
-  POR_RENOVAR: { label: "Por renovar", bg: "rgba(245,158,11,.12)", text: "#FBBF24", ring: "rgba(251,191,36,.3)"  },
-  SUSPENDIDO:  { label: "Suspendido",  bg: "rgba(239,68,68,.12)",  text: "#F87171", ring: "rgba(248,113,113,.3)" },
+ VIGENTE:     { label: "Vigente",     bg: "rgba(16,185,129,.12)", text: "#34D399", ring: "rgba(52,211,153,.3)" },
+ POR_RENOVAR: { label: "Por renovar", bg: "rgba(245,158,11,.12)", text: "#FBBF24", ring: "rgba(251,191,36,.3)" },
+ SUSPENDIDO:  { label: "Suspendido",  bg: "rgba(239,68,68,.12)",  text: "#F87171", ring: "rgba(248,113,113,.3)" },
 }
 const estadoOf = (e: string) => ESTC[e] ?? ESTC.VIGENTE
 
-// ─── Aviso colour ───────────────────────────────────────────────────────────
+// Aviso colour 
 const AVISO_DOT: Record<string, string> = {
-  Urgente:      "#EF4444",
-  Importante:   "#F59E0B",
-  Informativo:  "#3B82F6",
-  Convocatoria: "#10B981",
+ Urgente:      "#EF4444",
+ Importante:   "#F59E0B",
+ Informativo:  "#3B82F6",
+ Convocatoria: "#10B981",
 }
 
-// ─── Event type colour ──────────────────────────────────────────────────────
+// Event type colour 
 const EV_COLOR: Record<string, { bg: string; text: string }> = {
-  Asamblea:    { bg: "#EEF2FF", text: "#4F46E5" },
-  Taller:      { bg: "#E0F2FE", text: "#0284C7" },
-  Conferencia: { bg: "#F3E8FF", text: "#7C3AED" },
-  Evaluación:  { bg: "#D1FAE5", text: "#059669" },
-  Cuota:       { bg: "#FEF3C7", text: "#D97706" },
+ Asamblea:    { bg: "#EEF2FF", text: "#4F46E5" },
+ Taller:      { bg: "#E0F2FE", text: "#0284C7" },
+ Conferencia: { bg: "#F3E8FF", text: "#7C3AED" },
+ Evaluación:  { bg: "#D1FAE5", text: "#059669" },
+ Cuota:       { bg: "#FEF3C7", text: "#D97706" },
 }
 const evColor = (t: string) => EV_COLOR[t] ?? { bg: "#DBEAFE", text: "#1D4ED8" }
 
@@ -52,7 +52,7 @@ function initials(name: string) {
     .split(/\s+/).slice(0, 2).map(w => w[0] ?? "").join("").toUpperCase()
 }
 
-// ─── Shared card wrapper ────────────────────────────────────────────────────
+// Shared card wrapper 
 const Card = ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (
   <div style={{
     background: "var(--surface)", border: "1px solid var(--line)",
@@ -99,13 +99,13 @@ const SectionHeading = ({ label, href, count }: { label: string; href?: string; 
         fontSize: ".8rem", fontWeight: 600, color: "var(--brand)",
         textDecoration: "none", fontFamily: "var(--f-data)",
       }}>
-        Ver todos <ChevronRight size={13} strokeWidth={2.5} />
+ Ver todos <ChevronRight size={13} strokeWidth={2.5} />
       </Link>
     )}
   </div>
 )
 
-// ─── Page ───────────────────────────────────────────────────────────────────
+// Page 
 export default async function DashboardPage() {
   const session = await auth()
   const userId  = (session?.user as any)?.id
@@ -168,9 +168,9 @@ export default async function DashboardPage() {
 
   return (
     <>
-      {/* ══════════════════════════════════════════════════════════
-          PROFILE BANNER
-         ══════════════════════════════════════════════════════════ */}
+      {/* 
+ PROFILE BANNER
+          */}
       <div
         className="banner-wrap"
         style={{
@@ -198,7 +198,7 @@ export default async function DashboardPage() {
           backgroundSize: "32px 32px",
         }} />
 
-        {/* ── LEFT: identity ─────────────────────────────── */}
+        {/* LEFT: identity  */}
         <div className="banner-row" style={{
           position: "relative", zIndex: 1,
           flex: 1, minWidth: 0,
@@ -231,7 +231,7 @@ export default async function DashboardPage() {
                   border: "1px solid rgba(232,192,96,.28)",
                   padding: "2px 8px", borderRadius: 4,
                 }}>
-                  CIME-VER-{usuario.numeroColegiado}
+ CIME-VER-{usuario.numeroColegiado}
                 </span>
               )}
               <span style={{
@@ -284,14 +284,14 @@ export default async function DashboardPage() {
                   fontFamily: "var(--f-data)", fontSize: ".67rem",
                   color: "rgba(255,255,255,.3)",
                 }}>
-                  Alta {usuario.alta}
+ Alta {usuario.alta}
                 </span>
               )}
             </div>
           </div>
         </div>
 
-        {/* ── RIGHT: CIME logo + hours ────────────────────── */}
+        {/* RIGHT: CIME logo + hours  */}
         <div className="banner-right" style={{
           position: "relative", zIndex: 1,
           flexShrink: 0,
@@ -355,7 +355,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* ── Carrusel de avisos ────────────────────────────────────── */}
+      {/* Carrusel de avisos  */}
       <AvisosCarousel
         avisos={avisosCarousel.map(a => ({
           id: a.id, tipo: a.tipo, categoria: a.categoria,
@@ -366,12 +366,12 @@ export default async function DashboardPage() {
         titulo="Avisos del Colegio"
       />
 
-      {/* ══════════════════════════════════════════════════════════
-          MAIN GRID  —  8-col content + 4-col sidebar
-         ══════════════════════════════════════════════════════════ */}
+      {/* 
+ MAIN GRID  —  8-col content + 4-col sidebar
+          */}
       <div className="grid grid-cols-1 lg:grid-cols-12" style={{ gap: 24, alignItems: "start" }}>
 
-        {/* ── LEFT COLUMN (content area) ─────────────────────────── */}
+        {/* LEFT COLUMN (content area)  */}
         <div className="lg:col-span-8" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
 
           {/* KPI strip — 4 cards */}
@@ -406,7 +406,7 @@ export default async function DashboardPage() {
               },
               {
                 label: pagosPend.length > 0 ? "Pago pendiente" : "Pagos",
-                val: pagosPend.length > 0 ? `${pagosPend.length}` : "✓", unit: "",
+                val: pagosPend.length > 0 ? `${pagosPend.length}` : "", unit: "",
                 sub: pagosPend.length > 0 ? "Por realizar" : "Sin adeudos",
                 icon: <CreditCard size={20} strokeWidth={2} />,
                 accent: pagosPend.length > 0 ? "#B45309" : "#059669",
@@ -505,7 +505,7 @@ export default async function DashboardPage() {
                           fontSize: ".92rem", fontWeight: 600,
                           color: "var(--fg)", lineHeight: 1.3, marginBottom: 6,
                           display: "-webkit-box",
-                          WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
+ WebkitLineClamp: 2, WebkitBoxOrient: "vertical",
                           overflow: "hidden",
                         } as React.CSSProperties}>
                           {insc.curso.titulo}
@@ -538,7 +538,7 @@ export default async function DashboardPage() {
                               fontFamily: "var(--f-data)", fontSize: ".62rem",
                               color: "var(--muted)", letterSpacing: ".06em", textTransform: "uppercase",
                             }}>
-                              Progreso
+ Progreso
                             </span>
                             <span style={{
                               fontFamily: "var(--font-montserrat), Montserrat",
@@ -576,7 +576,7 @@ export default async function DashboardPage() {
                           color: "var(--brand)", textDecoration: "none",
                           letterSpacing: ".02em",
                         }}>
-                          Continuar <ArrowRight size={12} strokeWidth={2.5} />
+ Continuar <ArrowRight size={12} strokeWidth={2.5} />
                         </Link>
                       </div>
                     </article>
@@ -597,10 +597,10 @@ export default async function DashboardPage() {
                     fontSize: ".95rem", fontWeight: 600,
                     color: "var(--fg)", marginBottom: 6,
                   }}>
-                    Sin cursos activos
+ Sin cursos activos
                   </h3>
                   <p style={{ fontSize: ".84rem", color: "var(--muted)", maxWidth: "36ch", margin: "0 auto 18px" }}>
-                    Inscríbete a los cursos disponibles para acumular horas de actualización profesional.
+ Inscríbete a los cursos disponibles para acumular horas de actualización profesional.
                   </p>
                   <Link href="/dashboard/cursos" className="btn primary" style={{ borderRadius: 8, gap: 7 }}>
                     <BookOpen size={15} strokeWidth={1.75} /> Ver catálogo
@@ -787,14 +787,14 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        {/* ── RIGHT SIDEBAR ───────────────────────────────────────── */}
+        {/* RIGHT SIDEBAR  */}
         <div className="lg:col-span-4" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
-          {/* ── Large circular progress card ── */}
+          {/* Large circular progress card  */}
           <Card>
             <CardHeader>
               <h3 className="font-montserrat" style={{ fontSize: ".9rem", fontWeight: 700, color: "var(--fg)", margin: 0 }}>
-                Actualización 2026
+ Actualización 2026
               </h3>
               <span style={{
                 fontFamily: "var(--f-data)", fontSize: ".62rem", fontWeight: 700,
@@ -899,14 +899,14 @@ export default async function DashboardPage() {
                     fontFamily: "var(--f-data)", fontSize: ".67rem",
                     color: "var(--muted)", marginTop: 7,
                   }}>
-                    Faltan <strong style={{ color: "#F59E0B" }}>{faltanH}h</strong> para tu meta
+ Faltan <strong style={{ color: "#F59E0B" }}>{faltanH}h</strong> para tu meta
                   </p>
                 )}
               </div>
             </div>
           </Card>
 
-          {/* ── Avisos card ── */}
+          {/* Avisos card  */}
           <Card>
             <CardHeader>
               <h3 className="font-montserrat" style={{
@@ -914,13 +914,13 @@ export default async function DashboardPage() {
                 fontSize: ".9rem", fontWeight: 700, color: "var(--fg)", margin: 0,
               }}>
                 <Megaphone size={14} strokeWidth={2} style={{ color: "#F59E0B" }} />
-                Avisos del colegio
+ Avisos del colegio
               </h3>
               <Link href="/dashboard/avisos" style={{
                 fontFamily: "var(--f-data)", fontSize: ".72rem", fontWeight: 600,
                 color: "var(--brand)", textDecoration: "none",
               }}>
-                Ver todos
+ Ver todos
               </Link>
             </CardHeader>
 
@@ -951,7 +951,7 @@ export default async function DashboardPage() {
                           fontWeight: 500, fontSize: ".84rem", color: "var(--fg)",
                           lineHeight: 1.35, marginBottom: 4,
                           display: "-webkit-box",
-                          WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
+ WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden",
                         } as React.CSSProperties}>
                           {av.titulo}
                         </div>
@@ -982,17 +982,17 @@ export default async function DashboardPage() {
             )}
           </Card>
 
-          {/* ── Perfil quick info ── */}
+          {/* Perfil quick info  */}
           <Card>
             <CardHeader>
               <h3 className="font-montserrat" style={{ fontSize: ".9rem", fontWeight: 700, color: "var(--fg)", margin: 0 }}>
-                Mi perfil
+ Mi perfil
               </h3>
               <Link href="/dashboard/perfil" style={{
                 fontFamily: "var(--f-data)", fontSize: ".72rem", fontWeight: 600,
                 color: "var(--brand)", textDecoration: "none",
               }}>
-                Editar
+ Editar
               </Link>
             </CardHeader>
             <div style={{ padding: "14px 18px", display: "grid", gap: 10 }}>
@@ -1024,7 +1024,7 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      {/* ── Directorio Mesa Directiva ─────────────────────────────── */}
+      {/* Directorio Mesa Directiva  */}
       {directorio.length > 0 && (
         <div style={{ marginTop: 32 }}>
           <SectionHeading label="Mesa Directiva" href="/dashboard/directorio" />
@@ -1064,7 +1064,7 @@ export default async function DashboardPage() {
           {directorio.length > 6 && (
             <div style={{ textAlign: "center", marginTop: 14 }}>
               <Link href="/dashboard/directorio" style={{ fontSize: ".85rem", color: "var(--brand)", fontWeight: 600, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4 }}>
-                Ver todos ({directorio.length}) <ArrowRight size={14} strokeWidth={2.5} />
+ Ver todos ({directorio.length}) <ArrowRight size={14} strokeWidth={2.5} />
               </Link>
             </div>
           )}

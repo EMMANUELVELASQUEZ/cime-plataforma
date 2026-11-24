@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { FileText } from "lucide-react"
 
-// ─── Types ───────────────────────────────────────────────────────
+// Types 
 export type SolicitudResumen = {
   id: string
   estado: string
@@ -37,7 +37,7 @@ function buildWaUrl(planNombre: string, userName: string) {
   return `https://wa.me/${WA_NUMBER}?text=${text}`
 }
 
-// ─── WhatsApp Icon SVG ────────────────────────────────────────────
+// WhatsApp Icon SVG 
 function WhatsAppIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
@@ -46,11 +46,11 @@ function WhatsAppIcon({ size = 18 }: { size?: number }) {
   )
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────
+// Helpers 
 const money = (n: number) =>
   new Intl.NumberFormat("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 }).format(n)
 
-// ─── Toast system ─────────────────────────────────────────────────
+// Toast system 
 type Toast = { id: number; message: string; type: "ok" | "bad" }
 
 let toastId = 0
@@ -67,23 +67,23 @@ function useToast() {
   return { toasts, push }
 }
 
-// ─── Card gradients by tipo ───────────────────────────────────────
+// Card gradients by tipo 
 const CARD_STYLES: Record<string, { gradient: string; accent: string }> = {
-  ANUALIDAD: {
+ ANUALIDAD: {
     gradient: "linear-gradient(135deg, #040714 0%, #131847 100%)",
     accent: "#C8B820",
   },
-  REFRENDO: {
+ REFRENDO: {
     gradient: "linear-gradient(135deg, #0A0F1E 0%, #1A1040 60%, #0D2135 100%)",
     accent: "#7C3AED",
   },
-  OTRO: {
+ OTRO: {
     gradient: "linear-gradient(135deg, #071428 0%, #0C2340 100%)",
     accent: "#1B4F91",
   },
 }
 
-// ─── Estado config ────────────────────────────────────────────────
+// Estado config 
 type EstadoCfg = {
   label: string
   color: string
@@ -93,28 +93,28 @@ type EstadoCfg = {
 }
 
 const ESTADO_CFG: Record<string, EstadoCfg> = {
-  PENDIENTE: {
+ PENDIENTE: {
     label: "Solicitud enviada",
     color: "#D97706",
     bg: "#FEF3C7",
     btnLabel: "Solicitud enviada · Pendiente",
     disabled: true,
   },
-  CONTACTADO: {
+ CONTACTADO: {
     label: "En contacto",
     color: "#2563EB",
     bg: "#DBEAFE",
     btnLabel: "En contacto con la administracion",
     disabled: true,
   },
-  ACTIVO: {
+ ACTIVO: {
     label: "Activo",
     color: "#059669",
     bg: "#D1FAE5",
     btnLabel: "Plan activo",
     disabled: true,
   },
-  RECHAZADO: {
+ RECHAZADO: {
     label: "Rechazado",
     color: "#DC2626",
     bg: "#FEE2E2",
@@ -123,7 +123,7 @@ const ESTADO_CFG: Record<string, EstadoCfg> = {
   },
 }
 
-// ─── Main Component ───────────────────────────────────────────────
+// Main Component 
 export default function PlanesView({ planes, userId, userName }: Props) {
   const { toasts, push } = useToast()
   const [solicitudes, setSolicitudes] = useState<Record<string, SolicitudResumen | undefined>>(() => {
@@ -346,7 +346,7 @@ export default function PlanesView({ planes, userId, userName }: Props) {
                     borderRadius: 6,
                     border: "1px solid var(--line)",
                   }}>
-                    Precio + 16% IVA. Se emite factura electronica.
+ Precio + 16% IVA. Se emite factura electronica.
                   </div>
                 )}
 
@@ -360,7 +360,7 @@ export default function PlanesView({ planes, userId, userName }: Props) {
                   border: "1px solid var(--line)",
                   lineHeight: 1.5,
                 }}>
-                  Contáctanos para coordinar tu inscripción a través de la plataforma (Mensajes) o por WhatsApp al <strong>229 265 4241</strong>.
+ Contáctanos para coordinar tu inscripción a través de la plataforma (Mensajes) o por WhatsApp al <strong>229 265 4241</strong>.
                 </div>
 
                 {/* CTA */}
@@ -433,7 +433,7 @@ export default function PlanesView({ planes, userId, userName }: Props) {
                     }}
                   >
                     <WhatsAppIcon size={17} />
-                    Contactar por WhatsApp
+ Contactar por WhatsApp
                   </a>
                 </div>
               </div>

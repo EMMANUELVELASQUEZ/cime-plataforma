@@ -180,7 +180,7 @@ export default function NuevoAvisoForm() {
 
           <label className="check">
             <input type="checkbox" checked={form.fijado} onChange={e => set("fijado", e.target.checked)} />
-            Fijar este aviso (aparece primero)
+ Fijar este aviso (aparece primero)
           </label>
           <button className="btn primary block" type="submit" disabled={loading}>
             {loading ? "Publicando…" : "Publicar aviso"}

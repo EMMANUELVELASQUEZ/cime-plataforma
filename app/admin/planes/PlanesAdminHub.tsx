@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { FileText, Plus, Edit2, Trash2, ChevronDown, X, Check } from "lucide-react"
 
-// ─── Types ───────────────────────────────────────────────────────
+// Types 
 export type SolicitudUsuario = {
   id: string
   nombre: string
@@ -39,7 +39,7 @@ interface Props {
   data: PlanItem[]
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────
+// Helpers 
 const money = (n: number) =>
   n.toLocaleString("es-MX", { style: "currency", currency: "MXN", maximumFractionDigits: 0 })
 
@@ -47,16 +47,16 @@ const fmtDate = (s: string) =>
   new Date(s).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })
 
 const TIPO_LABELS: Record<string, string> = {
-  ANUALIDAD: "Anualidad",
-  REFRENDO: "Refrendo",
-  OTRO: "Otro",
+ ANUALIDAD: "Anualidad",
+ REFRENDO: "Refrendo",
+ OTRO: "Otro",
 }
 
 const ESTADO_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  PENDIENTE:  { label: "Pendiente",  color: "#D97706", bg: "#FEF3C7" },
-  CONTACTADO: { label: "Contactado", color: "#2563EB", bg: "#DBEAFE" },
-  ACTIVO:     { label: "Activo",     color: "#059669", bg: "#D1FAE5" },
-  RECHAZADO:  { label: "Rechazado",  color: "#DC2626", bg: "#FEE2E2" },
+ PENDIENTE:  { label: "Pendiente",  color: "#D97706", bg: "#FEF3C7" },
+ CONTACTADO: { label: "Contactado", color: "#2563EB", bg: "#DBEAFE" },
+ ACTIVO:     { label: "Activo",     color: "#059669", bg: "#D1FAE5" },
+ RECHAZADO:  { label: "Rechazado",  color: "#DC2626", bg: "#FEE2E2" },
 }
 
 function EstadoBadge({ estado }: { estado: string }) {
@@ -79,9 +79,9 @@ function EstadoBadge({ estado }: { estado: string }) {
 
 function TipoBadge({ tipo }: { tipo: string }) {
   const colors: Record<string, { color: string; bg: string }> = {
-    ANUALIDAD: { color: "#1B4F91", bg: "#DBEAFE" },
-    REFRENDO:  { color: "#6D28D9", bg: "#EDE9FE" },
-    OTRO:      { color: "#374151", bg: "#F3F4F6" },
+ ANUALIDAD: { color: "#1B4F91", bg: "#DBEAFE" },
+ REFRENDO:  { color: "#6D28D9", bg: "#EDE9FE" },
+ OTRO:      { color: "#374151", bg: "#F3F4F6" },
   }
   const cfg = colors[tipo] ?? colors.OTRO
   return (
@@ -101,7 +101,7 @@ function TipoBadge({ tipo }: { tipo: string }) {
   )
 }
 
-// ─── Default seed plans ──────────────────────────────────────────
+// Default seed plans 
 const SEED_PLANES = [
   {
     nombre: "Anualidad CIME 2026",
@@ -119,7 +119,7 @@ const SEED_PLANES = [
   },
 ]
 
-// ─── Plan form state ─────────────────────────────────────────────
+// Plan form state 
 type PlanForm = {
   nombre: string
   descripcion: string
@@ -138,7 +138,7 @@ const EMPTY_FORM: PlanForm = {
   activo: true,
 }
 
-// ─── Main Component ───────────────────────────────────────────────
+// Main Component 
 export default function PlanesAdminHub({ data }: Props) {
   const [planes, setPlanes] = useState<PlanItem[]>(data)
   const [solicitudes, setSolicitudes] = useState<SolicitudItem[]>(
@@ -324,18 +324,18 @@ export default function PlanesAdminHub({ data }: Props) {
         </div>
         <button className="btn primary" onClick={openCreate}>
           <Plus size={15} strokeWidth={2} />
-          Nuevo plan
+ Nuevo plan
         </button>
       </div>
 
       {/* Two-column layout */}
       <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) minmax(0,1.2fr)", gap: 24, alignItems: "start" }}>
 
-        {/* ── Left: Plans ──────────────────────────── */}
+        {/* Left: Plans  */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <h2 className="font-montserrat" style={{ fontSize: ".95rem", fontWeight: 700, color: "var(--fg)", margin: 0 }}>
-              Planes activos
+ Planes activos
             </h2>
             {planes.length === 0 && (
               <button
@@ -376,10 +376,10 @@ export default function PlanesAdminHub({ data }: Props) {
           )}
         </div>
 
-        {/* ── Right: Solicitudes ───────────────────── */}
+        {/* Right: Solicitudes  */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <h2 className="font-montserrat" style={{ fontSize: ".95rem", fontWeight: 700, color: "var(--fg)", margin: 0 }}>
-            Solicitudes
+ Solicitudes
             {solicitudes.length > 0 && (
               <span style={{
                 marginLeft: 8,
@@ -509,7 +509,7 @@ export default function PlanesAdminHub({ data }: Props) {
                           style={{ fontSize: ".76rem", padding: "4px 10px" }}
                           onClick={() => setNotasEditing(null)}
                         >
-                          Cancelar
+ Cancelar
                         </button>
                         <button
                           className="btn primary"
@@ -544,7 +544,7 @@ export default function PlanesAdminHub({ data }: Props) {
         </div>
       </div>
 
-      {/* ── Modal ─────────────────────────────────── */}
+      {/* Modal  */}
       {modalOpen && (
         <div style={{
           position: "fixed", inset: 0, zIndex: 100,
@@ -593,7 +593,7 @@ export default function PlanesAdminHub({ data }: Props) {
 
               <label style={{ display: "flex", flexDirection: "column" as const, gap: 5 }}>
                 <span style={{ fontSize: ".78rem", fontWeight: 600, color: "var(--muted)", letterSpacing: ".04em" }}>
-                  NOMBRE DEL PLAN *
+ NOMBRE DEL PLAN *
                 </span>
                 <input
                   type="text"
@@ -610,7 +610,7 @@ export default function PlanesAdminHub({ data }: Props) {
 
               <label style={{ display: "flex", flexDirection: "column" as const, gap: 5 }}>
                 <span style={{ fontSize: ".78rem", fontWeight: 600, color: "var(--muted)", letterSpacing: ".04em" }}>
-                  DESCRIPCION
+ DESCRIPCION
                 </span>
                 <textarea
                   value={form.descripcion}
@@ -629,7 +629,7 @@ export default function PlanesAdminHub({ data }: Props) {
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                 <label style={{ display: "flex", flexDirection: "column" as const, gap: 5 }}>
                   <span style={{ fontSize: ".78rem", fontWeight: 600, color: "var(--muted)", letterSpacing: ".04em" }}>
-                    MONTO (MXN) *
+ MONTO (MXN) *
                   </span>
                   <input
                     type="number"
@@ -648,7 +648,7 @@ export default function PlanesAdminHub({ data }: Props) {
 
                 <label style={{ display: "flex", flexDirection: "column" as const, gap: 5 }}>
                   <span style={{ fontSize: ".78rem", fontWeight: 600, color: "var(--muted)", letterSpacing: ".04em" }}>
-                    TIPO
+ TIPO
                   </span>
                   <div style={{ position: "relative" }}>
                     <select
@@ -706,7 +706,7 @@ export default function PlanesAdminHub({ data }: Props) {
               borderTop: "1px solid var(--line)",
             }}>
               <button className="btn" onClick={closeModal} disabled={saving}>
-                Cancelar
+ Cancelar
               </button>
               <button className="btn primary" onClick={handleSavePlan} disabled={saving}>
                 {saving ? "Guardando..." : editingPlan ? "Guardar cambios" : "Crear plan"}
@@ -719,7 +719,7 @@ export default function PlanesAdminHub({ data }: Props) {
   )
 }
 
-// ─── Plan Card ────────────────────────────────────────────────────
+// Plan Card 
 function PlanCard({
   plan,
   onEdit,
@@ -754,7 +754,7 @@ function PlanCard({
                 background: "var(--surface-3)", borderRadius: 20, padding: "2px 8px",
                 letterSpacing: ".05em", textTransform: "uppercase" as const,
               }}>
-                Inactivo
+ Inactivo
               </span>
             )}
           </div>

@@ -49,10 +49,10 @@ export default async function TesoreronPage() {
   }
 
   const ESTADO_COLOR: Record<string, string> = {
-    PAGADO:    "ok",
-    PENDIENTE: "warn",
-    VENCIDO:   "bad",
-    CANCELADO: "",
+ PAGADO:    "ok",
+ PENDIENTE: "warn",
+ VENCIDO:   "bad",
+ CANCELADO: "",
   }
 
   return (
@@ -78,11 +78,11 @@ export default async function TesoreronPage() {
       {/* KPI Grid */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14, marginBottom: 24 }}>
         {[
-          { label: "Ingresos del mes",    value: fmt(ingresosMes._sum.monto ?? 0),      sub: "Pagos confirmados",        icon: "📈", accent: "#10b981" },
-          { label: "Total recaudado",     value: fmt(ingresoTotal._sum.monto ?? 0),     sub: "Histórico acumulado",      icon: "🏦", accent: "#0D2060" },
-          { label: "Pagos pendientes",    value: String(pagosPendientes),               sub: `${pctPagados}% cobrado`,   icon: "⏳", accent: pagosPendientes > 10 ? "#ef4444" : "#f59e0b" },
-          { label: "Miembros vigentes",   value: String(totalColegiados + totalPeritos), sub: `${totalColegiados} col. · ${totalPeritos} per.`, icon: "👥", accent: "#3b82f6" },
-          { label: "Por renovar",         value: String(porVencer),                      sub: "Vigencia próxima a vencer", icon: "🔔", accent: porVencer > 0 ? "#f59e0b" : "#6b7280" },
+          { label: "Ingresos del mes",    value: fmt(ingresosMes._sum.monto ?? 0),      sub: "Pagos confirmados",        icon: "", accent: "#10b981" },
+          { label: "Total recaudado",     value: fmt(ingresoTotal._sum.monto ?? 0),     sub: "Histórico acumulado",      icon: "", accent: "#0D2060" },
+          { label: "Pagos pendientes",    value: String(pagosPendientes),               sub: `${pctPagados}% cobrado`,   icon: "", accent: pagosPendientes > 10 ? "#ef4444" : "#f59e0b" },
+          { label: "Miembros vigentes",   value: String(totalColegiados + totalPeritos), sub: `${totalColegiados} col. · ${totalPeritos} per.`, icon: "", accent: "#3b82f6" },
+          { label: "Por renovar",         value: String(porVencer),                      sub: "Vigencia próxima a vencer", icon: "", accent: porVencer > 0 ? "#f59e0b" : "#6b7280" },
         ].map(k => (
           <div key={k.label} className="card" style={{ padding: "18px 20px" }}>
             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
@@ -100,11 +100,11 @@ export default async function TesoreronPage() {
       {/* Quick access */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 28 }}>
         {[
-          { href: "/tesorero/pagos",     label: "Registro de Pagos",    desc: "Tabla completa de pagos",          bg: "#0D2060", icon: "💳" },
-          { href: "/tesorero/cobranza",  label: "Cobranza Pendiente",   desc: "Miembros con saldo abierto",       bg: "#b45309", icon: "📋" },
-          { href: "/tesorero/reportes",  label: "Reportes",             desc: "Resumen financiero y análisis",    bg: "#059669", icon: "📊" },
-          { href: "/tesorero/facturas",  label: "Facturas",             desc: "Comprobantes y facturas emitidas", bg: "#7c3aed", icon: "🧾" },
-          { href: "/tesorero/mensajes",  label: "Mensajes",             desc: "Comunicación con miembros",        bg: "#0369a1", icon: "💬" },
+          { href: "/tesorero/pagos",     label: "Registro de Pagos",    desc: "Tabla completa de pagos",          bg: "#0D2060", icon: "" },
+          { href: "/tesorero/cobranza",  label: "Cobranza Pendiente",   desc: "Miembros con saldo abierto",       bg: "#b45309", icon: "" },
+          { href: "/tesorero/reportes",  label: "Reportes",             desc: "Resumen financiero y análisis",    bg: "#059669", icon: "" },
+          { href: "/tesorero/facturas",  label: "Facturas",             desc: "Comprobantes y facturas emitidas", bg: "#7c3aed", icon: "" },
+          { href: "/tesorero/mensajes",  label: "Mensajes",             desc: "Comunicación con miembros",        bg: "#0369a1", icon: "" },
         ].map(item => (
           <Link key={item.href} href={item.href} style={{ textDecoration: "none" }}>
             <div className="card" style={{

@@ -54,7 +54,7 @@ const NEIGHBORS: [number,number][][] = [
 ]
 
 const LON_MIN = -99.6, LON_MAX = -92.8
-const LAT_MIN = 16.5,  LAT_MAX = 23.0
+const LAT_MIN = 16.5, LAT_MAX = 23.0
 
 // Colores de partículas
 const PCOLS = [
@@ -127,7 +127,7 @@ export default function LoginClient() {
 
       const now = performance.now()
 
-      // ── Fondo: profundidad oscura ────────────────────────
+      // Fondo: profundidad oscura 
       const bg = ctx.createRadialGradient(w*0.38, h*0.48, 0, w*0.38, h*0.48, w*0.9)
       bg.addColorStop(0, "#071b3a")
       bg.addColorStop(0.5, "#040f24")
@@ -135,7 +135,7 @@ export default function LoginClient() {
       ctx.fillStyle = bg
       ctx.fillRect(0, 0, w, h)
 
-      // ── Estrellas ────────────────────────────────────────
+      // Estrellas 
       stars.forEach(s => {
         const a = s.a * (0.5 + 0.5*Math.sin(now*s.sp + s.ph))
         ctx.beginPath()
@@ -144,8 +144,8 @@ export default function LoginClient() {
         ctx.fill()
       })
 
-      // ── Estados vecinos (contexto tenue) ─────────────────
-      NEIGHBORS.forEach(poly => {
+      // Estados vecinos (contexto tenue) 
+ NEIGHBORS.forEach(poly => {
         ctx.beginPath()
         poly.forEach(([ln,la],i) => {
           const[x,y]=proj(ln,la,w,h); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)
@@ -157,9 +157,9 @@ export default function LoginClient() {
         ctx.fill(); ctx.stroke()
       })
 
-      // ── Polígono Veracruz — relleno ───────────────────────
+      // Polígono Veracruz — relleno 
       ctx.beginPath()
-      VER.forEach(([ln,la],i) => {
+ VER.forEach(([ln,la],i) => {
         const[x,y]=proj(ln,la,w,h); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)
       })
       ctx.closePath()
@@ -190,7 +190,7 @@ export default function LoginClient() {
       ctx.stroke()
       ctx.restore()
 
-      // ── Golfo de México ───────────────────────────────────
+      // Golfo de México 
       const [gx,gy] = proj(-93.5, 21.0, w, h)
       ctx.save()
       ctx.font      = `italic 400 ${Math.round(h*0.019)}px 'Inter',system-ui,sans-serif`
@@ -199,8 +199,8 @@ export default function LoginClient() {
       ctx.fillText("GOLFO DE MÉXICO", gx, gy)
       ctx.restore()
 
-      // ── Conexiones base ───────────────────────────────────
-      CONN.forEach(([i,j]) => {
+      // Conexiones base 
+ CONN.forEach(([i,j]) => {
         const [x1,y1]=proj(NODES[i][2],NODES[i][1],w,h)
         const [x2,y2]=proj(NODES[j][2],NODES[j][1],w,h)
         const mx=(x1+x2)/2, my=(y1+y2)/2 - Math.hypot(x2-x1,y2-y1)*0.14
@@ -214,7 +214,7 @@ export default function LoginClient() {
         ctx.restore()
       })
 
-      // ── Partículas animadas ───────────────────────────────
+      // Partículas animadas 
       packets.forEach(p => {
         if (!reduce) {
           p.t += p.v * p.dir
@@ -247,8 +247,8 @@ export default function LoginClient() {
         ctx.restore()
       })
 
-      // ── Nodos ciudad ──────────────────────────────────────
-      NODES.forEach(([name,lat,lon,core],idx) => {
+      // Nodos ciudad 
+ NODES.forEach(([name,lat,lon,core],idx) => {
         const [x,y]=proj(lon,lat,w,h)
         const r = core ? 8 : 4.5
 
@@ -312,7 +312,7 @@ export default function LoginClient() {
           ctx.restore()
         }
 
-        // ── Nombre del municipio (TODOS) ──────────────────
+        // Nombre del municipio (TODOS) 
         const fs = core ? Math.round(h*0.017) : Math.round(h*0.0125)
         ctx.save()
         ctx.font      = `${core?700:500} ${fs}px 'Inter',system-ui,sans-serif`
@@ -341,7 +341,7 @@ export default function LoginClient() {
         ctx.restore()
       })
 
-      // ── Watermark VERACRUZ ────────────────────────────────
+      // Watermark VERACRUZ 
       const [slx,sly] = proj(-96.5, 20.3, w, h)
       ctx.save()
       ctx.font      = `800 ${Math.round(h*0.034)}px 'Inter',system-ui,sans-serif`
@@ -400,10 +400,10 @@ export default function LoginClient() {
             </div>
             <div style={{ textAlign: "center" }}>
               <div style={{ fontWeight: 800, fontSize: "1.05rem", letterSpacing: ".04em", color: "var(--fg)" }}>
-                CIME VERACRUZ
+ CIME VERACRUZ
               </div>
               <div style={{ fontSize: ".8rem", color: "var(--muted)", marginTop: 2 }}>
-                Colegio de Ingenieros Mecánicos y Electricistas
+ Colegio de Ingenieros Mecánicos y Electricistas
               </div>
             </div>
           </div>
@@ -412,7 +412,7 @@ export default function LoginClient() {
             <span className="eyebrow">Acceso seguro</span>
             <h2>Inicio de <b>sesión</b></h2>
             <p className="muted" style={{ fontSize: ".9rem" }}>
-              Entra con tu número de colegiado o correo registrado.
+ Entra con tu número de colegiado o correo registrado.
             </p>
           </header>
 
@@ -467,7 +467,7 @@ export default function LoginClient() {
           </form>
 
           <p className="login-foot">
-            Conexión cifrada · Sesión protegida<br />
+ Conexión cifrada · Sesión protegida<br />
             © 2026 CIME Veracruz
           </p>
         </div>

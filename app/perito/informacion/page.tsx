@@ -2,17 +2,17 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import {
-  MapPin, Phone, Mail, Award, Shield, Calendar,
-  BookOpen, Edit, CheckCircle2, FileText,
+ MapPin, Phone, Mail, Award, Shield, Calendar,
+ BookOpen, Edit, CheckCircle2, FileText,
 } from "lucide-react"
 import CimeLogo3D from "@/components/CimeLogo3D"
 
 export const dynamic = "force-dynamic"
 
 const ESTC: Record<string, { label: string; bg: string; color: string; border: string }> = {
-  VIGENTE:     { label: "Vigente",     bg: "#ECFDF5", color: "#065F46", border: "#6EE7B7" },
-  POR_RENOVAR: { label: "Por renovar", bg: "#FFFBEB", color: "#92400E", border: "#FCD34D" },
-  SUSPENDIDO:  { label: "Suspendido",  bg: "#FEF2F2", color: "#991B1B", border: "#FCA5A5" },
+ VIGENTE:     { label: "Vigente",     bg: "#ECFDF5", color: "#065F46", border: "#6EE7B7" },
+ POR_RENOVAR: { label: "Por renovar", bg: "#FFFBEB", color: "#92400E", border: "#FCD34D" },
+ SUSPENDIDO:  { label: "Suspendido",  bg: "#FEF2F2", color: "#991B1B", border: "#FCA5A5" },
 }
 
 function initials(name: string) {
@@ -62,27 +62,27 @@ export default async function PeritoInformacionPage() {
   const est  = ESTC[usuario.estado] ?? ESTC.VIGENTE
 
   const ENTRADA_CFG: Record<string, { color: string; bg: string }> = {
-    NOTA:        { color: "#2563eb", bg: "#EFF6FF" },
-    INSTRUCCION: { color: "#7C3AED", bg: "#F3E8FF" },
-    DOCUMENTO:   { color: "#059669", bg: "#ECFDF5" },
-    OBSERVACION: { color: "#D97706", bg: "#FFFBEB" },
-    REPORTE:     { color: "#DC2626", bg: "#FEF2F2" },
+ NOTA:        { color: "#2563eb", bg: "#EFF6FF" },
+ INSTRUCCION: { color: "#7C3AED", bg: "#F3E8FF" },
+ DOCUMENTO:   { color: "#059669", bg: "#ECFDF5" },
+ OBSERVACION: { color: "#D97706", bg: "#FFFBEB" },
+ REPORTE:     { color: "#DC2626", bg: "#FEF2F2" },
   }
   const PAGO_CFG: Record<string, { color: string; bg: string; label: string }> = {
-    PAGADO:    { color: "#059669", bg: "#ECFDF5", label: "Pagado"    },
-    PENDIENTE: { color: "#D97706", bg: "#FFFBEB", label: "Pendiente" },
-    VENCIDO:   { color: "#DC2626", bg: "#FEF2F2", label: "Vencido"   },
-    CANCELADO: { color: "#6B7280", bg: "#F9FAFB", label: "Cancelado" },
+ PAGADO:    { color: "#059669", bg: "#ECFDF5", label: "Pagado" },
+ PENDIENTE: { color: "#D97706", bg: "#FFFBEB", label: "Pendiente" },
+ VENCIDO:   { color: "#DC2626", bg: "#FEF2F2", label: "Vencido" },
+ CANCELADO: { color: "#6B7280", bg: "#F9FAFB", label: "Cancelado" },
   }
 
   const AVISO_DOT: Record<string, string> = {
-    Urgente: "#EF4444", Importante: "#F59E0B", Informativo: "#3B82F6", Convocatoria: "#10B981",
+ Urgente: "#EF4444", Importante: "#F59E0B", Informativo: "#3B82F6", Convocatoria: "#10B981",
   }
 
   return (
     <div style={{ maxWidth: 900, margin: "0 auto" }}>
 
-      {/* ── COVER + AVATAR ─────────────────────────────────── */}
+      {/* COVER + AVATAR  */}
       <div style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 16, overflow: "hidden", boxShadow: "var(--shadow-sm)", marginBottom: 24 }}>
 
         {/* Cover photo */}
@@ -150,7 +150,7 @@ export default async function PeritoInformacionPage() {
                   color: "#1549B8", background: "#EFF6FF",
                   border: "1px solid #BFDBFE", padding: "3px 10px", borderRadius: 4,
                 }}>
-                  CIME-PER-{usuario.numeroPerito}
+ CIME-PER-{usuario.numeroPerito}
                 </span>
               )}
               <span style={{
@@ -185,10 +185,10 @@ export default async function PeritoInformacionPage() {
         </div>
       </div>
 
-      {/* ── Grid de contenido ─────────────────────────────── */}
+      {/* Grid de contenido  */}
       <div style={{ display: "grid", gridTemplateColumns: "340px 1fr", gap: 20, alignItems: "start" }}>
 
-        {/* ── COLUMNA IZQUIERDA ───────────────────────────── */}
+        {/* COLUMNA IZQUIERDA  */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
           {/* Información personal */}
@@ -242,7 +242,7 @@ export default async function PeritoInformacionPage() {
           </div>
         </div>
 
-        {/* ── COLUMNA DERECHA ─────────────────────────────── */}
+        {/* COLUMNA DERECHA  */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
           {/* Datos institucionales — tarjeta prominente */}
@@ -254,7 +254,7 @@ export default async function PeritoInformacionPage() {
             <div style={{ position: "absolute", inset: 0, backgroundImage: "linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px)", backgroundSize: "24px 24px" }} />
             <div style={{ position: "relative", padding: "24px 24px 20px" }}>
               <div style={{ fontFamily: "var(--f-data)", fontSize: ".6rem", fontWeight: 700, letterSpacing: ".15em", textTransform: "uppercase", color: "rgba(255,255,255,.5)", marginBottom: 16 }}>
-                Datos institucionales
+ Datos institucionales
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 {[
@@ -285,7 +285,7 @@ export default async function PeritoInformacionPage() {
               </div>
               {expediente.entradas.length === 0 ? (
                 <div style={{ padding: "24px", textAlign: "center", color: "var(--muted)", fontSize: ".84rem" }}>
-                  Sin entradas recientes en el expediente
+ Sin entradas recientes en el expediente
                 </div>
               ) : (
                 <div>

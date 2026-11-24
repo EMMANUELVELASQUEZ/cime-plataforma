@@ -1,12 +1,12 @@
 "use client"
 import { useState, useRef } from "react"
 import {
-  Plus, Trash2, ChevronDown, ChevronRight, Pencil, Check, X,
-  Video, FileText, Image, Link2, AlignLeft, Upload, Loader2, GripVertical,
-  BookOpen, FolderOpen,
+ Plus, Trash2, ChevronDown, ChevronRight, Pencil, Check, X,
+ Video, FileText, Image, Link2, AlignLeft, Upload, Loader2, GripVertical,
+ BookOpen, FolderOpen,
 } from "lucide-react"
 
-/* ─── Types ───────────────────────────────────────────── */
+/* Types  */
 type TipoRecurso = "VIDEO_LINK" | "DOCUMENTO" | "IMAGEN" | "TEXTO" | "LINK_EXTERNO"
 
 interface Recurso {
@@ -20,27 +20,27 @@ interface Modulo {
   id: string; titulo: string; orden: number; lecciones: Leccion[]
 }
 
-/* ─── Helpers ─────────────────────────────────────────── */
+/* Helpers  */
 const TIPO_ICON: Record<TipoRecurso, React.ReactNode> = {
-  VIDEO_LINK: <Video size={15} strokeWidth={1.75} />,
-  DOCUMENTO: <FileText size={15} strokeWidth={1.75} />,
-  IMAGEN: <Image size={15} strokeWidth={1.75} />,
-  TEXTO: <AlignLeft size={15} strokeWidth={1.75} />,
-  LINK_EXTERNO: <Link2 size={15} strokeWidth={1.75} />,
+ VIDEO_LINK: <Video size={15} strokeWidth={1.75} />,
+ DOCUMENTO: <FileText size={15} strokeWidth={1.75} />,
+ IMAGEN: <Image size={15} strokeWidth={1.75} />,
+ TEXTO: <AlignLeft size={15} strokeWidth={1.75} />,
+ LINK_EXTERNO: <Link2 size={15} strokeWidth={1.75} />,
 }
 const TIPO_LABEL: Record<TipoRecurso, string> = {
-  VIDEO_LINK: "Video",
-  DOCUMENTO: "Documento",
-  IMAGEN: "Imagen",
-  TEXTO: "Texto",
-  LINK_EXTERNO: "Enlace",
+ VIDEO_LINK: "Video",
+ DOCUMENTO: "Documento",
+ IMAGEN: "Imagen",
+ TEXTO: "Texto",
+ LINK_EXTERNO: "Enlace",
 }
 const TIPO_COLOR: Record<TipoRecurso, string> = {
-  VIDEO_LINK: "#ef4444",
-  DOCUMENTO: "#3b82f6",
-  IMAGEN: "#10b981",
-  TEXTO: "#8b5cf6",
-  LINK_EXTERNO: "#f59e0b",
+ VIDEO_LINK: "#ef4444",
+ DOCUMENTO: "#3b82f6",
+ IMAGEN: "#10b981",
+ TEXTO: "#8b5cf6",
+ LINK_EXTERNO: "#f59e0b",
 }
 
 function formatBytes(bytes: number) {
@@ -93,7 +93,7 @@ function detectVideoSource(url: string): "youtube" | "vimeo" | "drive" | null {
   return null
 }
 
-/* ─── Component ────────────────────────────────────────── */
+/* Component  */
 export default function CursoEditorClient({ cursoId, curso }: { cursoId: string; curso: { modulos: Modulo[] } }) {
   const [modulos, setModulos] = useState<Modulo[]>(curso.modulos)
   const [expanded, setExpanded] = useState<Record<string, boolean>>({})
@@ -117,7 +117,7 @@ export default function CursoEditorClient({ cursoId, curso }: { cursoId: string;
   const [showAddLeccion, setShowAddLeccion] = useState<string | null>(null) // moduloId
   const [leccionTitulo, setLeccionTitulo] = useState("")
 
-  /* ── Modules ─────────────────────────────────────────── */
+  /* Modules  */
   async function addModulo() {
     const titulo = `Módulo ${modulos.length + 1}`
     setLoading("modulo-new")
@@ -154,7 +154,7 @@ export default function CursoEditorClient({ cursoId, curso }: { cursoId: string;
     setLoading(null)
   }
 
-  /* ── Lessons ─────────────────────────────────────────── */
+  /* Lessons  */
   async function addLeccion(moduloId: string) {
     if (!leccionTitulo.trim()) return
     setLoading(`leccion-${moduloId}`)
@@ -197,7 +197,7 @@ export default function CursoEditorClient({ cursoId, curso }: { cursoId: string;
     setLoading(null)
   }
 
-  /* ── Resources ───────────────────────────────────────── */
+  /* Resources  */
   function openAddRecurso(leccionId: string) {
     setShowAddRecurso(leccionId)
     setRecursoTipo("VIDEO_LINK")
@@ -289,7 +289,7 @@ export default function CursoEditorClient({ cursoId, curso }: { cursoId: string;
     setEditTitulo("")
   }
 
-  /* ── Stats ───────────────────────────────────────────── */
+  /* Stats  */
   const totalLecciones = modulos.reduce((s, m) => s + m.lecciones.length, 0)
   const totalRecursos = modulos.reduce((s, m) => s + m.lecciones.reduce((s2, l) => s2 + l.recursos.length, 0), 0)
 
@@ -441,7 +441,7 @@ export default function CursoEditorClient({ cursoId, curso }: { cursoId: string;
                             )}
                             {recurso.url && (recurso.tipo === "DOCUMENTO" || recurso.tipo === "IMAGEN") && (
                               <button className="btn sm ghost" style={{ fontSize: ".72rem" }} onClick={() => openRecurso(recurso.url)}>
-                                Ver
+ Ver
                               </button>
                             )}
                             <button
@@ -501,7 +501,7 @@ export default function CursoEditorClient({ cursoId, curso }: { cursoId: string;
         </button>
       </div>
 
-      {/* ── Add Resource Dialog ──────────────────────────── */}
+      {/* Add Resource Dialog  */}
       <dialog ref={dialogRef}>
         <div className="dlg-h">
           <div>
@@ -569,7 +569,7 @@ export default function CursoEditorClient({ cursoId, curso }: { cursoId: string;
               {/* Drive instructions */}
               {recursoUrl && detectVideoSource(recursoUrl) === "drive" && (
                 <div style={{ marginTop: 6, padding: "8px 12px", background: "#fef9c3", border: "1px solid #fde047", borderRadius: "var(--r-sm)", fontSize: ".76rem", color: "#713f12" }}>
-                  Asegúrate de que el archivo en Drive tenga acceso <b>"Cualquier persona con el enlace"</b> para que los alumnos puedan verlo.
+ Asegúrate de que el archivo en Drive tenga acceso <b>"Cualquier persona con el enlace"</b> para que los alumnos puedan verlo.
                 </div>
               )}
               {/* Source chips */}

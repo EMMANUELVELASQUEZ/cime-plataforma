@@ -58,7 +58,7 @@ export default async function CursosPage() {
         </div>
       </div>
 
-      {/* ── Cursos en progreso ─────────────────────────────── */}
+      {/* Cursos en progreso  */}
       {enCurso.length > 0 && (
         <section>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
@@ -104,10 +104,10 @@ export default async function CursosPage() {
                   <div className="lms-course-footer">
                     <span style={{ fontSize: ".72rem", color: "var(--muted)", display: "flex", alignItems: "center", gap: 4 }}>
                       <CalendarDays size={12} strokeWidth={2} />
-                      Termina {new Date(c.fechaFin).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
+ Termina {new Date(c.fechaFin).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
                     </span>
                     <a href={`/dashboard/cursos/${i.curso.id}`} className="btn sm primary" style={{ fontSize: ".78rem", height: 30, padding: "0 12px" }}>
-                      Continuar →
+ Continuar →
                     </a>
                   </div>
                 </div>
@@ -117,7 +117,7 @@ export default async function CursosPage() {
         </section>
       )}
 
-      {/* ── Catálogo ───────────────────────────────────────── */}
+      {/* Catálogo  */}
       <section>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, flexWrap: "wrap", gap: 10 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -159,7 +159,7 @@ export default async function CursosPage() {
                           )}
                           {lleno && !yaInscrito && (
                             <span className="subject-tag" style={{ background: "#ef444422", color: "#ef4444", borderColor: "#ef444444" }}>
-                              Cupo lleno
+ Cupo lleno
                             </span>
                           )}
                         </div>
@@ -224,7 +224,7 @@ export default async function CursosPage() {
         )}
       </section>
 
-      {/* ── Completados ────────────────────────────────────── */}
+      {/* Completados  */}
       {completados.length > 0 && (
         <section>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>

@@ -18,7 +18,7 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
       update: { estado: "PENDIENTE", notas: null },
     })
 
-    // ── 3 notificaciones profesionales a la administración ──────────
+    //  3 notificaciones profesionales a la administración 
     const fecha = new Date().toLocaleDateString("es-MX", {
       weekday: "long", year: "numeric", month: "long", day: "numeric",
     })
@@ -31,7 +31,7 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
           deAdmin: false,
           leido: false,
           contenido:
-            `📋 SOLICITUD DE INSCRIPCIÓN — ${plan.nombre}\n\n` +
+            ` SOLICITUD DE INSCRIPCIÓN — ${plan.nombre}\n\n` +
             `${userName} ha enviado una solicitud formal de inscripción al plan "${plan.nombre}" ` +
             `desde la plataforma del CIME Veracruz.\n\n` +
             `Fecha: ${fecha} a las ${hora}.`,
@@ -41,7 +41,7 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
           deAdmin: false,
           leido: false,
           contenido:
-            `📌 DETALLE DEL PLAN SOLICITADO\n\n` +
+            ` DETALLE DEL PLAN SOLICITADO\n\n` +
             `• Plan: ${plan.nombre}\n` +
             `• Tipo: ${plan.tipo}\n` +
             `• Inversión: $${plan.monto.toLocaleString("es-MX")} MXN${plan.iva ? " + IVA" : ""}\n` +
@@ -53,7 +53,7 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
           deAdmin: false,
           leido: false,
           contenido:
-            `📞 SOLICITUD DE CONTACTO\n\n` +
+            ` SOLICITUD DE CONTACTO\n\n` +
             `${userName} solicita ser contactado/a para coordinar los detalles ` +
             `de su inscripción al plan "${plan.nombre}".\n\n` +
             `Por favor, comuníquese con el/la interesado/a a través de esta plataforma ` +
@@ -61,7 +61,7 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
         },
       ],
     })
-    // ────────────────────────────────────────────────────────────────
+    // 
 
     return NextResponse.json(solicitud, { status: 201 })
   } catch {

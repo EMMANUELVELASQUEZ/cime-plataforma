@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// Types 
 interface Miembro {
   id: string
   nombre: string
@@ -15,7 +15,7 @@ interface Miembro {
   createdAt: string
 }
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// Helpers 
 function parseFoto(raw: string | null): string | null {
   if (!raw) return null
   try { return (JSON.parse(raw) as { url: string }).url } catch { return null }
@@ -38,7 +38,7 @@ function avatarBg(nombre: string) {
 
 const AREAS = ["Mesa Directiva", "Comité Técnico", "Comisión de Honor", "Secretaría"]
 
-// ─── Miembro card ─────────────────────────────────────────────────────────────
+// Miembro card 
 function MiembroCard({ m, onDelete }: { m: Miembro; onDelete: (id: string) => void }) {
   const [deleting, setDeleting] = useState(false)
   const fotoUrl = parseFoto(m.foto)
@@ -202,7 +202,7 @@ function MiembroCard({ m, onDelete }: { m: Miembro; onDelete: (id: string) => vo
   )
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// Page 
 export default function DirectorioAdminPage() {
   const [miembros, setMiembros] = useState<Miembro[]>([])
   const [loading, setLoading] = useState(true)
@@ -298,11 +298,11 @@ export default function DirectorioAdminPage() {
             color: "var(--muted-2)",
             marginBottom: 6,
           }}>
-            Administración · Panel del Colegio
+ Administración · Panel del Colegio
           </p>
           <h1 style={{ fontSize: "1.75rem" }}>Directorio Institucional</h1>
           <p style={{ color: "var(--muted)", fontSize: ".9rem", marginTop: 4 }}>
-            Perfil del Consejo Directivo y Mesa Directiva
+ Perfil del Consejo Directivo y Mesa Directiva
           </p>
         </div>
         <div style={{
@@ -335,7 +335,7 @@ export default function DirectorioAdminPage() {
           color: "var(--muted)",
           marginBottom: 32,
         }}>
-          Aún no hay miembros en el directorio. Agrega el primero con el formulario de abajo.
+ Aún no hay miembros en el directorio. Agrega el primero con el formulario de abajo.
         </div>
       ) : (
         <div style={{ marginBottom: 40 }}>
@@ -470,7 +470,7 @@ export default function DirectorioAdminPage() {
                   onClick={clearFoto}
                   style={{ fontSize: ".82rem" }}
                 >
-                  Quitar foto
+ Quitar foto
                 </button>
               </div>
             )}

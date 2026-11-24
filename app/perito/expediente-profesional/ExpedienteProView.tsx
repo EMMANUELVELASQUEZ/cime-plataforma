@@ -20,11 +20,11 @@ interface Props {
 }
 
 const ESTADO_CFG: Record<string, { label: string; color: string; bg: string }> = {
-  REGISTRADO:    { label: "Registrado",    color: "#1D4ED8", bg: "#EFF6FF" },
-  ACREDITADO:    { label: "Acreditado",    color: "#059669", bg: "#ECFDF5" },
-  INSTRUCTOR:    { label: "Instructor",    color: "#0891B2", bg: "#CFFAFE" },
-  POR_VERIFICAR: { label: "Por verificar", color: "#D97706", bg: "#FFFBEB" },
-  NO_PARTICIPO:  { label: "No participó",  color: "#6B7280", bg: "#F9FAFB" },
+ REGISTRADO:    { label: "Registrado",    color: "#1D4ED8", bg: "#EFF6FF" },
+ ACREDITADO:    { label: "Acreditado",    color: "#059669", bg: "#ECFDF5" },
+ INSTRUCTOR:    { label: "Instructor",    color: "#0891B2", bg: "#CFFAFE" },
+ POR_VERIFICAR: { label: "Por verificar", color: "#D97706", bg: "#FFFBEB" },
+ NO_PARTICIPO:  { label: "No participó",  color: "#6B7280", bg: "#F9FAFB" },
 }
 
 export default function ExpedienteProView({ usuario, especialidades, formacion, observaciones }: Props) {
@@ -98,7 +98,7 @@ export default function ExpedienteProView({ usuario, especialidades, formacion, 
         ))}
       </div>
 
-      {/* ═══ TAB 1: EXPEDIENTE INDIVIDUAL ═══ */}
+      {/* TAB 1: EXPEDIENTE INDIVIDUAL  */}
       {tab === "expediente" && (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
@@ -152,7 +152,7 @@ export default function ExpedienteProView({ usuario, especialidades, formacion, 
                 fontSize: ".73rem", fontWeight: 600, letterSpacing: ".12em",
                 textTransform: "uppercase", color: "rgba(255,255,255,.45)",
               }}>
-                INGENIERO&nbsp;·&nbsp;REGISTRO PROFESIONAL{" "}
+ INGENIERO&nbsp;·&nbsp;REGISTRO PROFESIONAL{" "}
                 <span style={{ color: "#E8C060" }}>{usuario.numeroPerito ?? "—"}</span>
               </div>
             </div>
@@ -202,7 +202,7 @@ export default function ExpedienteProView({ usuario, especialidades, formacion, 
             <SectionHeader num="01" title="Formación y Actualización 2025" />
             {f2025.filter(f => f.estado !== "NO_PARTICIPO").length === 0 ? (
               <p style={{ fontSize: ".84rem", color: "var(--muted)", margin: 0, padding: "12px 0" }}>
-                Sin cursos de formación registrados para 2025.
+ Sin cursos de formación registrados para 2025.
               </p>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -242,7 +242,7 @@ export default function ExpedienteProView({ usuario, especialidades, formacion, 
             <SectionHeader num="02" title="Formación y Actualización 2026" />
             {f2026.filter(f => f.estado !== "NO_PARTICIPO").length === 0 ? (
               <p style={{ fontSize: ".84rem", color: "var(--muted)", margin: 0, padding: "12px 0" }}>
-                Sin cursos de formación registrados para 2026.
+ Sin cursos de formación registrados para 2026.
               </p>
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -327,7 +327,7 @@ export default function ExpedienteProView({ usuario, especialidades, formacion, 
         </div>
       )}
 
-      {/* ═══ TAB 2: INFORME DE PARTICIPACIÓN ═══ */}
+      {/* TAB 2: INFORME DE PARTICIPACIÓN  */}
       {tab === "participacion" && (
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
@@ -338,16 +338,16 @@ export default function ExpedienteProView({ usuario, especialidades, formacion, 
               letterSpacing: ".15em", textTransform: "uppercase",
               color: "#C89B2A", marginBottom: 10,
             }}>
-              ANEXO ESTADÍSTICO · CONTROL DE PARTICIPACIÓN
+ ANEXO ESTADÍSTICO · CONTROL DE PARTICIPACIÓN
             </div>
             <h2 className="font-montserrat" style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--fg)", margin: "0 0 8px" }}>
-              Informe de participación formativa
+ Informe de participación formativa
             </h2>
             <div style={{
               fontFamily: "var(--f-data)", fontSize: ".76rem", fontWeight: 600,
               letterSpacing: ".08em", color: "var(--muted)",
             }}>
-              ING. {usuario.nombre.toUpperCase()} · PERIODO 2025–2026
+ ING. {usuario.nombre.toUpperCase()} · PERIODO 2025–2026
             </div>
           </div>
 
@@ -376,7 +376,7 @@ export default function ExpedienteProView({ usuario, especialidades, formacion, 
                     fontFamily: "var(--f-data)", fontSize: ".6rem", fontWeight: 700,
                     letterSpacing: ".12em", textTransform: "uppercase", color: "var(--muted)",
                   }}>
-                    ACTIVIDADES CONTABILIZADAS
+ ACTIVIDADES CONTABILIZADAS
                   </div>
                 </div>
               )
@@ -466,7 +466,7 @@ export default function ExpedienteProView({ usuario, especialidades, formacion, 
             <SectionHeader num="03" title="Observaciones de Control Institucional" />
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               <p style={{ fontSize: ".86rem", color: "var(--fg-2)", lineHeight: 1.7, margin: 0 }}>
-                El presente expediente concentra las actividades formativas y la participación profesional registrada durante 2025–2026.
+ El presente expediente concentra las actividades formativas y la participación profesional registrada durante 2025–2026.
               </p>
               {observaciones && (
                 <p style={{ fontSize: ".86rem", color: "var(--fg-2)", lineHeight: 1.7, margin: 0 }}>
@@ -474,7 +474,7 @@ export default function ExpedienteProView({ usuario, especialidades, formacion, 
                 </p>
               )}
               <p style={{ fontSize: ".82rem", color: "var(--muted)", lineHeight: 1.6, margin: 0 }}>
-                La contabilización de participación no sustituye la validación documental de acreditaciones pendientes.
+ La contabilización de participación no sustituye la validación documental de acreditaciones pendientes.
               </p>
             </div>
           </div>

@@ -4,13 +4,13 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import {
-  ArrowLeft, Key, CreditCard, GraduationCap, FileText, User,
-  X, ChevronRight, Plus, Award, BookOpen, Printer,
-  ClipboardList, AlertTriangle, Info,
+ ArrowLeft, Key, CreditCard, GraduationCap, FileText, User,
+ X, ChevronRight, Plus, Award, BookOpen, Printer,
+ ClipboardList, AlertTriangle, Info,
 } from "lucide-react"
 import EditarColegiadoForm from "./EditarColegiadoForm"
 
-// ─── Types ─────────────────────────────────────────────────────────────────
+// Types 
 interface CursoData {
   id: string; codigo: string; titulo: string; area: string
   horas: number; modalidad: string; instructor: string
@@ -42,28 +42,28 @@ export interface MemberData {
 }
 type TabId = "perfil" | "cursos" | "constancias" | "pagos" | "expediente"
 
-// ─── Constants ─────────────────────────────────────────────────────────────
+// Constants 
 const ESTADOS_COLEGIADO: Record<string, { color: string; bg: string; label: string }> = {
-  VIGENTE:     { color: "var(--ok)",   bg: "var(--ok-bg)",   label: "Vigente"     },
-  POR_RENOVAR: { color: "var(--warn)", bg: "var(--warn-bg)", label: "Por renovar" },
-  SUSPENDIDO:  { color: "var(--bad)",  bg: "var(--bad-bg)",  label: "Suspendido"  },
+ VIGENTE:     { color: "var(--ok)",   bg: "var(--ok-bg)",   label: "Vigente" },
+ POR_RENOVAR: { color: "var(--warn)", bg: "var(--warn-bg)", label: "Por renovar" },
+ SUSPENDIDO:  { color: "var(--bad)",  bg: "var(--bad-bg)",  label: "Suspendido" },
 }
 const ESTADOS_INS: Record<string, { color: string; bg: string; label: string }> = {
-  INSCRITO:   { color: "var(--info)", bg: "var(--info-bg)", label: "Inscrito"   },
-  EN_CURSO:   { color: "var(--warn)", bg: "var(--warn-bg)", label: "En curso"   },
-  COMPLETADO: { color: "var(--ok)",   bg: "var(--ok-bg)",   label: "Completado" },
+ INSCRITO:   { color: "var(--info)", bg: "var(--info-bg)", label: "Inscrito" },
+ EN_CURSO:   { color: "var(--warn)", bg: "var(--warn-bg)", label: "En curso" },
+ COMPLETADO: { color: "var(--ok)",   bg: "var(--ok-bg)",   label: "Completado" },
 }
 const ESTADOS_PAGO: Record<string, { color: string; bg: string; label: string }> = {
-  PAGADO:   { color: "var(--ok)",   bg: "var(--ok-bg)",   label: "Pagado"   },
-  PENDIENTE:{ color: "var(--warn)", bg: "var(--warn-bg)", label: "Pendiente" },
-  VENCIDO:  { color: "var(--bad)",  bg: "var(--bad-bg)",  label: "Vencido"  },
+ PAGADO:   { color: "var(--ok)",   bg: "var(--ok-bg)",   label: "Pagado" },
+ PENDIENTE:{ color: "var(--warn)", bg: "var(--warn-bg)", label: "Pendiente" },
+ VENCIDO:  { color: "var(--bad)",  bg: "var(--bad-bg)",  label: "Vencido" },
 }
 const TIPOS_ENTRADA: Record<string, { color: string; label: string; icon: React.ReactNode }> = {
-  NOTA:        { color: "var(--info)", label: "Nota",        icon: <Info       size={13} /> },
-  INSTRUCCION: { color: "var(--warn)", label: "Instrucción", icon: <ClipboardList size={13}/> },
-  DOCUMENTO:   { color: "var(--teal)", label: "Documento",   icon: <FileText   size={13} /> },
-  OBSERVACION: { color: "var(--muted)",label: "Observación", icon: <BookOpen   size={13} /> },
-  REPORTE:     { color: "var(--bad)",  label: "Reporte",     icon: <AlertTriangle size={13}/> },
+ NOTA:        { color: "var(--info)", label: "Nota",        icon: <Info       size={13} /> },
+ INSTRUCCION: { color: "var(--warn)", label: "Instrucción", icon: <ClipboardList size={13}/> },
+ DOCUMENTO:   { color: "var(--teal)", label: "Documento",   icon: <FileText   size={13} /> },
+ OBSERVACION: { color: "var(--muted)",label: "Observación", icon: <BookOpen   size={13} /> },
+ REPORTE:     { color: "var(--bad)",  label: "Reporte",     icon: <AlertTriangle size={13}/> },
 }
 const PALETTE_COLORS = ["#4A90D9","#9b6fe8","#34d399","#f59e0b","#ec4899","#14b8a6","#f97316","#06b6d4"]
 function areaHash(a: string) { let h = 0; for (let i = 0; i < a.length; i++) h = (h * 31 + a.charCodeAt(i)) & 0xffff; return h }
@@ -82,7 +82,7 @@ function fmtDate(d: string) {
   return new Date(d).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })
 }
 
-// ─── Shared chip ───────────────────────────────────────────────────────────
+// Shared chip 
 function Chip({ color, bg, label }: { color: string; bg: string; label: string }) {
   return (
     <span style={{
@@ -98,7 +98,7 @@ function Chip({ color, bg, label }: { color: string; bg: string; label: string }
   )
 }
 
-// ─── Modal overlay ─────────────────────────────────────────────────────────
+// Modal overlay 
 function Modal({ title, onClose, children, wide }: {
   title: string; onClose: () => void; children: React.ReactNode; wide?: boolean
 }) {
@@ -140,7 +140,7 @@ function Modal({ title, onClose, children, wide }: {
   )
 }
 
-// ─── Modal: Change Password ─────────────────────────────────────────────────
+// Modal: Change Password 
 function PasswordModal({ id, onClose }: { id: string; onClose: () => void }) {
   const [pwd, setPwd] = useState("")
   const [confirm, setConfirm] = useState("")
@@ -191,7 +191,7 @@ function PasswordModal({ id, onClose }: { id: string; onClose: () => void }) {
   )
 }
 
-// ─── Modal: Register Payment ────────────────────────────────────────────────
+// Modal: Register Payment 
 function PaymentModal({ id, onClose }: { id: string; onClose: () => void }) {
   const router = useRouter()
   const [form, setForm] = useState({ concepto: "", monto: "", estado: "PAGADO", folio: "" })
@@ -255,7 +255,7 @@ function PaymentModal({ id, onClose }: { id: string; onClose: () => void }) {
   )
 }
 
-// ─── Modal: Add Expediente Entry ────────────────────────────────────────────
+// Modal: Add Expediente Entry 
 function ExpedienteModal({ id, onClose }: { id: string; onClose: () => void }) {
   const router = useRouter()
   const [form, setForm] = useState({ tipo: "NOTA", titulo: "", contenido: "", autor: "Administración CIME" })
@@ -321,7 +321,7 @@ function ExpedienteModal({ id, onClose }: { id: string; onClose: () => void }) {
   )
 }
 
-// ─── Tab: Cursos ────────────────────────────────────────────────────────────
+// Tab: Cursos 
 function TabCursos({ inscripciones }: { inscripciones: InscripcionData[] }) {
   const router = useRouter()
   const [editing, setEditing] = useState<string | null>(null)
@@ -404,7 +404,7 @@ function TabCursos({ inscripciones }: { inscripciones: InscripcionData[] }) {
                   <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 6 }}>
                     <Award size={12} strokeWidth={2} style={{ color: "var(--ok)" }} />
                     <span style={{ fontFamily: "var(--f-mono)", fontSize: ".68rem", color: "var(--ok)" }}>
-                      Constancia: {i.folio}
+ Constancia: {i.folio}
                     </span>
                   </div>
                 )}
@@ -412,7 +412,7 @@ function TabCursos({ inscripciones }: { inscripciones: InscripcionData[] }) {
 
               <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end" }}>
                 <time style={{ fontFamily: "var(--f-data)", fontSize: ".67rem", color: "var(--muted)", letterSpacing: ".03em" }}>
-                  Inscrito {fmtDate(i.createdAt)}
+ Inscrito {fmtDate(i.createdAt)}
                 </time>
                 <button
                   className="btn"
@@ -464,7 +464,7 @@ function TabCursos({ inscripciones }: { inscripciones: InscripcionData[] }) {
   )
 }
 
-// ─── Tab: Constancias ───────────────────────────────────────────────────────
+// Tab: Constancias 
 function TabConstancias({ inscripciones }: { inscripciones: InscripcionData[] }) {
   const router = useRouter()
   const completados = inscripciones.filter(i => i.estado === "COMPLETADO")
@@ -522,11 +522,11 @@ function TabConstancias({ inscripciones }: { inscripciones: InscripcionData[] })
                   {i.curso.area || "General"} · {i.curso.horas}h
                 </span>
                 <span style={{ fontFamily: "var(--f-data)", fontSize: ".65rem", color: "var(--muted)" }}>
-                  Completado {fmtDate(i.createdAt)}
+ Completado {fmtDate(i.createdAt)}
                 </span>
                 {i.calificacion && (
                   <span style={{ fontFamily: "var(--f-data)", fontSize: ".65rem", fontWeight: 700, color: "var(--ok)" }}>
-                    Calif. {i.calificacion.toFixed(1)}
+ Calif. {i.calificacion.toFixed(1)}
                   </span>
                 )}
               </div>
@@ -536,7 +536,7 @@ function TabConstancias({ inscripciones }: { inscripciones: InscripcionData[] })
                 {hasConstancia ? (
                   <>
                     <span style={{ fontFamily: "var(--f-mono)", fontSize: ".7rem", color: "var(--ok)", fontWeight: 700 }}>
-                      Folio: {i.folio}
+ Folio: {i.folio}
                     </span>
                     <button
                       style={{
@@ -545,12 +545,12 @@ function TabConstancias({ inscripciones }: { inscripciones: InscripcionData[] })
                       }}
                       onClick={() => setFolioEdit(p => ({ ...p, [i.id]: i.folio ?? "" }))}
                     >
-                      Cambiar
+ Cambiar
                     </button>
                   </>
                 ) : (
                   <span style={{ fontFamily: "var(--f-data)", fontSize: ".65rem", color: "var(--muted-2)" }}>
-                    Sin folio asignado
+ Sin folio asignado
                   </span>
                 )}
               </div>
@@ -586,7 +586,7 @@ function TabConstancias({ inscripciones }: { inscripciones: InscripcionData[] })
                 title="Imprimir constancia"
               >
                 <Printer size={14} strokeWidth={1.75} />
-                Imprimir
+ Imprimir
               </button>
             )}
           </div>
@@ -596,7 +596,7 @@ function TabConstancias({ inscripciones }: { inscripciones: InscripcionData[] })
   )
 }
 
-// ─── Tab: Pagos ─────────────────────────────────────────────────────────────
+// Tab: Pagos 
 function TabPagos({ pagos, onAddPago }: { pagos: PagoData[]; onAddPago: () => void }) {
   const totalPagado = pagos.filter(p => p.estado === "PAGADO").reduce((s, p) => s + p.monto, 0)
   const totalPendiente = pagos.filter(p => p.estado !== "PAGADO").reduce((s, p) => s + p.monto, 0)
@@ -631,7 +631,7 @@ function TabPagos({ pagos, onAddPago }: { pagos: PagoData[]; onAddPago: () => vo
           padding: "14px 20px", borderBottom: "1px solid var(--line)", background: "var(--surface-2)",
         }}>
           <span style={{ fontFamily: "var(--f-data)", fontSize: ".7rem", fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--muted)" }}>
-            Historial de pagos
+ Historial de pagos
           </span>
           <button className="btn primary" style={{ display: "flex", alignItems: "center", gap: 6, fontSize: ".78rem" }} onClick={onAddPago}>
             <Plus size={14} strokeWidth={2.5} /> Registrar pago
@@ -640,7 +640,7 @@ function TabPagos({ pagos, onAddPago }: { pagos: PagoData[]; onAddPago: () => vo
 
         {pagos.length === 0 ? (
           <div style={{ textAlign: "center", padding: "40px 24px", color: "var(--muted)" }}>
-            Sin pagos registrados
+ Sin pagos registrados
           </div>
         ) : (
           <>
@@ -684,7 +684,7 @@ function TabPagos({ pagos, onAddPago }: { pagos: PagoData[]; onAddPago: () => vo
   )
 }
 
-// ─── Tab: Expediente ────────────────────────────────────────────────────────
+// Tab: Expediente 
 function TabExpediente({ expediente, onAdd }: { expediente: ExpedienteData | null; onAdd: () => void }) {
   const entradas = expediente?.entradas ?? []
 
@@ -697,7 +697,7 @@ function TabExpediente({ expediente, onAdd }: { expediente: ExpedienteData | nul
         }}>
           <div>
             <span style={{ fontFamily: "var(--f-data)", fontSize: ".7rem", fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--muted)" }}>
-              Expediente administrativo
+ Expediente administrativo
             </span>
             {expediente?.instrucciones && (
               <p style={{ fontSize: ".8rem", color: "var(--muted)", marginTop: 2 }}>{expediente.instrucciones}</p>
@@ -713,7 +713,7 @@ function TabExpediente({ expediente, onAdd }: { expediente: ExpedienteData | nul
             <FileText size={32} strokeWidth={1.5} style={{ color: "var(--muted-2)", margin: "0 auto 12px" }} />
             <p style={{ color: "var(--muted)", fontSize: ".88rem" }}>Sin entradas en el expediente</p>
             <p style={{ color: "var(--muted-2)", fontSize: ".8rem", marginTop: 4 }}>
-              Agrega notas, instrucciones, documentos u observaciones internas.
+ Agrega notas, instrucciones, documentos u observaciones internas.
             </p>
           </div>
         ) : (
@@ -766,7 +766,7 @@ function TabExpediente({ expediente, onAdd }: { expediente: ExpedienteData | nul
   )
 }
 
-// ─── Main: MemberHub ────────────────────────────────────────────────────────
+// Main: MemberHub 
 export default function MemberHub({ member }: { member: MemberData }) {
   const [tab, setTab] = useState<TabId>("perfil")
   const [pwdModal, setPwdModal] = useState(false)
@@ -801,7 +801,7 @@ export default function MemberHub({ member }: { member: MemberData }) {
   return (
     <div style={{ display: "grid", gap: 24 }}>
 
-      {/* ── Back link ──────────────────────────────────────────── */}
+      {/* Back link  */}
       <div>
         <Link href="/admin/colegiados" style={{
           display: "inline-flex", alignItems: "center", gap: 6,
@@ -816,7 +816,7 @@ export default function MemberHub({ member }: { member: MemberData }) {
         </Link>
       </div>
 
-      {/* ── Hero card ──────────────────────────────────────────── */}
+      {/* Hero card  */}
       <div style={{
         borderRadius: "var(--r-lg)", overflow: "hidden",
         background: "linear-gradient(135deg, #070A24 0%, #0D1540 60%, #0A1230 100%)",
@@ -995,7 +995,7 @@ export default function MemberHub({ member }: { member: MemberData }) {
         </div>
       </div>
 
-      {/* ── Tab nav ────────────────────────────────────────────── */}
+      {/* Tab nav  */}
       <div style={{ display: "flex", gap: 2, borderBottom: "1px solid var(--line)", paddingBottom: 0 }}>
         {TABS.map(t => (
           <button
@@ -1028,7 +1028,7 @@ export default function MemberHub({ member }: { member: MemberData }) {
         ))}
       </div>
 
-      {/* ── Tab content ────────────────────────────────────────── */}
+      {/* Tab content  */}
       {tab === "perfil" && (
         <EditarColegiadoForm colegiado={colegiadoProps} />
       )}
@@ -1045,7 +1045,7 @@ export default function MemberHub({ member }: { member: MemberData }) {
         <TabExpediente expediente={member.expediente} onAdd={() => setExpModal(true)} />
       )}
 
-      {/* ── Modals ─────────────────────────────────────────────── */}
+      {/* Modals  */}
       {pwdModal && <PasswordModal id={member.id} onClose={() => setPwdModal(false)} />}
       {pagoModal && <PaymentModal id={member.id} onClose={() => setPagoModal(false)} />}
       {expModal  && <ExpedienteModal id={member.id} onClose={() => setExpModal(false)} />}

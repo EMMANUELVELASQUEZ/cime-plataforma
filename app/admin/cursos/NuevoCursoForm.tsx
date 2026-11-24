@@ -25,7 +25,7 @@ export default function NuevoCursoForm() {
     <>
       <button className="btn primary" onClick={() => setOpen(true)}>
         <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-        Nuevo curso
+ Nuevo curso
       </button>
 
       {open && (
@@ -33,7 +33,7 @@ export default function NuevoCursoForm() {
           <div className="dialog" style={{ maxWidth: 560 }} onClick={e => e.stopPropagation()}>
             <div className="dialog-head">
               <h3>Nuevo curso</h3>
-              <button className="btn ghost sm" onClick={() => setOpen(false)}>✕</button>
+              <button className="btn ghost sm" onClick={() => setOpen(false)}></button>
             </div>
             <form onSubmit={submit} style={{ display: "grid", gap: "1rem" }}>
               <div className="grid g-2">

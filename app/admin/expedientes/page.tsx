@@ -1,18 +1,18 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import {
-  FolderOpen, FolderX, Archive, Users, Plus, ArrowRight,
-  FileText, AlertCircle, CheckCircle2, BarChart3, Clock,
+ FolderOpen, FolderX, Archive, Users, Plus, ArrowRight,
+ FileText, AlertCircle, CheckCircle2, BarChart3, Clock,
 } from "lucide-react"
 
 export const dynamic = "force-dynamic"
 
 const TIPO_CFG: Record<string, { label: string; color: string; bg: string }> = {
-  NOTA:        { label: "Nota",        color: "#2563eb", bg: "rgba(37,99,235,.1)"  },
-  INSTRUCCION: { label: "Instrucción", color: "#7c3aed", bg: "rgba(124,58,237,.1)" },
-  DOCUMENTO:   { label: "Documento",   color: "#0891b2", bg: "rgba(8,145,178,.1)"  },
-  OBSERVACION: { label: "Observación", color: "#d97706", bg: "rgba(217,119,6,.1)"  },
-  REPORTE:     { label: "Reporte",     color: "#059669", bg: "rgba(5,150,105,.1)"  },
+ NOTA:        { label: "Nota",        color: "#2563eb", bg: "rgba(37,99,235,.1)" },
+ INSTRUCCION: { label: "Instrucción", color: "#7c3aed", bg: "rgba(124,58,237,.1)" },
+ DOCUMENTO:   { label: "Documento",   color: "#0891b2", bg: "rgba(8,145,178,.1)" },
+ OBSERVACION: { label: "Observación", color: "#d97706", bg: "rgba(217,119,6,.1)" },
+ REPORTE:     { label: "Reporte",     color: "#059669", bg: "rgba(5,150,105,.1)" },
 }
 
 function initials(name: string) {
@@ -54,28 +54,28 @@ export default async function ExpedientesPage() {
   }))
 
   const stats = [
-    { label: "Total colegiados", val: total,     icon: <Users     size={18} strokeWidth={1.75} />, color: "#1B4F91", bg: "rgba(27,79,145,.1)"  },
-    { label: "Con expediente",   val: conExp,     icon: <FolderOpen size={18} strokeWidth={1.75} />, color: "#059669", bg: "rgba(5,150,105,.1)"  },
-    { label: "Sin expediente",   val: sinExp,     icon: <FolderX   size={18} strokeWidth={1.75} />, color: "#d97706", bg: "rgba(217,119,6,.1)"  },
+    { label: "Total colegiados", val: total,     icon: <Users     size={18} strokeWidth={1.75} />, color: "#1B4F91", bg: "rgba(27,79,145,.1)" },
+    { label: "Con expediente",   val: conExp,     icon: <FolderOpen size={18} strokeWidth={1.75} />, color: "#059669", bg: "rgba(5,150,105,.1)" },
+    { label: "Sin expediente",   val: sinExp,     icon: <FolderX   size={18} strokeWidth={1.75} />, color: "#d97706", bg: "rgba(217,119,6,.1)" },
     { label: "Archivados",       val: archivados, icon: <Archive   size={18} strokeWidth={1.75} />, color: "#6b7280", bg: "rgba(107,114,128,.1)"},
   ]
 
   return (
     <>
-      {/* ── Header ──────────────────────────────────────────────── */}
+      {/* Header  */}
       <div className="page-head">
         <div>
           <h1 style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <span style={{ width: 36, height: 36, borderRadius: 9, background: "rgba(27,79,145,.12)", display: "grid", placeItems: "center", color: "var(--brand)" }}>
               <FolderOpen size={19} strokeWidth={1.75} />
             </span>
-            Expedientes
+ Expedientes
           </h1>
           <p>Gestión de expedientes individuales del padrón de colegiados</p>
         </div>
       </div>
 
-      {/* ── KPI Cards ───────────────────────────────────────────── */}
+      {/* KPI Cards  */}
       <div className="grid g-4">
         {stats.map(s => (
           <div key={s.label} className="card stat">
@@ -87,12 +87,12 @@ export default async function ExpedientesPage() {
         ))}
       </div>
 
-      {/* ── Expedientes Table ───────────────────────────────────── */}
+      {/* Expedientes Table  */}
       <div className="card">
         <div className="card-h">
           <h2 style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <FolderOpen size={16} strokeWidth={1.75} style={{ color: "var(--brand)" }} />
-            Colegiados y expedientes
+ Colegiados y expedientes
           </h2>
           <span className="chip nodot info">{total} total</span>
         </div>
@@ -112,7 +112,7 @@ export default async function ExpedientesPage() {
                 const exp  = expMap.get(col.id)
                 const hue  = HUES[col.nombre.charCodeAt(0) % HUES.length]
                 const EST: Record<string, string> = {
-                  VIGENTE: "ok", POR_RENOVAR: "warn", SUSPENDIDO: "bad",
+ VIGENTE: "ok", POR_RENOVAR: "warn", SUSPENDIDO: "bad",
                 }
                 return (
                   <tr key={col.id}>
@@ -152,7 +152,7 @@ export default async function ExpedientesPage() {
                         {exp
                           ? (
                             <Link href={`/admin/expedientes/${col.id}`} className="btn sm primary" style={{ gap: 4 }}>
-                              Ver <ArrowRight size={12} strokeWidth={2.5} />
+ Ver <ArrowRight size={12} strokeWidth={2.5} />
                             </Link>
                           ) : (
                             <Link href={`/admin/expedientes/${col.id}`} className="btn sm">
@@ -170,7 +170,7 @@ export default async function ExpedientesPage() {
         </div>
       </div>
 
-      {/* ── Reports Section ─────────────────────────────────────── */}
+      {/* Reports Section  */}
       <div className="grid g-dash">
 
         {/* Actividad reciente */}
@@ -178,7 +178,7 @@ export default async function ExpedientesPage() {
           <div className="card-h">
             <h2 style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <Clock size={16} strokeWidth={1.75} style={{ color: "var(--brand)" }} />
-              Actividad reciente
+ Actividad reciente
             </h2>
             <span className="chip nodot">Últimas 8 entradas</span>
           </div>
@@ -226,7 +226,7 @@ export default async function ExpedientesPage() {
         <div className="stack">
           <div className="card card-b">
             <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".1em", color: "var(--muted)", marginBottom: 14 }}>
-              Entradas por tipo
+ Entradas por tipo
             </div>
             {Object.keys(TIPO_CFG).length === 0 || Object.values(tipoCount).reduce((a, b) => a + b, 0) === 0 ? (
               <div className="empty" style={{ padding: "20px 0" }}>
@@ -260,7 +260,7 @@ export default async function ExpedientesPage() {
 
           <div className="card card-b">
             <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".1em", color: "var(--muted)", marginBottom: 14 }}>
-              Cobertura de expedientes
+ Cobertura de expedientes
             </div>
             <div style={{ display: "grid", gap: 8 }}>
               {[

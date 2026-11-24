@@ -3,11 +3,11 @@ import { prisma }  from "@/lib/prisma"
 import Link        from "next/link"
 import AvisosCarousel from "@/components/AvisosCarousel"
 import {
-  Users, CheckCircle2, AlertTriangle, XCircle,
-  GraduationCap, CreditCard, MessageCircle, Bell,
-  Plus, UserCog, BookOpen, Calendar, Megaphone,
-  FileText, ChevronRight, TrendingUp, Shield,
-  UserPlus, ArrowRight, Clock, MapPin,
+ Users, CheckCircle2, AlertTriangle, XCircle,
+ GraduationCap, CreditCard, MessageCircle, Bell,
+ Plus, UserCog, BookOpen, Calendar, Megaphone,
+ FileText, ChevronRight, TrendingUp, Shield,
+ UserPlus, ArrowRight, Clock, MapPin,
 } from "lucide-react"
 import CimeLogo3D from "@/components/CimeLogo3D"
 
@@ -23,17 +23,17 @@ function fmtMoney(n: number) {
 }
 
 const ESTC_CFG: Record<string, { label: string; color: string; bg: string }> = {
-  VIGENTE:     { label: "Vigente",     color: "#10b981", bg: "rgba(16,185,129,.12)" },
-  POR_RENOVAR: { label: "Por renovar", color: "#f59e0b", bg: "rgba(245,158,11,.12)" },
-  SUSPENDIDO:  { label: "Suspendido",  color: "#ef4444", bg: "rgba(239,68,68,.12)"  },
+ VIGENTE:     { label: "Vigente",     color: "#10b981", bg: "rgba(16,185,129,.12)" },
+ POR_RENOVAR: { label: "Por renovar", color: "#f59e0b", bg: "rgba(245,158,11,.12)" },
+ SUSPENDIDO:  { label: "Suspendido",  color: "#ef4444", bg: "rgba(239,68,68,.12)" },
 }
 
 const EV_CFG: Record<string, { color: string; bg: string }> = {
-  Asamblea:    { color: "#4F46E5", bg: "#EEF2FF" },
-  Taller:      { color: "#0284C7", bg: "#E0F2FE" },
-  Conferencia: { color: "#7C3AED", bg: "#F3E8FF" },
-  Evaluación:  { color: "#059669", bg: "#D1FAE5" },
-  Cuota:       { color: "#D97706", bg: "#FEF3C7" },
+ Asamblea:    { color: "#4F46E5", bg: "#EEF2FF" },
+ Taller:      { color: "#0284C7", bg: "#E0F2FE" },
+ Conferencia: { color: "#7C3AED", bg: "#F3E8FF" },
+ Evaluación:  { color: "#059669", bg: "#D1FAE5" },
+ Cuota:       { color: "#D97706", bg: "#FEF3C7" },
 }
 const evCfg = (t: string) => EV_CFG[t] ?? { color: "#1D4ED8", bg: "#DBEAFE" }
 
@@ -120,7 +120,7 @@ export default async function AdminDashboard() {
 
   return (
     <>
-      {/* ══ BANNER ══════════════════════════════════════════════════ */}
+      {/* BANNER  */}
       <div style={{
         position: "relative", borderRadius: 16, overflow: "hidden",
         background: "linear-gradient(120deg, #0D2060 0%, #1549B8 55%, #0d3080 100%)",
@@ -179,7 +179,7 @@ export default async function AdminDashboard() {
                 fontFamily: "var(--f-data)", fontSize: ".6rem", fontWeight: 600,
                 color: "rgba(255,255,255,.45)", letterSpacing: ".05em",
               }}>
-                CIME Veracruz
+ CIME Veracruz
               </span>
               {solicitudesPendientes > 0 && (
                 <span style={{
@@ -228,7 +228,7 @@ export default async function AdminDashboard() {
           {/* Padrón health */}
           <div style={{ textAlign: "right" }}>
             <div style={{ fontFamily: "var(--f-data)", fontSize: ".58rem", color: "rgba(255,255,255,.4)", marginBottom: 4, letterSpacing: ".05em", textTransform: "uppercase" }}>
-              Padrón activo
+ Padrón activo
             </div>
             <div style={{
               fontFamily: "var(--font-montserrat), Montserrat",
@@ -244,13 +244,13 @@ export default async function AdminDashboard() {
         </div>
       </div>
 
-      {/* ══ CAROUSEL ══════════════════════════════════════════════ */}
+      {/* CAROUSEL  */}
       <AvisosCarousel
         avisos={avisosCarousel.map(a => ({ ...a, createdAt: a.createdAt.toISOString() }))}
         titulo="Comunicados del Colegio"
       />
 
-      {/* ══ KPI STRIP ═════════════════════════════════════════════ */}
+      {/* KPI STRIP  */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}>
         {[
           {
@@ -274,7 +274,7 @@ export default async function AdminDashboard() {
           },
           {
             label: mensajesSinLeer > 0 ? "Mensajes nuevos" : "Mensajes",
-            val: mensajesSinLeer > 0 ? mensajesSinLeer : "✓", unit: "",
+            val: mensajesSinLeer > 0 ? mensajesSinLeer : "", unit: "",
             sub: mensajesSinLeer > 0 ? "Sin responder" : "Al día",
             icon: <MessageCircle size={20} strokeWidth={1.75} />,
             accent: mensajesSinLeer > 0 ? "#BE123C" : "#1D4ED8",
@@ -328,10 +328,10 @@ export default async function AdminDashboard() {
         ))}
       </div>
 
-      {/* ══ MAIN GRID ═════════════════════════════════════════════ */}
+      {/* MAIN GRID  */}
       <div className="grid grid-cols-1 lg:grid-cols-12" style={{ gap: 24, alignItems: "start" }}>
 
-        {/* ── COLUMNA IZQUIERDA 8/12 ─────────────────────────── */}
+        {/* COLUMNA IZQUIERDA 8/12  */}
         <div className="lg:col-span-8" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
 
           {/* Últimos miembros registrados */}
@@ -342,14 +342,14 @@ export default async function AdminDashboard() {
             }}>
               <h2 style={{ margin: 0, fontSize: "1rem", fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
                 <UserPlus size={16} strokeWidth={2} style={{ color: "#1D4ED8" }} />
-                Últimas altas al padrón
+ Últimas altas al padrón
               </h2>
               <div style={{ display: "flex", gap: 8 }}>
                 <Link href="/admin/colegiados" style={{ fontSize: ".75rem", fontWeight: 600, color: "var(--brand)", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4 }}>
-                  Colegiados <ChevronRight size={12} strokeWidth={2.5} />
+ Colegiados <ChevronRight size={12} strokeWidth={2.5} />
                 </Link>
                 <Link href="/admin/peritos" style={{ fontSize: ".75rem", fontWeight: 600, color: "#059669", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4 }}>
-                  Peritos <ChevronRight size={12} strokeWidth={2.5} />
+ Peritos <ChevronRight size={12} strokeWidth={2.5} />
                 </Link>
               </div>
             </div>
@@ -361,7 +361,7 @@ export default async function AdminDashboard() {
                 const profileHref = esColegiado ? `/admin/colegiados/${m.id}` : `/admin/peritos/${m.id}`
                 const num = esColegiado
                   ? (m.numeroColegiado ? `CIME-VER-${m.numeroColegiado}` : "—")
-                  : (m.numeroPerito   ? `CIME-PER-${m.numeroPerito}`   : "—")
+                  : (m.numeroPerito   ? `CIME-PER-${m.numeroPerito}` : "—")
                 return (
                   <div key={m.id} style={{
                     display: "flex", alignItems: "center", gap: 14, padding: "12px 20px",
@@ -423,7 +423,7 @@ export default async function AdminDashboard() {
               })}
               {ultimosMiembros.length === 0 && (
                 <div style={{ padding: "40px 20px", textAlign: "center", color: "var(--muted)", fontSize: ".85rem" }}>
-                  Sin miembros registrados aún
+ Sin miembros registrados aún
                 </div>
               )}
             </div>
@@ -434,7 +434,7 @@ export default async function AdminDashboard() {
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid var(--line)" }}>
               <h2 style={{ margin: 0, fontSize: "1rem", fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
                 <TrendingUp size={16} strokeWidth={2} style={{ color: "#059669" }} />
-                Salud del padrón
+ Salud del padrón
               </h2>
             </div>
             <div style={{ padding: "20px 24px", display: "grid", gap: 20 }}>
@@ -443,7 +443,7 @@ export default async function AdminDashboard() {
               <div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                   <span style={{ fontFamily: "var(--f-data)", fontSize: ".7rem", fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: "#1D4ED8" }}>
-                    Colegiados · {totalColegiados}
+ Colegiados · {totalColegiados}
                   </span>
                   <span style={{ fontFamily: "var(--f-data)", fontSize: ".7rem", color: "var(--muted)" }}>{pct(vigentesC, totalColegiados)}% vigentes</span>
                 </div>
@@ -470,7 +470,7 @@ export default async function AdminDashboard() {
               <div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                   <span style={{ fontFamily: "var(--f-data)", fontSize: ".7rem", fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase", color: "#059669" }}>
-                    Peritos · {totalPeritos}
+ Peritos · {totalPeritos}
                   </span>
                   <span style={{ fontFamily: "var(--f-data)", fontSize: ".7rem", color: "var(--muted)" }}>{pct(vigentesP, totalPeritos)}% vigentes</span>
                 </div>
@@ -494,7 +494,7 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        {/* ── SIDEBAR DERECHO 4/12 ───────────────────────────── */}
+        {/* SIDEBAR DERECHO 4/12  */}
         <div className="lg:col-span-4" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
           {/* Acciones rápidas */}
@@ -537,10 +537,10 @@ export default async function AdminDashboard() {
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderBottom: "1px solid var(--line)" }}>
                 <h3 style={{ margin: 0, fontSize: ".9rem", fontWeight: 700, display: "flex", alignItems: "center", gap: 7 }}>
                   <Calendar size={14} strokeWidth={2} style={{ color: "var(--brand)" }} />
-                  Próximos eventos
+ Próximos eventos
                 </h3>
                 <Link href="/admin/eventos" style={{ fontSize: ".72rem", fontWeight: 600, color: "var(--brand)", textDecoration: "none" }}>
-                  Gestionar
+ Gestionar
                 </Link>
               </div>
               <div>
@@ -586,7 +586,7 @@ export default async function AdminDashboard() {
                   color: "var(--brand)", textDecoration: "none", borderTop: "1px solid var(--line)",
                   background: "var(--surface-raised)",
                 }}>
-                  Ver todos los eventos <ChevronRight size={12} strokeWidth={2.5} />
+ Ver todos los eventos <ChevronRight size={12} strokeWidth={2.5} />
                 </Link>
               </div>
             </div>
@@ -609,7 +609,7 @@ export default async function AdminDashboard() {
                   {solicitudesPendientes} solicitud{solicitudesPendientes !== 1 ? "es" : ""} pendiente{solicitudesPendientes !== 1 ? "s" : ""}
                 </div>
                 <div style={{ fontFamily: "var(--f-data)", fontSize: ".7rem", color: "#B45309" }}>
-                  Planes de pago por revisar
+ Planes de pago por revisar
                 </div>
               </div>
               <ArrowRight size={16} strokeWidth={2.5} style={{ color: "#B45309", flexShrink: 0 }} />

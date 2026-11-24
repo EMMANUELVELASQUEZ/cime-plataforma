@@ -62,10 +62,10 @@ export default function EditarPeritoForm({ perito }: { perito: PeritoData }) {
     ciudad:      perito.ciudad ?? "",
     cedula:      perito.cedula ?? "",
     estado:      perito.estado,
-    alta:        String(perito.alta),
+    alta: String(perito.alta),
     vigencia:    perito.vigencia ?? "",
-    horas:       String(perito.horas),
-    horasMeta:   String(perito.horasMeta),
+    horas: String(perito.horas),
+    horasMeta: String(perito.horasMeta),
     password:    "",
   })
 
@@ -215,7 +215,7 @@ export default function EditarPeritoForm({ perito }: { perito: PeritoData }) {
                 </button>
                 <button type="button" className="btn" onClick={copyPwd}
                   style={{ background: copied ? "#10b981" : undefined, color: copied ? "#fff" : undefined }}>
-                  {copied ? "✓" : (
+                  {copied ? "" : (
                     <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>
                   )}
                 </button>

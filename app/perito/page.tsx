@@ -2,8 +2,8 @@ import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
 import {
-  Calendar, Megaphone, MessageCircle, FileUser, FolderOpen,
-  BookMarked, ChevronRight, MapPin, Shield, ArrowRight, Bell, Award,
+ Calendar, Megaphone, MessageCircle, FileUser, FolderOpen,
+ BookMarked, ChevronRight, MapPin, Shield, ArrowRight, Bell, Award,
 } from "lucide-react"
 import AvisosCarousel from "@/components/AvisosCarousel"
 import CimeLogo3D from "@/components/CimeLogo3D"
@@ -11,13 +11,13 @@ import CimeLogo3D from "@/components/CimeLogo3D"
 export const dynamic = "force-dynamic"
 
 const ESTC: Record<string, { label: string; bg: string; text: string }> = {
-  VIGENTE:     { label: "Vigente",     bg: "rgba(16,185,129,.15)", text: "#34D399" },
-  POR_RENOVAR: { label: "Por renovar", bg: "rgba(245,158,11,.15)", text: "#FBBF24" },
-  SUSPENDIDO:  { label: "Suspendido",  bg: "rgba(239,68,68,.15)",  text: "#F87171" },
+ VIGENTE:     { label: "Vigente",     bg: "rgba(16,185,129,.15)", text: "#34D399" },
+ POR_RENOVAR: { label: "Por renovar", bg: "rgba(245,158,11,.15)", text: "#FBBF24" },
+ SUSPENDIDO:  { label: "Suspendido",  bg: "rgba(239,68,68,.15)",  text: "#F87171" },
 }
 
 const AVISO_DOT: Record<string, string> = {
-  Urgente: "#EF4444", Importante: "#F59E0B", Informativo: "#3B82F6", Convocatoria: "#10B981",
+ Urgente: "#EF4444", Importante: "#F59E0B", Informativo: "#3B82F6", Convocatoria: "#10B981",
 }
 
 function initials(name: string) {
@@ -64,17 +64,17 @@ export default async function PeritoInicio() {
   const saludo = hour < 12 ? "Buenos días" : hour < 19 ? "Buenas tardes" : "Buenas noches"
 
   const EV_COLOR: Record<string, { bg: string; text: string }> = {
-    Asamblea:    { bg: "#EEF2FF", text: "#4F46E5" },
-    Taller:      { bg: "#E0F2FE", text: "#0284C7" },
-    Conferencia: { bg: "#F3E8FF", text: "#7C3AED" },
-    Evaluación:  { bg: "#D1FAE5", text: "#059669" },
-    Cuota:       { bg: "#FEF3C7", text: "#D97706" },
+ Asamblea:    { bg: "#EEF2FF", text: "#4F46E5" },
+ Taller:      { bg: "#E0F2FE", text: "#0284C7" },
+ Conferencia: { bg: "#F3E8FF", text: "#7C3AED" },
+ Evaluación:  { bg: "#D1FAE5", text: "#059669" },
+ Cuota:       { bg: "#FEF3C7", text: "#D97706" },
   }
   const evColor = (t: string) => EV_COLOR[t] ?? { bg: "#DBEAFE", text: "#1D4ED8" }
 
   return (
     <>
-      {/* ── Banner ─────────────────────────────────────────── */}
+      {/* Banner  */}
       <div style={{
         position: "relative", borderRadius: 16, overflow: "hidden",
         background: "linear-gradient(120deg, #0D2060 0%, #1549B8 60%, #1A5ED4 100%)",
@@ -114,7 +114,7 @@ export default async function PeritoInicio() {
                   letterSpacing: ".07em", background: "rgba(232,192,96,.12)",
                   border: "1px solid rgba(232,192,96,.28)", padding: "2px 8px", borderRadius: 4,
                 }}>
-                  CIME-PER-{usuario.numeroPerito}
+ CIME-PER-{usuario.numeroPerito}
                 </span>
               )}
               <span style={{
@@ -123,7 +123,7 @@ export default async function PeritoInicio() {
                 padding: "2px 8px", borderRadius: 4,
                 background: "rgba(16,185,129,.18)", color: "#34D399",
               }}>
-                PERITO
+ PERITO
               </span>
               <span style={{
                 display: "inline-flex", alignItems: "center", gap: 4,
@@ -160,7 +160,7 @@ export default async function PeritoInicio() {
               )}
               {usuario.vigencia && (
                 <span style={{ fontFamily: "var(--f-data)", fontSize: ".67rem", color: "rgba(255,255,255,.35)" }}>
-                  Vigencia {usuario.vigencia}
+ Vigencia {usuario.vigencia}
                 </span>
               )}
             </div>
@@ -201,13 +201,13 @@ export default async function PeritoInicio() {
         </div>
       </div>
 
-      {/* ── Carousel de avisos ──────────────────────────────── */}
+      {/* Carousel de avisos  */}
       <AvisosCarousel
         avisos={avisosCarousel.map(a => ({ ...a, createdAt: a.createdAt.toISOString() }))}
         titulo="Avisos del Colegio"
       />
 
-      {/* ── Grid principal ──────────────────────────────────── */}
+      {/* Grid principal  */}
       <div className="grid grid-cols-1 lg:grid-cols-12" style={{ gap: 24, alignItems: "start" }}>
 
         {/* Columna izquierda */}
@@ -247,7 +247,7 @@ export default async function PeritoInicio() {
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
                 <h2 className="font-montserrat" style={{ fontSize: "1rem", fontWeight: 700, color: "var(--fg)", margin: 0 }}>Próximos eventos</h2>
                 <Link href="/perito/calendario" style={{ display: "inline-flex", alignItems: "center", gap: 4, fontSize: ".8rem", fontWeight: 600, color: "var(--brand)", textDecoration: "none" }}>
-                  Ver todos <ChevronRight size={13} strokeWidth={2.5} />
+ Ver todos <ChevronRight size={13} strokeWidth={2.5} />
                 </Link>
               </div>
               <div style={{ background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 10, overflow: "hidden", boxShadow: "var(--shadow-sm)" }}>
@@ -288,7 +288,7 @@ export default async function PeritoInicio() {
                 <Megaphone size={14} strokeWidth={2} style={{ color: "#F59E0B" }} /> Avisos del colegio
               </h3>
               <Link href="/perito/avisos" style={{ fontFamily: "var(--f-data)", fontSize: ".72rem", fontWeight: 600, color: "var(--brand)", textDecoration: "none" }}>
-                Ver todos
+ Ver todos
               </Link>
             </div>
             {avisos.length === 0 ? (
@@ -318,7 +318,7 @@ export default async function PeritoInicio() {
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderBottom: "1px solid var(--line)" }}>
               <h3 className="font-montserrat" style={{ fontSize: ".9rem", fontWeight: 700, color: "var(--fg)", margin: 0 }}>Mi perfil</h3>
               <Link href="/perito/informacion" style={{ fontFamily: "var(--f-data)", fontSize: ".72rem", fontWeight: 600, color: "var(--brand)", textDecoration: "none", display: "flex", alignItems: "center", gap: 4 }}>
-                Ver <ArrowRight size={12} strokeWidth={2.5} />
+ Ver <ArrowRight size={12} strokeWidth={2.5} />
               </Link>
             </div>
             <div style={{ padding: "14px 18px", display: "grid", gap: 10 }}>
@@ -338,13 +338,13 @@ export default async function PeritoInicio() {
         </div>
       </div>
 
-      {/* ── Directorio Mesa Directiva ──────────────────────────────── */}
+      {/* Directorio Mesa Directiva  */}
       {directorio.length > 0 && (
         <div style={{ marginTop: 32 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
             <h2 style={{ margin: 0, fontSize: "1rem", fontWeight: 700 }}>Mesa Directiva</h2>
             <Link href="/perito/directorio" style={{ fontSize: ".8rem", color: "var(--brand)", fontWeight: 600, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4 }}>
-              Ver todos <ChevronRight size={13} strokeWidth={2.5} />
+ Ver todos <ChevronRight size={13} strokeWidth={2.5} />
             </Link>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 14 }}>

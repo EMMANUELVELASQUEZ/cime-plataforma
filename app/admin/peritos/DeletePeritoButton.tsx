@@ -28,7 +28,7 @@ export default function DeletePeritoButton({ id, nombre }: { id: string; nombre:
 
   return (
     <button className="btn sm ghost" style={{ color: "var(--bad)" }} onClick={() => setConfirm(true)}>
-      Eliminar
+ Eliminar
     </button>
   )
 }

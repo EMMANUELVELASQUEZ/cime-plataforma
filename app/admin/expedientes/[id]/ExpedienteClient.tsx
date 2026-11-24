@@ -3,13 +3,13 @@
 import { useState, useRef } from "react"
 import Link from "next/link"
 import {
-  ChevronLeft, FolderOpen, Archive, ArchiveRestore, Plus,
-  FileText, Lightbulb, FileCheck, Eye, Megaphone,
-  Trash2, Save, User, Clock, BookOpen, Shield, X, Check,
-  Paperclip, Download, Upload, FileWarning,
+ ChevronLeft, FolderOpen, Archive, ArchiveRestore, Plus,
+ FileText, Lightbulb, FileCheck, Eye, Megaphone,
+ Trash2, Save, User, Clock, BookOpen, Shield, X, Check,
+ Paperclip, Download, Upload, FileWarning,
 } from "lucide-react"
 
-// ─── Types ──────────────────────────────────────────────────────
+// Types 
 interface ArchivoInfo { url: string; nombre: string; tipo: string; bytes: number }
 
 interface Entrada {
@@ -31,18 +31,18 @@ interface UsuarioMin {
 }
 
 interface Props {
-  usuario:    UsuarioMin
+  usuario: UsuarioMin
   expediente: Expediente | null
   adminName:  string
 }
 
-// ─── Static config ───────────────────────────────────────────────
+// Static config 
 const TIPO_CFG: Record<string, { label: string; color: string; bg: string; border: string; icon: React.ReactNode }> = {
-  NOTA:        { label: "Nota",        color: "#2563eb", bg: "rgba(37,99,235,.1)",  border: "rgba(37,99,235,.25)",  icon: <FileText   size={14} strokeWidth={1.75} /> },
-  INSTRUCCION: { label: "Instrucción", color: "#7c3aed", bg: "rgba(124,58,237,.1)", border: "rgba(124,58,237,.25)", icon: <Lightbulb  size={14} strokeWidth={1.75} /> },
-  DOCUMENTO:   { label: "Documento",   color: "#0891b2", bg: "rgba(8,145,178,.1)",  border: "rgba(8,145,178,.25)",  icon: <FileCheck  size={14} strokeWidth={1.75} /> },
-  OBSERVACION: { label: "Observación", color: "#d97706", bg: "rgba(217,119,6,.1)",  border: "rgba(217,119,6,.25)",  icon: <Eye        size={14} strokeWidth={1.75} /> },
-  REPORTE:     { label: "Reporte",     color: "#059669", bg: "rgba(5,150,105,.1)",  border: "rgba(5,150,105,.25)",  icon: <Megaphone  size={14} strokeWidth={1.75} /> },
+ NOTA:        { label: "Nota",        color: "#2563eb", bg: "rgba(37,99,235,.1)",  border: "rgba(37,99,235,.25)",  icon: <FileText   size={14} strokeWidth={1.75} /> },
+ INSTRUCCION: { label: "Instrucción", color: "#7c3aed", bg: "rgba(124,58,237,.1)", border: "rgba(124,58,237,.25)", icon: <Lightbulb  size={14} strokeWidth={1.75} /> },
+ DOCUMENTO:   { label: "Documento",   color: "#0891b2", bg: "rgba(8,145,178,.1)",  border: "rgba(8,145,178,.25)",  icon: <FileCheck  size={14} strokeWidth={1.75} /> },
+ OBSERVACION: { label: "Observación", color: "#d97706", bg: "rgba(217,119,6,.1)",  border: "rgba(217,119,6,.25)",  icon: <Eye        size={14} strokeWidth={1.75} /> },
+ REPORTE:     { label: "Reporte",     color: "#059669", bg: "rgba(5,150,105,.1)",  border: "rgba(5,150,105,.25)",  icon: <Megaphone  size={14} strokeWidth={1.75} /> },
 }
 
 const ACCEPT = ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.rar,.txt,.png,.jpg,.jpeg,.webp"
@@ -85,16 +85,16 @@ function downloadArchivo(raw: string | null) {
 
 function fileIcon(nombre: string) {
   const ext = nombre.split(".").pop()?.toLowerCase() ?? ""
-  if (["pdf"].includes(ext))                           return "📄"
-  if (["doc","docx"].includes(ext))                   return "📝"
-  if (["xls","xlsx"].includes(ext))                   return "📊"
-  if (["ppt","pptx"].includes(ext))                   return "📋"
-  if (["zip","rar","7z"].includes(ext))               return "🗜️"
-  if (["png","jpg","jpeg","webp","gif"].includes(ext)) return "🖼️"
-  return "📎"
+  if (["pdf"].includes(ext))                           return ""
+  if (["doc","docx"].includes(ext))                   return ""
+  if (["xls","xlsx"].includes(ext))                   return ""
+  if (["ppt","pptx"].includes(ext))                   return ""
+  if (["zip","rar","7z"].includes(ext))               return ""
+  if (["png","jpg","jpeg","webp","gif"].includes(ext)) return ""
+  return ""
 }
 
-// ─── Component ───────────────────────────────────────────────────
+// Component 
 export default function ExpedienteClient({ usuario, expediente: initExp, adminName }: Props) {
   const [exp,       setExp]       = useState<Expediente | null>(initExp)
   const [nombre,    setNombre]    = useState(initExp?.nombre ?? `Expediente de ${usuario.nombre.split(" ").slice(0, 2).join(" ")}`)
@@ -121,7 +121,7 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
 
   const hue = HUES[usuario.nombre.charCodeAt(0) % HUES.length]
 
-  // ── File reader ──────────────────────────────────────────────
+  // File reader 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     setFileErr("")
@@ -160,7 +160,7 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
     clearFile(); setShowForm(false)
   }
 
-  // ── Create expediente ────────────────────────────────────────
+  // Create expediente 
   async function handleCreate() {
     if (!nombre.trim()) return
     setSaving(true)
@@ -174,7 +174,7 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
     } finally { setSaving(false) }
   }
 
-  // ── Save expediente changes ──────────────────────────────────
+  // Save expediente changes 
   async function handleSave() {
     if (!exp || !nombre.trim()) return
     setSaving(true)
@@ -188,7 +188,7 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
     } finally { setSaving(false) }
   }
 
-  // ── Toggle archive ───────────────────────────────────────────
+  // Toggle archive 
   async function handleToggleArchive() {
     if (!exp) return
     const next = exp.estado === "ACTIVO" ? "ARCHIVADO" : "ACTIVO"
@@ -199,7 +199,7 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
     if (res.ok) setExp(await res.json())
   }
 
-  // ── Add entry ────────────────────────────────────────────────
+  // Add entry 
   async function handleAddEntry(e: React.FormEvent) {
     e.preventDefault()
     if (!exp || !titulo.trim()) return
@@ -223,7 +223,7 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
     } finally { setAddingEnt(false) }
   }
 
-  // ── Delete entry ─────────────────────────────────────────────
+  // Delete entry 
   async function handleDeleteEntry(entradaId: string) {
     if (!exp) return
     setDeletingId(entradaId)
@@ -233,10 +233,10 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
     } finally { setDeletingId(null) }
   }
 
-  // ─────────────────────────────────────────────────────────────
+  // 
   return (
     <>
-      {/* ── Back + Header ──────────────────────────────────────── */}
+      {/* Back + Header  */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <Link href="/admin/expedientes" className="btn sm ghost" style={{ display: "flex", alignItems: "center", gap: 5 }}>
           <ChevronLeft size={14} strokeWidth={2} /> Expedientes
@@ -245,7 +245,7 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
         <b style={{ fontSize: ".9rem" }}>{usuario.nombre}</b>
       </div>
 
-      {/* ── Colegiado hero card ─────────────────────────────────── */}
+      {/* Colegiado hero card  */}
       <div className="card" style={{ overflow: "hidden" }}>
         <div style={{
           background: "linear-gradient(135deg, #071526 0%, #0d2647 60%, #071526 100%)",
@@ -262,7 +262,7 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ color: "rgba(255,255,255,.4)", fontSize: ".65rem", textTransform: "uppercase", letterSpacing: ".1em", marginBottom: 4 }}>
-                Colegiado — expediente
+ Colegiado — expediente
               </div>
               <h2 style={{ color: "#fff", fontSize: "1.2rem", fontWeight: 800, letterSpacing: "-.02em", margin: 0 }}>
                 {usuario.nombre}
@@ -297,10 +297,10 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
         </div>
       </div>
 
-      {/* ── Main two-column layout ──────────────────────────────── */}
+      {/* Main two-column layout  */}
       <div className="grid g-dash" style={{ alignItems: "start" }}>
 
-        {/* LEFT: Expediente form ─────────────────────────────── */}
+        {/* LEFT: Expediente form  */}
         <div className="stack">
           <div className="card">
             <div className="card-h">
@@ -317,7 +317,7 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
             <div className="card-b" style={{ display: "grid", gap: 16 }}>
               {!exp && (
                 <div className="form-ok" style={{ fontSize: ".82rem" }}>
-                  Este colegiado aún no tiene expediente. Completa los datos y haz clic en "Crear expediente".
+ Este colegiado aún no tiene expediente. Completa los datos y haz clic en "Crear expediente".
                 </div>
               )}
               <div className="field">
@@ -349,7 +349,7 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
           {exp && (
             <div className="card card-b">
               <div style={{ fontSize: ".68rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: ".1em", color: "var(--muted)", marginBottom: 12 }}>
-                Información del expediente
+ Información del expediente
               </div>
               <dl className="kv">
                 <dt>Creado</dt>
@@ -368,7 +368,7 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
           )}
         </div>
 
-        {/* RIGHT: Timeline de entradas ──────────────────────────── */}
+        {/* RIGHT: Timeline de entradas  */}
         <div className="card" style={{ display: exp ? undefined : "none" }}>
           <div className="card-h">
             <h2 style={{ fontSize: ".95rem" }}>Entradas del expediente</h2>
@@ -383,7 +383,7 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
             )}
           </div>
 
-          {/* ── Add entry form ────────────────────────────────── */}
+          {/* Add entry form  */}
           {showForm && exp && (
             <form onSubmit={handleAddEntry} style={{
               padding: "16px 18px", borderBottom: "1px solid var(--line)",
@@ -412,7 +412,7 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
                   value={contenido} onChange={e => setContenido(e.target.value)} />
               </div>
 
-              {/* ── File upload zone (only for DOCUMENTO) ──────── */}
+              {/* File upload zone (only for DOCUMENTO)  */}
               {tipo === "DOCUMENTO" && (
                 <div className="field">
                   <label style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -444,10 +444,10 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
                         : <>
                             <Upload size={22} strokeWidth={1.5} style={{ color: "var(--muted)" }} />
                             <span style={{ fontSize: ".83rem", color: "var(--fg)", fontWeight: 500 }}>
-                              Arrastra aquí o haz clic para seleccionar
+ Arrastra aquí o haz clic para seleccionar
                             </span>
                             <span style={{ fontSize: ".73rem", color: "var(--muted)" }}>
-                              PDF · Word · Excel · PowerPoint · ZIP · Imágenes
+ PDF · Word · Excel · PowerPoint · ZIP · Imágenes
                             </span>
                           </>}
                       <input ref={fileRef} type="file" accept={ACCEPT}
@@ -492,7 +492,7 @@ export default function ExpedienteClient({ usuario, expediente: initExp, adminNa
             </form>
           )}
 
-          {/* ── Entries list ─────────────────────────────────── */}
+          {/* Entries list  */}
           {exp && (
             exp.entradas.length === 0 ? (
               <div className="empty">

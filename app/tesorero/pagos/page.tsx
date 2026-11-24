@@ -8,10 +8,10 @@ interface SearchParams {
 }
 
 const ESTADO_CHIP: Record<string, { label: string; cls: string; dot: string }> = {
-  PAGADO:    { label: "Pagado",    cls: "ok",   dot: "#10b981" },
-  PENDIENTE: { label: "Pendiente", cls: "warn", dot: "#f59e0b" },
-  VENCIDO:   { label: "Vencido",  cls: "bad",  dot: "#ef4444" },
-  CANCELADO: { label: "Cancelado", cls: "",     dot: "#9ca3af" },
+ PAGADO:    { label: "Pagado",    cls: "ok",   dot: "#10b981" },
+ PENDIENTE: { label: "Pendiente", cls: "warn", dot: "#f59e0b" },
+ VENCIDO:   { label: "Vencido",  cls: "bad",  dot: "#ef4444" },
+ CANCELADO: { label: "Cancelado", cls: "",     dot: "#9ca3af" },
 }
 
 function fmt(n: number) {
@@ -28,7 +28,7 @@ export default async function PagosTesoreronPage({ searchParams }: { searchParam
   const where = {
     ...(estado && { estado }),
     ...(q && {
-      OR: [
+ OR: [
         { folio: { contains: q, mode: "insensitive" as const } },
         { concepto: { contains: q, mode: "insensitive" as const } },
         { usuario: { nombre: { contains: q, mode: "insensitive" as const } } },
@@ -79,11 +79,11 @@ export default async function PagosTesoreronPage({ searchParams }: { searchParam
           <a href={`/api/admin/pagos/export?${new URLSearchParams({ ...(q && { q }), ...(estado && { estado }) }).toString()}`}
             className="btn">
             <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
-            Exportar CSV
+ Exportar CSV
           </a>
           <Link href="/admin/pagos/nuevo" className="btn primary">
             <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-            Nuevo pago
+ Nuevo pago
           </Link>
         </div>
       </div>
@@ -153,11 +153,11 @@ export default async function PagosTesoreronPage({ searchParams }: { searchParam
               {concepciones.map(c => <option key={c.concepto} value={c.concepto}>{c.concepto}</option>)}
             </select>
             <button className="btn sm" type="submit" style={{ background: "#E8C060", color: "#0D2060", border: "none", fontWeight: 700 }}>
-              Filtrar
+ Filtrar
             </button>
             {(q || estado || concepto) && (
               <Link href="/tesorero/pagos" className="btn sm" style={{ background: "rgba(255,255,255,.15)", color: "#fff", border: "1px solid rgba(255,255,255,.2)" }}>
-                Limpiar
+ Limpiar
               </Link>
             )}
           </form>
@@ -256,7 +256,7 @@ export default async function PagosTesoreronPage({ searchParams }: { searchParam
               <tfoot>
                 <tr style={{ background: "#0D206008", borderTop: "2px solid #0D206030" }}>
                   <td colSpan={4} style={{ padding: "10px 14px", fontSize: ".8rem", color: "var(--muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: ".06em" }}>
-                    Total ({total} registros en filtro actual)
+ Total ({total} registros en filtro actual)
                   </td>
                   <td style={{ padding: "10px 14px", textAlign: "right", fontWeight: 800, fontSize: "1rem", color: "#0D2060", fontVariantNumeric: "tabular-nums" }}>
                     {fmt(sumTotal._sum.monto ?? 0)}

@@ -24,7 +24,7 @@ export default async function PeritosPage({ searchParams }: { searchParams: Sear
   const where = {
     rol: "PERITO" as const,
     ...(q && {
-      OR: [
+ OR: [
         { nombre:      { contains: q, mode: "insensitive" as const } },
         { numeroPerito: { contains: q, mode: "insensitive" as const } },
         { correo:      { contains: q, mode: "insensitive" as const } },
@@ -63,7 +63,7 @@ export default async function PeritosPage({ searchParams }: { searchParams: Sear
         <div className="actions">
           <Link href="/admin/peritos/nuevo" className="btn primary">
             <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-            Nuevo perito
+ Nuevo perito
           </Link>
         </div>
       </div>

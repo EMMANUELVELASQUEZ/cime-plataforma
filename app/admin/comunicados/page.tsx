@@ -62,7 +62,7 @@ export default function ComunicadosPage() {
       if (!res.ok) {
         setResult({ ok: false, msg: data.error ?? "Error al enviar." })
       } else {
-        setResult({ ok: true, msg: `✓ Comunicado enviado a ${data.enviados} miembro${data.enviados !== 1 ? "s" : ""} exitosamente.` })
+        setResult({ ok: true, msg: ` Comunicado enviado a ${data.enviados} miembro${data.enviados !== 1 ? "s" : ""} exitosamente.` })
         setContenido("")
         setCharCount(0)
       }
@@ -92,8 +92,8 @@ export default function ComunicadosPage() {
             <div className="card-b">
               <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
                 {[
-                  { key: "COLEGIADO", label: "Colegiados", icon: "🎓", color: "#0D2060" },
-                  { key: "PERITO",    label: "Peritos",    icon: "⚖️", color: "#7c3aed" },
+                  { key: "COLEGIADO", label: "Colegiados", icon: "", color: "#0D2060" },
+                  { key: "PERITO",    label: "Peritos",    icon: "", color: "#7c3aed" },
                 ].map(r => (
                   <label key={r.key} style={{
                     display: "flex", alignItems: "center", gap: 10, cursor: "pointer",
@@ -145,7 +145,7 @@ export default function ComunicadosPage() {
 
               <div style={{ marginTop: 16, display: "flex", gap: 10, justifyContent: "flex-end" }}>
                 <button className="btn" onClick={() => { setContenido(""); setCharCount(0); setResult(null) }}>
-                  Limpiar
+ Limpiar
                 </button>
                 <button
                   className="btn primary"
@@ -156,7 +156,7 @@ export default function ComunicadosPage() {
                   {sending ? "Enviando…" : (
                     <>
                       <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M10 14l11 -11" /><path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5" /></svg>
-                      Enviar comunicado
+ Enviar comunicado
                     </>
                   )}
                 </button>

@@ -15,11 +15,11 @@ const ESTADOS_FORMACION = [
 const MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre","Diplomado","Jun·sep","Seminario"]
 
 const ESTADO_COLOR: Record<string, { color: string; bg: string }> = {
-  REGISTRADO:    { color: "#1D4ED8", bg: "#EFF6FF" },
-  ACREDITADO:    { color: "#059669", bg: "#ECFDF5" },
-  INSTRUCTOR:    { color: "#0891B2", bg: "#CFFAFE" },
-  POR_VERIFICAR: { color: "#D97706", bg: "#FFFBEB" },
-  NO_PARTICIPO:  { color: "#6B7280", bg: "#F9FAFB" },
+ REGISTRADO:    { color: "#1D4ED8", bg: "#EFF6FF" },
+ ACREDITADO:    { color: "#059669", bg: "#ECFDF5" },
+ INSTRUCTOR:    { color: "#0891B2", bg: "#CFFAFE" },
+ POR_VERIFICAR: { color: "#D97706", bg: "#FFFBEB" },
+ NO_PARTICIPO:  { color: "#6B7280", bg: "#F9FAFB" },
 }
 
 export default function ExpedientePeritoHub({ peritoId, peritoNombre }: { peritoId: string; peritoNombre: string }) {
@@ -150,7 +150,7 @@ export default function ExpedientePeritoHub({ peritoId, peritoNombre }: { perito
       <div style={{ marginBottom: 20 }}>
         <h2 style={{ fontSize: "1rem", fontWeight: 700, margin: "0 0 4px" }}>Expediente Profesional</h2>
         <p style={{ fontSize: ".84rem", color: "var(--muted)", margin: 0 }}>
-          Gestionar pericias, especialidades y formación de <strong>{peritoNombre}</strong>
+ Gestionar pericias, especialidades y formación de <strong>{peritoNombre}</strong>
         </p>
       </div>
 
@@ -192,7 +192,7 @@ export default function ExpedientePeritoHub({ peritoId, peritoNombre }: { perito
         <div style={{ padding: "32px", textAlign: "center", color: "var(--muted)" }}>Cargando…</div>
       ) : (
         <>
-          {/* ── Tab: Especialidades ── */}
+          {/* Tab: Especialidades  */}
           {tab === "especialidades" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
@@ -218,12 +218,12 @@ export default function ExpedientePeritoHub({ peritoId, peritoNombre }: { perito
               <div className="card" style={{ overflow: "hidden" }}>
                 <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--line)" }}>
                   <h3 style={{ fontSize: ".9rem", fontWeight: 700, margin: 0 }}>
-                    Especialidades registradas <span style={{ color: "var(--muted)", fontWeight: 400 }}>({especialidades.length})</span>
+ Especialidades registradas <span style={{ color: "var(--muted)", fontWeight: 400 }}>({especialidades.length})</span>
                   </h3>
                 </div>
                 {especialidades.length === 0 ? (
                   <div style={{ padding: "32px", textAlign: "center", color: "var(--muted)", fontSize: ".86rem" }}>
-                    Sin especialidades. Agrega la primera arriba.
+ Sin especialidades. Agrega la primera arriba.
                   </div>
                 ) : (
                   <table style={{ width: "100%", borderCollapse: "collapse" }}>
@@ -255,7 +255,7 @@ export default function ExpedientePeritoHub({ peritoId, peritoNombre }: { perito
             </div>
           )}
 
-          {/* ── Tab: Formación ── */}
+          {/* Tab: Formación  */}
           {tab === "formacion" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
@@ -302,7 +302,7 @@ export default function ExpedientePeritoHub({ peritoId, peritoNombre }: { perito
                 <div key={year} className="card" style={{ overflow: "hidden" }}>
                   <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <h3 style={{ fontSize: ".9rem", fontWeight: 700, margin: 0 }}>
-                      Formación {year} <span style={{ color: "var(--muted)", fontWeight: 400 }}>({items.length} registros)</span>
+ Formación {year} <span style={{ color: "var(--muted)", fontWeight: 400 }}>({items.length} registros)</span>
                     </h3>
                     {items.length > 0 && (
                       <span style={{ fontSize: ".76rem", color: "var(--muted)" }}>
@@ -312,7 +312,7 @@ export default function ExpedientePeritoHub({ peritoId, peritoNombre }: { perito
                   </div>
                   {items.length === 0 ? (
                     <div style={{ padding: "24px", textAlign: "center", color: "var(--muted)", fontSize: ".86rem" }}>
-                      Sin registros para {year}.
+ Sin registros para {year}.
                     </div>
                   ) : (
                     <div>
@@ -339,7 +339,7 @@ export default function ExpedientePeritoHub({ peritoId, peritoNombre }: { perito
                             }}>
                               {ESTADOS_FORMACION.find(e => e.value === f.estado)?.label ?? f.estado}
                             </span>
-                            <button onClick={() => deleteFormacion(f.id)} style={{ ...BTN_DEL, flexShrink: 0 }}>✕</button>
+                            <button onClick={() => deleteFormacion(f.id)} style={{ ...BTN_DEL, flexShrink: 0 }}></button>
                           </div>
                         )
                       })}

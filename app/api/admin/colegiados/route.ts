@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   try {
     const exists = await prisma.usuario.findFirst({
       where: {
-        OR: [
+ OR: [
           { correo: correo.toLowerCase() },
           ...(numeroColegiado ? [{ numeroColegiado }] : []),
         ],

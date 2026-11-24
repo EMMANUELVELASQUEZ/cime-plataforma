@@ -12,7 +12,7 @@ export default async function ReportesTesoreronPage() {
 
   // Monthly breakdown for current year
   const pagosPorMes = await Promise.all(
-    Array.from({ length: 12 }, (_, i) => {
+ Array.from({ length: 12 }, (_, i) => {
       const desde = new Date(anio, i, 1)
       const hasta = new Date(anio, i + 1, 0, 23, 59, 59)
       return prisma.pago.aggregate({

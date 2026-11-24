@@ -9,7 +9,8 @@ export const dynamic = "force-dynamic"
 export default async function TesoreronLayout({ children }: { children: React.ReactNode }) {
   const session = await auth()
   if (!session) redirect("/login")
-  if ((session.user as any)?.role !== "CONTADOR_TESORERO") redirect("/")
+  const role = (session.user as any)?.role
+  if (role !== "CONTADOR_TESORERO" && role !== "ADMIN") redirect("/")
 
   const userId = (session.user as any)?.id
 

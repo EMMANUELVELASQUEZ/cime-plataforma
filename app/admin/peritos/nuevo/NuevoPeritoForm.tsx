@@ -252,7 +252,7 @@ export default function NuevoPeritoForm() {
               <button type="button" className="btn" onClick={generate}
                 style={{ background: "#0D2060", color: "#fff", alignSelf: "flex-start" }}>
                 <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" /><path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4" /></svg>
-                Generar contraseña
+ Generar contraseña
               </button>
             </div>
 
@@ -309,11 +309,11 @@ export default function NuevoPeritoForm() {
                     }} />
                   </div>
                   <div style={{ fontSize: ".75rem", color: "var(--muted)", display: "flex", gap: 12, flexWrap: "wrap" }}>
-                    <span style={{ color: form.password.length >= 12 ? "#10b981" : "var(--muted)" }}>✓ 12+ chars</span>
-                    <span style={{ color: /[A-Z]/.test(form.password) ? "#10b981" : "var(--muted)" }}>✓ Mayúscula</span>
-                    <span style={{ color: /[a-z]/.test(form.password) ? "#10b981" : "var(--muted)" }}>✓ Minúscula</span>
-                    <span style={{ color: /[0-9]/.test(form.password) ? "#10b981" : "var(--muted)" }}>✓ Número</span>
-                    <span style={{ color: /[^A-Za-z0-9]/.test(form.password) ? "#10b981" : "var(--muted)" }}>✓ Símbolo</span>
+                    <span style={{ color: form.password.length >= 12 ? "#10b981" : "var(--muted)" }}> 12+ chars</span>
+                    <span style={{ color: /[A-Z]/.test(form.password) ? "#10b981" : "var(--muted)" }}> Mayúscula</span>
+                    <span style={{ color: /[a-z]/.test(form.password) ? "#10b981" : "var(--muted)" }}> Minúscula</span>
+                    <span style={{ color: /[0-9]/.test(form.password) ? "#10b981" : "var(--muted)" }}> Número</span>
+                    <span style={{ color: /[^A-Za-z0-9]/.test(form.password) ? "#10b981" : "var(--muted)" }}> Símbolo</span>
                   </div>
                 </div>
               )}
@@ -329,7 +329,7 @@ export default function NuevoPeritoForm() {
             {loading ? "Guardando…" : (
               <>
                 <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
-                Crear perito
+ Crear perito
               </>
             )}
           </button>

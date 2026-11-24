@@ -13,10 +13,10 @@ export interface AvisoItem {
 }
 
 const TIPO_CONFIG: Record<string, { color: string; bg: string; border: string }> = {
-  Urgente:      { color: "#ef4444", bg: "#ef444415", border: "#ef444430" },
-  Importante:   { color: "#f59e0b", bg: "#f59e0b15", border: "#f59e0b30" },
-  Informativo:  { color: "#3b82f6", bg: "#3b82f615", border: "#3b82f630" },
-  Convocatoria: { color: "#10b981", bg: "#10b98115", border: "#10b98130" },
+ Urgente:      { color: "#ef4444", bg: "#ef444415", border: "#ef444430" },
+ Importante:   { color: "#f59e0b", bg: "#f59e0b15", border: "#f59e0b30" },
+ Informativo:  { color: "#3b82f6", bg: "#3b82f615", border: "#3b82f630" },
+ Convocatoria: { color: "#10b981", bg: "#10b98115", border: "#10b98130" },
 }
 const tipoOf = (t: string) => TIPO_CONFIG[t] ?? { color: "#6b7280", bg: "#6b728015", border: "#6b728030" }
 
@@ -64,7 +64,7 @@ function Modal({ aviso, onClose }: { aviso: AvisoItem; onClose: () => void }) {
               </span>
               {aviso.fijado && (
                 <span style={{ padding: "4px 10px", borderRadius: 20, fontSize: ".75rem", fontWeight: 700, background: "rgba(255,255,255,.15)", color: "#fff", backdropFilter: "blur(8px)", display: "flex", alignItems: "center", gap: 4 }}>
-                  📌 Fijado
+ Fijado
                 </span>
               )}
             </div>
@@ -76,7 +76,7 @@ function Modal({ aviso, onClose }: { aviso: AvisoItem; onClose: () => void }) {
           <div style={{ height: 100, background: `linear-gradient(135deg, #0D2060, #1a3a8a)`, borderRadius: "16px 16px 0 0", display: "flex", alignItems: "flex-end", justifyContent: "space-between", padding: "14px 20px" }}>
             <div style={{ display: "flex", gap: 8 }}>
               <span style={{ padding: "4px 12px", borderRadius: 20, fontSize: ".75rem", fontWeight: 700, background: cfg.bg, color: cfg.color, border: `1px solid ${cfg.border}` }}>{aviso.tipo}</span>
-              {aviso.fijado && <span style={{ padding: "4px 10px", borderRadius: 20, fontSize: ".75rem", fontWeight: 700, background: "rgba(255,255,255,.15)", color: "#fff" }}>📌 Fijado</span>}
+              {aviso.fijado && <span style={{ padding: "4px 10px", borderRadius: 20, fontSize: ".75rem", fontWeight: 700, background: "rgba(255,255,255,.15)", color: "#fff" }}> Fijado</span>}
             </div>
           </div>
         )}
@@ -102,7 +102,7 @@ function Modal({ aviso, onClose }: { aviso: AvisoItem; onClose: () => void }) {
             onClick={onClose}
             style={{ marginTop: 28, padding: "10px 24px", borderRadius: 8, background: "#0D2060", color: "#fff", border: "none", fontWeight: 700, fontSize: ".9rem", cursor: "pointer", width: "100%" }}
           >
-            Cerrar
+ Cerrar
           </button>
         </div>
       </div>
@@ -162,7 +162,7 @@ export default function AvisosGrid({ avisos }: { avisos: AvisoItem[] }) {
           ) : (
             <div style={{ height: "100%", background: `linear-gradient(135deg, ${cfg.bg.replace("15", "30")}, ${cfg.bg})`, display: "flex", alignItems: "center", padding: "0 16px" }}>
               <span style={{ fontSize: "2rem" }}>
-                {{ Urgente: "🚨", Importante: "⚠️", Informativo: "ℹ️", Convocatoria: "📢" }[aviso.tipo] ?? "📋"}
+                {{ Urgente: "", Importante: "", Informativo: "", Convocatoria: "" }[aviso.tipo] ?? ""}
               </span>
             </div>
           )}
@@ -173,7 +173,7 @@ export default function AvisosGrid({ avisos }: { avisos: AvisoItem[] }) {
             </span>
             {aviso.fijado && (
               <span style={{ padding: "3px 8px", borderRadius: 20, fontSize: ".7rem", fontWeight: 700, background: "rgba(232,192,96,.9)", color: "#0D2060", display: "flex", alignItems: "center", gap: 3 }}>
-                📌 Fijado
+ Fijado
               </span>
             )}
           </div>
@@ -199,7 +199,7 @@ export default function AvisosGrid({ avisos }: { avisos: AvisoItem[] }) {
   if (avisos.length === 0) {
     return (
       <div style={{ textAlign: "center", padding: "80px 24px", color: "var(--muted)" }}>
-        <div style={{ fontSize: 48, marginBottom: 12 }}>📭</div>
+        <div style={{ fontSize: 48, marginBottom: 12 }}></div>
         <div style={{ fontWeight: 700, marginBottom: 4 }}>Sin avisos por el momento</div>
         <div style={{ fontSize: ".85rem" }}>Cuando haya comunicados aparecerán aquí.</div>
       </div>
@@ -212,7 +212,7 @@ export default function AvisosGrid({ avisos }: { avisos: AvisoItem[] }) {
       {fijados.length > 0 && (
         <div style={{ marginBottom: 36 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-            <span style={{ fontSize: ".7rem", fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", color: "#E8C060" }}>📌 Fijados</span>
+            <span style={{ fontSize: ".7rem", fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", color: "#E8C060" }}> Fijados</span>
             <div style={{ flex: 1, height: 1, background: "var(--line)" }} />
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>

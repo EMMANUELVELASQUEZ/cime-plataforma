@@ -3,10 +3,10 @@ import { useState, useEffect, useCallback } from "react"
 import type { AvisoItem } from "./AvisosGrid"
 
 const TIPO_CONFIG: Record<string, { color: string; accent: string }> = {
-  Urgente:      { color: "#ef4444", accent: "#fca5a5" },
-  Importante:   { color: "#f59e0b", accent: "#fcd34d" },
-  Informativo:  { color: "#3b82f6", accent: "#93c5fd" },
-  Convocatoria: { color: "#10b981", accent: "#6ee7b7" },
+ Urgente:      { color: "#ef4444", accent: "#fca5a5" },
+ Importante:   { color: "#f59e0b", accent: "#fcd34d" },
+ Informativo:  { color: "#3b82f6", accent: "#93c5fd" },
+ Convocatoria: { color: "#10b981", accent: "#6ee7b7" },
 }
 const tipoOf = (t: string) => TIPO_CONFIG[t] ?? { color: "#E8C060", accent: "#fde68a" }
 
@@ -102,7 +102,7 @@ export default function AvisosCarousel({ avisos, titulo = "Avisos del Colegio" }
             <div style={{ position: "absolute", inset: 0, opacity: .06, backgroundImage: "repeating-linear-gradient(0deg, #fff 0px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, #fff 0px, transparent 1px, transparent 40px)" }} />
             {/* Big icon */}
             <div style={{ position: "absolute", right: 32, top: "50%", transform: "translateY(-50%)", fontSize: 100, opacity: .15, userSelect: "none" }}>
-              {{ Urgente: "🚨", Importante: "⚠️", Informativo: "ℹ️", Convocatoria: "📢" }[aviso.tipo] ?? "📋"}
+              {{ Urgente: "", Importante: "", Informativo: "", Convocatoria: "" }[aviso.tipo] ?? ""}
             </div>
           </div>
         )}
@@ -126,7 +126,7 @@ export default function AvisosCarousel({ avisos, titulo = "Avisos del Colegio" }
             </span>
             {aviso.fijado && (
               <span style={{ padding: "4px 10px", borderRadius: 20, fontSize: ".72rem", fontWeight: 700, background: "rgba(232,192,96,.85)", color: "#0D2060" }}>
-                📌 Fijado
+ Fijado
               </span>
             )}
           </div>

@@ -5,48 +5,48 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { signOut } from "next-auth/react"
 import {
-  LayoutDashboard, GraduationCap, Calendar, FileCheck, Megaphone,
-  Users, CreditCard, User, Moon, Sun, LogOut, Menu, X,
-  ChevronRight, ChevronDown, BarChart3, Bell,
-  PanelLeftClose, PanelLeftOpen, FolderOpen, FileText, Building2, BookMarked, MessageCircle,
-  Scale, FileUser, TrendingUp, PieChart, Receipt, Wallet, Award,
+ LayoutDashboard, GraduationCap, Calendar, FileCheck, Megaphone,
+ Users, CreditCard, User, Moon, Sun, LogOut, Menu, X,
+ ChevronRight, ChevronDown, BarChart3, Bell,
+ PanelLeftClose, PanelLeftOpen, FolderOpen, FileText, Building2, BookMarked, MessageCircle,
+ Scale, FileUser, TrendingUp, PieChart, Receipt, Wallet, Award,
 } from "lucide-react"
 import CimeLogo3D from "@/components/CimeLogo3D"
 
-// ─── Bottom nav items ────────────────────────────────────────
+// Bottom nav items 
 const BOTTOM_NAV_COLEGIADO = [
-  { href: "/dashboard",          icon: <LayoutDashboard size={18} strokeWidth={1.75} />, label: "Inicio"   },
-  { href: "/dashboard/cursos",   icon: <GraduationCap   size={18} strokeWidth={1.75} />, label: "Cursos"   },
+  { href: "/dashboard",          icon: <LayoutDashboard size={18} strokeWidth={1.75} />, label: "Inicio" },
+  { href: "/dashboard/cursos",   icon: <GraduationCap   size={18} strokeWidth={1.75} />, label: "Cursos" },
   { href: "/dashboard/mensajes", icon: <MessageCircle   size={18} strokeWidth={1.75} />, label: "Mensajes", badge: true },
-  { href: "/dashboard/pagos",    icon: <CreditCard      size={18} strokeWidth={1.75} />, label: "Pagos"    },
-  { href: "/dashboard/perfil",   icon: <User            size={18} strokeWidth={1.75} />, label: "Perfil"   },
+  { href: "/dashboard/pagos",    icon: <CreditCard      size={18} strokeWidth={1.75} />, label: "Pagos" },
+  { href: "/dashboard/perfil",   icon: <User            size={18} strokeWidth={1.75} />, label: "Perfil" },
 ]
 
 const BOTTOM_NAV_ADMIN = [
-  { href: "/admin",              icon: <BarChart3       size={18} strokeWidth={1.75} />, label: "Panel"      },
+  { href: "/admin",              icon: <BarChart3       size={18} strokeWidth={1.75} />, label: "Panel" },
   { href: "/admin/colegiados",   icon: <Users           size={18} strokeWidth={1.75} />, label: "Colegiados" },
   { href: "/admin/mensajes",     icon: <MessageCircle   size={18} strokeWidth={1.75} />, label: "Mensajes", badge: true },
-  { href: "/admin/cursos",       icon: <GraduationCap   size={18} strokeWidth={1.75} />, label: "Cursos"     },
-  { href: null,                  icon: <Menu            size={18} strokeWidth={1.75} />, label: "Mas"        },
+  { href: "/admin/cursos",       icon: <GraduationCap   size={18} strokeWidth={1.75} />, label: "Cursos" },
+  { href: null,                  icon: <Menu            size={18} strokeWidth={1.75} />, label: "Mas" },
 ]
 
 const BOTTOM_NAV_PERITO = [
-  { href: "/perito",             icon: <LayoutDashboard size={18} strokeWidth={1.75} />, label: "Inicio"    },
-  { href: "/perito/calendario",  icon: <Calendar        size={18} strokeWidth={1.75} />, label: "Agenda"    },
+  { href: "/perito",             icon: <LayoutDashboard size={18} strokeWidth={1.75} />, label: "Inicio" },
+  { href: "/perito/calendario",  icon: <Calendar        size={18} strokeWidth={1.75} />, label: "Agenda" },
   { href: "/perito/mensajes",    icon: <MessageCircle   size={18} strokeWidth={1.75} />, label: "Mensajes", badge: true },
-  { href: "/perito/avisos",      icon: <Bell            size={18} strokeWidth={1.75} />, label: "Avisos"    },
-  { href: null,                  icon: <Menu            size={18} strokeWidth={1.75} />, label: "Más"       },
+  { href: "/perito/avisos",      icon: <Bell            size={18} strokeWidth={1.75} />, label: "Avisos" },
+  { href: null,                  icon: <Menu            size={18} strokeWidth={1.75} />, label: "Más" },
 ]
 
 const BOTTOM_NAV_TESORERO = [
-  { href: "/tesorero",           icon: <LayoutDashboard size={18} strokeWidth={1.75} />, label: "Panel"    },
-  { href: "/tesorero/pagos",     icon: <CreditCard      size={18} strokeWidth={1.75} />, label: "Pagos"    },
+  { href: "/tesorero",           icon: <LayoutDashboard size={18} strokeWidth={1.75} />, label: "Panel" },
+  { href: "/tesorero/pagos",     icon: <CreditCard      size={18} strokeWidth={1.75} />, label: "Pagos" },
   { href: "/tesorero/cobranza",  icon: <TrendingUp      size={18} strokeWidth={1.75} />, label: "Cobranza" },
   { href: "/tesorero/reportes",  icon: <PieChart        size={18} strokeWidth={1.75} />, label: "Reportes" },
-  { href: null,                  icon: <Menu            size={18} strokeWidth={1.75} />, label: "Más"      },
+  { href: null,                  icon: <Menu            size={18} strokeWidth={1.75} />, label: "Más" },
 ]
 
-// ─── Helpers ────────────────────────────────────────────────────
+// Helpers 
 function cn(...c: (string | undefined | null | false)[]) {
   return c.filter(Boolean).join(" ")
 }
@@ -60,7 +60,7 @@ function initials(name: string) {
 const HUES = [211, 142, 262, 24, 199, 327, 38, 172]
 const avatarHue = (name: string) => HUES[name.charCodeAt(0) % HUES.length]
 
-// ─── Types ──────────────────────────────────────────────────────
+// Types 
 interface NavItem  { href: string; icon: React.ReactNode; label: string; badge?: number }
 interface NavGroup { group: string; items: NavItem[] }
 
@@ -85,12 +85,12 @@ export interface AppShellUser {
 }
 
 interface AppShellProps {
-  children:   React.ReactNode
-  user:       AppShellUser
+  children: React.ReactNode
+  user: AppShellUser
   pageTitle?: string
 }
 
-// ─── Static config ───────────────────────────────────────────────
+// Static config 
 const TITLES: Record<string, string> = {
   "/admin":                  "Panel del Colegio",
   "/admin/colegiados":       "Colegiados",
@@ -104,8 +104,9 @@ const TITLES: Record<string, string> = {
   "/admin/pagos":            "Gestión de Pagos",
   "/admin/planes":           "Planes de Pago",
   "/admin/mis-documentos":   "Mis Documentos",
-  "/admin/peritos":           "Peritos",
-  "/admin/peritos/nuevo":    "Alta de Perito",
+  "/admin/peritos":                 "Peritos",
+  "/admin/peritos/nuevo":          "Alta de Perito",
+  "/admin/expedientes-peritos":    "Expedientes de Peritos",
   "/admin/comunicados":      "Comunicados Masivos",
   "/perito":                 "Inicio",
   "/perito/calendario":      "Calendario",
@@ -116,12 +117,15 @@ const TITLES: Record<string, string> = {
   "/perito/expedientes":     "Mis Expedientes",
   "/perito/documentos":      "Documentos Personales",
   "/perito/perfil":          "Mi Perfil",
-  "/tesorero":               "Panel Financiero",
-  "/tesorero/pagos":         "Gestión de Pagos",
-  "/tesorero/cobranza":      "Cobranza",
-  "/tesorero/reportes":      "Reportes Financieros",
-  "/tesorero/facturas":      "Facturas",
-  "/tesorero/mensajes":      "Mensajes",
+  "/tesorero":                       "Panel del Tesorero",
+  "/tesorero/pagos":                 "Gestión de Pagos",
+  "/tesorero/cobranza":              "Cobranza",
+  "/tesorero/cobranza-peritos":      "Cobranza de Peritos",
+  "/tesorero/reportes":              "Reportes Financieros",
+  "/tesorero/facturas":              "Facturas",
+  "/tesorero/mensajes":              "Mensajes",
+  "/tesorero/avisos":                "Avisos",
+  "/perito/mis-pagos":               "Mis Pagos",
   "/dashboard":              "Inicio",
   "/dashboard/cursos":       "Mis cursos",
   "/dashboard/calendario":   "Calendario",
@@ -135,12 +139,12 @@ const TITLES: Record<string, string> = {
 }
 
 const STATUS: Record<string, { dot: string; text: string; label: string }> = {
-  VIGENTE:     { dot: "bg-emerald-400", text: "text-emerald-400", label: "Vigente"     },
-  POR_RENOVAR: { dot: "bg-amber-400",   text: "text-amber-400",   label: "Por renovar" },
-  SUSPENDIDO:  { dot: "bg-red-400",     text: "text-red-400",     label: "Suspendido"  },
+ VIGENTE:     { dot: "bg-emerald-400", text: "text-emerald-400", label: "Vigente" },
+ POR_RENOVAR: { dot: "bg-amber-400",   text: "text-amber-400",   label: "Por renovar" },
+ SUSPENDIDO:  { dot: "bg-red-400",     text: "text-red-400",     label: "Suspendido" },
 }
 
-// ─── Component ───────────────────────────────────────────────────
+// Component 
 export default function AppShell({ children, user, pageTitle }: AppShellProps) {
   const pathname    = usePathname()
   const [expanded,  setExpanded]  = useState(true)
@@ -204,31 +208,49 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
 
   const adminNav: NavGroup[] = [
     {
-      group: "Padrón",
+      group: "General",
       items: [
-        { href: "/admin",            icon: <BarChart3     size={18} strokeWidth={1.75} />, label: "Panel del Colegio" },
-        { href: "/admin/colegiados", icon: <Users         size={18} strokeWidth={1.75} />, label: "Colegiados" },
-        { href: "/admin/peritos",    icon: <Scale         size={18} strokeWidth={1.75} />, label: "Peritos" },
+        { href: "/admin",             icon: <BarChart3     size={18} strokeWidth={1.75} />, label: "Panel del Colegio" },
+        { href: "/admin/mensajes",    icon: <MessageCircle size={18} strokeWidth={1.75} />, label: "Mensajes", badge: user.mensajesNoLeidos || undefined },
+        { href: "/admin/comunicados", icon: <Megaphone     size={18} strokeWidth={1.75} />, label: "Comunicados" },
       ],
     },
     {
-      group: "Gestión",
+      group: "Colegiados",
       items: [
-        { href: "/admin/cursos",     icon: <GraduationCap size={18} strokeWidth={1.75} />, label: "Cursos" },
-        { href: "/admin/eventos",    icon: <Calendar      size={18} strokeWidth={1.75} />, label: "Eventos" },
-        { href: "/admin/avisos",     icon: <Megaphone     size={18} strokeWidth={1.75} />, label: "Avisos" },
-        { href: "/admin/mensajes",   icon: <MessageCircle size={18} strokeWidth={1.75} />, label: "Mensajes", badge: user.mensajesNoLeidos || undefined },
-        { href: "/admin/comunicados",icon: <Wallet        size={18} strokeWidth={1.75} />, label: "Comunicados" },
+        { href: "/admin/colegiados",  icon: <Users         size={18} strokeWidth={1.75} />, label: "Padrón" },
+        { href: "/admin/cursos",      icon: <GraduationCap size={18} strokeWidth={1.75} />, label: "Cursos" },
+        { href: "/admin/eventos",     icon: <Calendar      size={18} strokeWidth={1.75} />, label: "Eventos" },
+        { href: "/admin/avisos",      icon: <Bell          size={18} strokeWidth={1.75} />, label: "Avisos" },
+        { href: "/admin/expedientes", icon: <FolderOpen    size={18} strokeWidth={1.75} />, label: "Expedientes" },
+        { href: "/admin/directorio",  icon: <Building2     size={18} strokeWidth={1.75} />, label: "Directorio" },
       ],
     },
     {
-      group: "Expedientes y Finanzas",
+      group: "Peritos",
       items: [
-        { href: "/admin/directorio",     icon: <Building2  size={18} strokeWidth={1.75} />, label: "Directorio" },
-        { href: "/admin/expedientes",    icon: <FolderOpen size={18} strokeWidth={1.75} />, label: "Expedientes" },
+        { href: "/admin/peritos",              icon: <Scale      size={18} strokeWidth={1.75} />, label: "Padrón de Peritos" },
+        { href: "/admin/expedientes-peritos",  icon: <Award      size={18} strokeWidth={1.75} />, label: "Expedientes" },
+        { href: "/tesorero/cobranza-peritos",  icon: <Wallet     size={18} strokeWidth={1.75} />, label: "Cobranza Peritos" },
+      ],
+    },
+    {
+      group: "Finanzas",
+      items: [
         { href: "/admin/pagos",          icon: <CreditCard size={18} strokeWidth={1.75} />, label: "Pagos" },
-        { href: "/admin/planes",         icon: <FileText   size={18} strokeWidth={1.75} />, label: "Planes", badge: user.planesAlerta || undefined },
-        { href: "/admin/mis-documentos", icon: <BookMarked size={18} strokeWidth={1.75} />, label: "Mis documentos" },
+        { href: "/admin/planes",         icon: <FileText   size={18} strokeWidth={1.75} />, label: "Planes de Pago", badge: user.planesAlerta || undefined },
+        { href: "/admin/mis-documentos", icon: <BookMarked size={18} strokeWidth={1.75} />, label: "Documentos" },
+      ],
+    },
+    {
+      group: "Tesorero",
+      items: [
+        { href: "/tesorero",           icon: <LayoutDashboard size={18} strokeWidth={1.75} />, label: "Dashboard" },
+        { href: "/tesorero/pagos",     icon: <CreditCard      size={18} strokeWidth={1.75} />, label: "Gestión de Pagos" },
+        { href: "/tesorero/cobranza",  icon: <TrendingUp      size={18} strokeWidth={1.75} />, label: "Cobranza" },
+        { href: "/tesorero/reportes",  icon: <PieChart        size={18} strokeWidth={1.75} />, label: "Reportes" },
+        { href: "/tesorero/facturas",  icon: <Receipt         size={18} strokeWidth={1.75} />, label: "Facturas" },
+        { href: "/tesorero/mensajes",  icon: <MessageCircle   size={18} strokeWidth={1.75} />, label: "Mensajes" },
       ],
     },
   ]
@@ -275,6 +297,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
         { href: "/perito/expediente-profesional", icon: <Award      size={18} strokeWidth={1.75} />, label: "Expediente Profesional" },
         { href: "/perito/expedientes",            icon: <FolderOpen size={18} strokeWidth={1.75} />, label: "Expedientes" },
         { href: "/perito/documentos",             icon: <BookMarked size={18} strokeWidth={1.75} />, label: "Documentos" },
+        { href: "/perito/mis-pagos",              icon: <CreditCard size={18} strokeWidth={1.75} />, label: "Mis Pagos" },
       ],
     },
     {
@@ -287,10 +310,11 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
     {
       group: "Panel Financiero",
       items: [
-        { href: "/tesorero",           icon: <LayoutDashboard size={18} strokeWidth={1.75} />, label: "Dashboard" },
-        { href: "/tesorero/pagos",     icon: <CreditCard      size={18} strokeWidth={1.75} />, label: "Gestión de Pagos" },
-        { href: "/tesorero/cobranza",  icon: <TrendingUp      size={18} strokeWidth={1.75} />, label: "Cobranza" },
-        { href: "/tesorero/reportes",  icon: <PieChart        size={18} strokeWidth={1.75} />, label: "Reportes" },
+        { href: "/tesorero",                    icon: <LayoutDashboard size={18} strokeWidth={1.75} />, label: "Dashboard" },
+        { href: "/tesorero/pagos",              icon: <CreditCard      size={18} strokeWidth={1.75} />, label: "Gestión de Pagos" },
+        { href: "/tesorero/cobranza",           icon: <TrendingUp      size={18} strokeWidth={1.75} />, label: "Cobranza" },
+        { href: "/tesorero/cobranza-peritos",   icon: <Wallet          size={18} strokeWidth={1.75} />, label: "Cobranza Peritos" },
+        { href: "/tesorero/reportes",           icon: <PieChart        size={18} strokeWidth={1.75} />, label: "Reportes" },
       ],
     },
     {
@@ -371,7 +395,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
         ))}
       </nav>
 
-      {/* ── User / Stats card ─────────────────────────── */}
+      {/* User / Stats card  */}
       {!isAdmin && !isTesorero && !collapsed && (
         <div className="relative mx-2.5 mb-3 rounded-xl border border-brand-500/[.18] flex-shrink-0 overflow-hidden"
           style={{ background: "rgba(7,15,28,.85)" }}>
@@ -549,7 +573,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
         />
       )}
 
-      {/* ── Mobile sidebar ─────────────────────────────────────── */}
+      {/* Mobile sidebar  */}
       <aside className={cn(
         "fixed inset-y-0 left-0 z-50 w-72 flex flex-col overflow-hidden lg:hidden",
         "border-r border-white/[.05] relative",
@@ -565,7 +589,7 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
         {sideInner(false)}
       </aside>
 
-      {/* ── Desktop sidebar ─────────────────────────────────────── */}
+      {/* Desktop sidebar  */}
       <aside
         className="hidden lg:flex flex-col flex-shrink-0 overflow-hidden relative border-r border-white/[.05] transition-[width] duration-300 ease-in-out"
         style={{ background: "#070F1C", width: expanded ? "256px" : "68px" }}
@@ -573,10 +597,10 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
         {sideInner(!expanded)}
       </aside>
 
-      {/* ── Main column ─────────────────────────────────────────── */}
+      {/* Main column  */}
       <div className="flex flex-col flex-1 min-w-0">
 
-        {/* ── Topbar ──────────────────────────────────────────── */}
+        {/* Topbar  */}
         <header className="sticky top-0 z-30 flex items-center gap-3 h-[60px] px-4 lg:px-6 flex-shrink-0 border-b"
           style={{
             background: "color-mix(in srgb, var(--bg) 88%, transparent)",
@@ -645,14 +669,14 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
                         className="flex items-center gap-2.5 px-3 py-[9px] rounded-lg text-[.84rem] font-medium transition-colors hover:bg-[var(--surface-2)]"
                         style={{ color: "var(--fg)" }}>
                         <User size={15} strokeWidth={1.75} style={{ color: "var(--muted)" } as React.CSSProperties} />
-                        Mi perfil
+ Mi perfil
                       </Link>
                     )}
                     <button onClick={() => { toggleTheme(); setUserMenu(false) }}
                       className="flex items-center gap-2.5 px-3 py-[9px] rounded-lg text-[.84rem] font-medium transition-colors hover:bg-[var(--surface-2)] w-full text-left"
                       style={{ color: "var(--fg)" }}>
                       {isDark ? <Sun size={15} strokeWidth={1.75} style={{ color: "var(--muted)" } as React.CSSProperties} /> : <Moon size={15} strokeWidth={1.75} style={{ color: "var(--muted)" } as React.CSSProperties} />}
-                      Cambiar tema
+ Cambiar tema
                     </button>
                     <div className="h-px my-0.5" style={{ background: "var(--line)" }} />
                     <button onClick={() => signOut({ callbackUrl: "/login" })}
@@ -670,13 +694,13 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
           </div>
         </header>
 
-        {/* ── Page content ────────────────────────────────────── */}
+        {/* Page content  */}
         <main className="view flex-1">
           {children}
         </main>
       </div>
 
-      {/* ── Bottom navigation bar (mobile only) ─────────────── */}
+      {/* Bottom navigation bar (mobile only)  */}
       <nav
         className="bottom-nav"
         style={{

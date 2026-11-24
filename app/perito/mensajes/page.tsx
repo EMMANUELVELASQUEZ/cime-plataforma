@@ -79,10 +79,10 @@ export default function ColegiadoMensajesPage() {
       {/* Header */}
       <div style={{ marginBottom: 16, flexShrink: 0 }}>
         <h1 style={{ fontSize: "1.35rem", fontWeight: 700, color: "var(--fg)", margin: 0 }}>
-          Chat con Administracion
+ Chat con Administracion
         </h1>
         <p style={{ fontSize: ".8rem", color: "var(--muted)", marginTop: 4 }}>
-          Las respuestas pueden tardar unos minutos
+ Las respuestas pueden tardar unos minutos
         </p>
       </div>
 
@@ -115,7 +115,7 @@ export default function ColegiadoMensajesPage() {
           {mensajes.length === 0 ? (
             <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
               <p style={{ color: "var(--muted)", fontSize: ".88rem", textAlign: "center" }}>
-                Envia un mensaje a la administracion para iniciar la conversacion.
+ Envia un mensaje a la administracion para iniciar la conversacion.
               </p>
             </div>
           ) : (

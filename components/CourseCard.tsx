@@ -1,21 +1,21 @@
 import Link from "next/link"
 import { GraduationCap, Clock, User, CheckCircle2, ArrowRight } from "lucide-react"
 
-// ─── Area config ────────────────────────────────────────────────
+// Area config 
 const AREA: Record<string, { label: string; color: string; bg: string; grad: string }> = {
-  ELE: {
+ ELE: {
     label: "Eléctrica",
     color: "#0ea5e9",
     bg:    "rgba(14,165,233,.14)",
     grad:  "linear-gradient(140deg,#052233 0%,#0e4a6e 100%)",
   },
-  MEC: {
+ MEC: {
     label: "Mecánica",
     color: "#10b981",
     bg:    "rgba(16,185,129,.14)",
     grad:  "linear-gradient(140deg,#05231a 0%,#0a5c3a 100%)",
   },
-  SOL: {
+ SOL: {
     label: "Solar/Renovable",
     color: "#f59e0b",
     bg:    "rgba(245,158,11,.14)",
@@ -24,19 +24,19 @@ const AREA: Record<string, { label: string; color: string; bg: string; grad: str
 }
 
 const ESTADO: Record<string, { label: string; color: string; bg: string; border: string }> = {
-  ACTIVO:     { label: "En progreso", color: "#2563eb", bg: "rgba(37,99,235,.1)",  border: "rgba(37,99,235,.25)"  },
-  COMPLETADO: { label: "Completado",  color: "#10b981", bg: "rgba(16,185,129,.1)", border: "rgba(16,185,129,.25)" },
-  INSCRITO:   { label: "Inscrito",    color: "#6b7280", bg: "rgba(107,114,128,.1)",border: "rgba(107,114,128,.2)" },
+ ACTIVO:     { label: "En progreso", color: "#2563eb", bg: "rgba(37,99,235,.1)",  border: "rgba(37,99,235,.25)" },
+ COMPLETADO: { label: "Completado",  color: "#10b981", bg: "rgba(16,185,129,.1)", border: "rgba(16,185,129,.25)" },
+ INSCRITO:   { label: "Inscrito",    color: "#6b7280", bg: "rgba(107,114,128,.1)",border: "rgba(107,114,128,.2)" },
 }
 
-// ─── Props ──────────────────────────────────────────────────────
+// Props 
 export interface CourseCardProps {
   id:            string
   titulo:        string
   instructor:    string
   area:          string
   horas:         number
-  fechaFin:      Date | string
+  fechaFin: Date | string
   progreso:      number
   estado:        string
   imagen?:       string | null
@@ -44,7 +44,7 @@ export interface CourseCardProps {
   href:          string
 }
 
-// ─── Component ──────────────────────────────────────────────────
+// Component 
 export default function CourseCard({
   titulo, instructor, area, horas, fechaFin,
   progreso, estado, imagen, totalModulos, href,
@@ -69,7 +69,7 @@ export default function CourseCard({
       onMouseEnter={e => { (e.currentTarget as HTMLElement).style.boxShadow = "var(--shadow-md)" }}
       onMouseLeave={e => { (e.currentTarget as HTMLElement).style.boxShadow = "var(--shadow-sm)" }}
     >
-      {/* ── Banner ──────────────────────────────────────────── */}
+      {/* Banner  */}
       <div className="relative h-[96px] flex items-end p-4 overflow-hidden"
         style={{ background: imagen ? undefined : a.grad }}>
         {imagen && (
@@ -94,7 +94,7 @@ export default function CourseCard({
         </div>
       </div>
 
-      {/* ── Body ────────────────────────────────────────────── */}
+      {/* Body  */}
       <div className="flex-1 flex flex-col p-4 gap-3">
         <h3 className="font-semibold text-[.92rem] leading-snug line-clamp-2" style={{ color: "var(--fg)" }}>
           {titulo}
@@ -131,7 +131,7 @@ export default function CourseCard({
         </div>
       </div>
 
-      {/* ── Footer ──────────────────────────────────────────── */}
+      {/* Footer  */}
       <div className="flex items-center justify-between gap-3 px-4 py-3 border-t"
         style={{ borderColor: "var(--line)", background: "var(--surface-2)" }}>
         <div className="flex items-center gap-2 flex-wrap">

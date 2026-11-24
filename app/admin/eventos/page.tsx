@@ -148,7 +148,7 @@ export default async function AdminEventosPage() {
                               : new Date(item.createdAt).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}
                           </td>
                           <td style={{ textAlign: "center", fontSize: ".85rem" }}>
-                            {item.fijado ? "📌" : "—"}
+                            {item.fijado ? "" : "—"}
                           </td>
                           <td style={{ textAlign: "right" }}>
                             {/* Avisos don't have a delete button in the original, leave empty for now */}

@@ -48,9 +48,9 @@ export default async function CobranzaTesoreronPage() {
       {/* Summary row */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 24 }}>
         {[
-          { label: "Deuda total",        value: fmt(totalDeuda),                    color: "#ef4444", icon: "💰" },
-          { label: "Miembros con deuda", value: String(miembrosConPendientes.length), color: "#f59e0b", icon: "👥" },
-          { label: "Pagos vencidos",     value: String(vencidosCount),              color: "#ef4444", icon: "⚠️" },
+          { label: "Deuda total",        value: fmt(totalDeuda),                    color: "#ef4444", icon: "" },
+          { label: "Miembros con deuda", value: String(miembrosConPendientes.length), color: "#f59e0b", icon: "" },
+          { label: "Pagos vencidos",     value: String(vencidosCount),              color: "#ef4444", icon: "" },
         ].map(s => (
           <div key={s.label} className="card" style={{ padding: "16px 20px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -122,7 +122,7 @@ export default async function CobranzaTesoreronPage() {
                       <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
                         {p.vencimiento && (
                           <span style={{ fontSize: ".75rem", color: p.estado === "VENCIDO" ? "#ef4444" : "var(--muted)" }}>
-                            Vence: {new Date(p.vencimiento).toLocaleDateString("es-MX", { day: "2-digit", month: "short" })}
+ Vence: {new Date(p.vencimiento).toLocaleDateString("es-MX", { day: "2-digit", month: "short" })}
                           </span>
                         )}
                         <span style={{ fontWeight: 700, fontVariantNumeric: "tabular-nums", fontSize: ".9rem" }}>
@@ -149,7 +149,7 @@ export default async function CobranzaTesoreronPage() {
                     className="btn sm"
                     style={{ background: "#0D2060", color: "#fff" }}>
                     <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" /><path d="M3 7l9 6l9 -6" /></svg>
-                    Recordatorio
+ Recordatorio
                   </a>
                 </div>
               </div>

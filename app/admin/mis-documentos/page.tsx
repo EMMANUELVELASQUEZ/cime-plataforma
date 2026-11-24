@@ -2,11 +2,11 @@
 
 import { useState, useEffect, useRef } from "react"
 import {
-  FileText, Archive, Image, Paperclip, Download, Trash2, Pencil,
-  Plus, X, Check, Loader2, FolderOpen,
+ FileText, Archive, Image, Paperclip, Download, Trash2, Pencil,
+ Plus, X, Check, Loader2, FolderOpen,
 } from "lucide-react"
 
-// ─── Types ──────────────────────────────────────────────────────────────────
+// Types 
 interface Documento {
   id: string
   nombre: string
@@ -26,12 +26,12 @@ interface FormState {
   file: File | null
 }
 
-// ─── Constants ───────────────────────────────────────────────────────────────
+// Constants 
 const CATEGORIAS = ["Certificados", "Títulos y Diplomas", "Contratos", "Comunicados Oficiales", "General"]
 const MAX_MB = 3
 const MAX_BYTES = MAX_MB * 1024 * 1024
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// Helpers 
 function fmtBytes(b: number): string {
   if (b === 0) return "0 B"
   const k = 1024
@@ -82,7 +82,7 @@ function downloadDoc(doc: Documento) {
   setTimeout(() => URL.revokeObjectURL(blobUrl), 1500)
 }
 
-// ─── Component ───────────────────────────────────────────────────────────────
+// Component 
 export default function MisDocumentosPage() {
   const [docs, setDocs] = useState<Documento[]>([])
   const [loading, setLoading] = useState(true)
@@ -236,11 +236,11 @@ export default function MisDocumentosPage() {
             color: "var(--muted-2)",
             marginBottom: 6,
           }}>
-            Administración · Panel del Colegio
+ Administración · Panel del Colegio
           </p>
           <h1 style={{ fontSize: "1.75rem" }}>Mis Documentos</h1>
           <p style={{ color: "var(--muted)", fontSize: ".9rem", marginTop: 4 }}>
-            Almacén privado de certificados, títulos y documentos oficiales.
+ Almacén privado de certificados, títulos y documentos oficiales.
           </p>
         </div>
         {docs.length > 0 && (
@@ -275,7 +275,7 @@ export default function MisDocumentosPage() {
         <div className="card-h">
           <h2 style={{ display: "flex", alignItems: "center", gap: 8, margin: 0 }}>
             <Plus size={18} style={{ color: "var(--brand)" }} />
-            Subir nuevo documento
+ Subir nuevo documento
           </h2>
         </div>
         <form onSubmit={handleUpload}>
@@ -376,11 +376,11 @@ export default function MisDocumentosPage() {
           <FolderOpen size={56} strokeWidth={1.25} />
           <p style={{ margin: 0, fontSize: ".9rem", fontWeight: 600, color: "var(--fg)" }}>Sin documentos</p>
           <p style={{ margin: 0, fontSize: ".85rem", textAlign: "center", maxWidth: 320 }}>
-            Aún no has subido ningún documento. Usa el formulario de arriba para comenzar.
+ Aún no has subido ningún documento. Usa el formulario de arriba para comenzar.
           </p>
         </div>
       ) : (
-        Object.entries(grouped).map(([categoria, items]) => (
+ Object.entries(grouped).map(([categoria, items]) => (
           <div key={categoria} style={{ marginBottom: 32 }}>
             {/* Category header */}
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
@@ -423,7 +423,7 @@ export default function MisDocumentosPage() {
                     style={{ padding: 20, display: "flex", flexDirection: "column", gap: 12 }}
                   >
                     {isEditing ? (
-                      /* ── Edit mode ── */
+                      /* Edit mode  */
                       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
                           <span style={{ fontSize: ".8rem", fontWeight: 600, color: "var(--muted)" }}>Editar documento</span>
@@ -472,7 +472,7 @@ export default function MisDocumentosPage() {
                         </button>
                       </div>
                     ) : (
-                      /* ── View mode ── */
+                      /* View mode  */
                       <>
                         {/* Top row: icon + name */}
                         <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>

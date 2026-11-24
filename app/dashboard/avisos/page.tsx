@@ -49,7 +49,7 @@ export default async function AvisosPage() {
       <div className="page-head">
         <div>
           <p style={{ fontSize: ".7rem", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--muted)", marginBottom: 4 }}>
-            PORTAL CIME · COMUNICADOS OFICIALES
+ PORTAL CIME · COMUNICADOS OFICIALES
           </p>
           <h1>Avisos del Colegio</h1>
           <p style={{ color: "var(--muted)" }}>Convocatorias, cuotas, eventos y comunicados emitidos por el Consejo Directivo.</p>

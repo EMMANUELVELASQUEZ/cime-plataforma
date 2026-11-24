@@ -7,13 +7,13 @@ function parseDocUrl(raw: string): { url: string; nombre: string; tipo: string }
 }
 
 const TIPO_ICON: Record<string, string> = {
-  "application/pdf":    "📄",
-  "image/jpeg":         "🖼️",
-  "image/png":          "🖼️",
-  "application/msword": "📝",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "📝",
-  "application/vnd.ms-excel": "📊",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "📊",
+  "application/pdf":    "",
+  "image/jpeg":         "",
+  "image/png":          "",
+  "application/msword": "",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "",
+  "application/vnd.ms-excel": "",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "",
 }
 
 const CAT_COLOR: Record<string, string> = {
@@ -106,7 +106,7 @@ export default async function DocumentosPeritoPage() {
                     const parsed  = parseDocUrl(doc.url)
                     const dataUrl = parsed?.url ?? null
                     const dlName  = parsed?.nombre ?? doc.nombreArchivo
-                    const icon    = TIPO_ICON[doc.tipoMime] ?? "📎"
+                    const icon    = TIPO_ICON[doc.tipoMime] ?? ""
                     const isPdf   = doc.tipoMime === "application/pdf"
                     const isImg   = doc.tipoMime.startsWith("image/")
 
@@ -165,7 +165,7 @@ export default async function DocumentosPeritoPage() {
                               fontSize: ".8rem", color: "#0D2060", fontWeight: 500,
                             }}>
                               <svg style={{ width: 14, height: 14 }} fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
-                              Ver / Descargar
+ Ver / Descargar
                             </div>
                           </div>
                         </div>
