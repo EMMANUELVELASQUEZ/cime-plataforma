@@ -1,6 +1,4 @@
 import { prisma } from "@/lib/prisma"
-import { Receipt, FileText, Wallet } from "lucide-react"
-import { TesHero, TesKpi } from "@/components/tesoreria/TesUI"
 
 export const dynamic = "force-dynamic"
 
@@ -23,19 +21,23 @@ export default async function FacturasTesoreronPage() {
 
   return (
     <>
-      <TesHero
-        eyebrow="Tesorería · Comprobantes"
-        title="Facturas y"
-        highlight="comprobantes"
-        sub={`${comprobantes.length} comprobante${comprobantes.length !== 1 ? "s" : ""} registrados`}
-        icon={<Receipt size={26} strokeWidth={1.6} />}
-        figure={fmt(totalFacturado)}
-        figureLabel="Total facturado"
-      />
+      <div className="page-head">
+        <div>
+          <h1>Facturas y Comprobantes</h1>
+          <p>{comprobantes.length} comprobante{comprobantes.length !== 1 ? "s" : ""} registrados.</p>
+        </div>
+      </div>
 
-      <div className="tes-kpis">
-        <TesKpi label="Comprobantes"    value={comprobantes.length} sub="Pagos con archivo adjunto" tone="info" icon={<FileText size={17} strokeWidth={1.9} />} />
-        <TesKpi label="Total facturado" value={fmt(totalFacturado)} sub="Suma de comprobantes"      tone="ok"   icon={<Wallet size={17} strokeWidth={1.9} />} />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 24 }}>
+        {[
+          { label: "Comprobantes", value: String(comprobantes.length), color: "#0D2060" },
+          { label: "Total facturado", value: fmt(totalFacturado), color: "#10b981" },
+        ].map(s => (
+          <div key={s.label} className="card" style={{ padding: "16px 20px" }}>
+            <div style={{ fontSize: ".75rem", color: "var(--muted)", letterSpacing: ".06em", textTransform: "uppercase" }}>{s.label}</div>
+            <div style={{ fontSize: "1.5rem", fontWeight: 800, color: s.color, marginTop: 4 }}>{s.value}</div>
+          </div>
+        ))}
       </div>
 
       {comprobantes.length === 0 ? (
@@ -81,7 +83,8 @@ export default async function FacturasTesoreronPage() {
                     </td>
                     <td>
                       {c.comprobante ? (
-                        <a href={c.comprobante} target="_blank" rel="noopener noreferrer" className="btn sm navy">
+                        <a href={c.comprobante} target="_blank" rel="noopener noreferrer" className="btn sm"
+                          style={{ background: "#0D2060", color: "#fff" }}>
                           <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
  Ver
                         </a>

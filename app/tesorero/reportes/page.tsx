@@ -1,6 +1,4 @@
 import { prisma } from "@/lib/prisma"
-import { PieChart, Wallet, Hourglass, AlertTriangle, CalendarCheck } from "lucide-react"
-import { TesHero, TesKpi } from "@/components/tesoreria/TesUI"
 
 export const dynamic = "force-dynamic"
 
@@ -52,21 +50,27 @@ export default async function ReportesTesoreronPage() {
 
   return (
     <>
-      <TesHero
-        eyebrow={`Tesorería · Ejercicio ${anio}`}
-        title="Reportes"
-        highlight="financieros"
-        sub={`Análisis y resumen del ejercicio ${anio}`}
-        icon={<PieChart size={26} strokeWidth={1.6} />}
-        figure={fmt(pagado._sum.monto ?? 0)}
-        figureLabel="Total recaudado"
-      />
+      <div className="page-head">
+        <div>
+          <h1>Reportes Financieros</h1>
+          <p>Análisis y resumen del ejercicio {anio}.</p>
+        </div>
+      </div>
 
-      <div className="tes-kpis">
-        <TesKpi label="Total recaudado"    value={fmt(pagado._sum.monto ?? 0)}    sub={`${pagado._count.id} transacción${pagado._count.id !== 1 ? "es" : ""}`}       tone="ok"   icon={<Wallet size={17} strokeWidth={1.9} />} />
-        <TesKpi label="Por cobrar"         value={fmt(pendiente._sum.monto ?? 0)} sub={`${pendiente._count.id} transacción${pendiente._count.id !== 1 ? "es" : ""}`} tone="warn" icon={<Hourglass size={17} strokeWidth={1.9} />} />
-        <TesKpi label="Vencido"            value={fmt(vencido._sum.monto ?? 0)}   sub={`${vencido._count.id} transacción${vencido._count.id !== 1 ? "es" : ""}`}     tone="bad"  icon={<AlertTriangle size={17} strokeWidth={1.9} />} />
-        <TesKpi label="Recaudado este mes" value={fmt(mesActual.monto)}           sub={`${mesActual.count} transacción${mesActual.count !== 1 ? "es" : ""}`}         tone="gold" icon={<CalendarCheck size={17} strokeWidth={1.9} />} />
+      {/* KPI strip */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 24 }}>
+        {[
+          { label: "Total recaudado",  value: fmt(pagado._sum.monto ?? 0),    count: pagado._count.id,    color: "#10b981", bg: "#10b98112" },
+          { label: "Por cobrar",       value: fmt(pendiente._sum.monto ?? 0), count: pendiente._count.id, color: "#f59e0b", bg: "#f59e0b12" },
+          { label: "Vencido",          value: fmt(vencido._sum.monto ?? 0),   count: vencido._count.id,   color: "#ef4444", bg: "#ef444412" },
+          { label: "Recaudado este mes", value: fmt(mesActual.monto),         count: mesActual.count,     color: "#3b82f6", bg: "#3b82f612" },
+        ].map(k => (
+          <div key={k.label} className="card" style={{ padding: "16px 20px", background: k.bg, border: `1px solid ${k.color}20` }}>
+            <div style={{ fontSize: ".75rem", color: k.color, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase" }}>{k.label}</div>
+            <div style={{ fontSize: "1.6rem", fontWeight: 800, color: k.color, marginTop: 4, fontVariantNumeric: "tabular-nums" }}>{k.value}</div>
+            <div style={{ fontSize: ".78rem", color: k.color, opacity: .7, marginTop: 2 }}>{k.count} transacción{k.count !== 1 ? "es" : ""}</div>
+          </div>
+        ))}
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 20, alignItems: "start" }}>
@@ -91,14 +95,14 @@ export default async function ReportesTesoreronPage() {
                       <div style={{
                         height: Math.max(h, m.monto > 0 ? 4 : 0),
                         width: "100%",
-                        background: isCurrent ? "var(--navy)" : m.monto > 0 ? "color-mix(in srgb, var(--brand) 35%, transparent)" : "var(--line)",
+                        background: isCurrent ? "#0D2060" : m.monto > 0 ? "#0D206040" : "var(--line)",
                         borderRadius: "4px 4px 0 0",
                         transition: "height .3s",
                         cursor: "default",
                         minHeight: 2,
                       }} title={`${m.mes}: ${fmt(m.monto)}`} />
                     </div>
-                    <div style={{ fontSize: ".7rem", color: isCurrent ? "var(--navy)" : "var(--muted)", fontWeight: isCurrent ? 700 : 400 }}>
+                    <div style={{ fontSize: ".7rem", color: isCurrent ? "#0D2060" : "var(--muted)", fontWeight: isCurrent ? 700 : 400 }}>
                       {m.mes}
                     </div>
                   </div>
@@ -120,17 +124,17 @@ export default async function ReportesTesoreronPage() {
                 <div key={c.concepto} style={{ padding: "8px 20px", display: "grid", gap: 4 }}>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: ".85rem" }}>
                     <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <span style={{ width: 20, height: 20, borderRadius: "50%", background: "var(--navy)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".65rem", fontWeight: 700, flexShrink: 0 }}>
+                      <span style={{ width: 20, height: 20, borderRadius: "50%", background: "#0D2060", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: ".65rem", fontWeight: 700, flexShrink: 0 }}>
                         {i + 1}
                       </span>
                       <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 160 }}>{c.concepto}</span>
                     </span>
-                    <span style={{ fontWeight: 700, fontVariantNumeric: "tabular-nums", fontSize: ".8rem", color: "var(--ink)" }}>
+                    <span style={{ fontWeight: 700, fontVariantNumeric: "tabular-nums", fontSize: ".8rem", color: "#0D2060" }}>
                       {fmt(c._sum.monto ?? 0)}
                     </span>
                   </div>
                   <div className="meter" style={{ height: 4 }}>
-                    <i style={{ width: `${pct}%`, background: "var(--navy)" }} />
+                    <i style={{ width: `${pct}%`, background: "#0D2060" }} />
                   </div>
                   <div style={{ fontSize: ".72rem", color: "var(--muted)" }}>{c._count.id} pago{c._count.id !== 1 ? "s" : ""} · {pct}%</div>
                 </div>

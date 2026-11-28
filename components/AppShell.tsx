@@ -9,7 +9,7 @@ import {
  Users, CreditCard, User, Moon, Sun, LogOut, Menu, X,
  ChevronRight, ChevronDown, BarChart3, Bell,
  PanelLeftClose, PanelLeftOpen, FolderOpen, FileText, Building2, BookMarked, MessageCircle,
- Scale, FileUser, TrendingUp, PieChart, Receipt, Wallet, Award, ShieldCheck, Link2,
+ Scale, FileUser, TrendingUp, PieChart, Receipt, Wallet, Award,
 } from "lucide-react"
 import CimeLogo3D from "@/components/CimeLogo3D"
 
@@ -104,8 +104,6 @@ const TITLES: Record<string, string> = {
   "/admin/pagos":            "Gestión de Pagos",
   "/admin/planes":           "Planes de Pago",
   "/admin/mis-documentos":   "Mis Documentos",
-  "/admin/cuentas":                 "Cuentas",
-  "/admin/cuentas/sellos":          "Conciliación con Sellos",
   "/admin/peritos":                 "Peritos",
   "/admin/peritos/nuevo":          "Alta de Perito",
   "/admin/expedientes-peritos":    "Expedientes de Peritos",
@@ -213,7 +211,6 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
       group: "General",
       items: [
         { href: "/admin",             icon: <BarChart3     size={18} strokeWidth={1.75} />, label: "Panel del Colegio" },
-        { href: "/admin/cuentas",     icon: <ShieldCheck   size={18} strokeWidth={1.75} />, label: "Cuentas" },
         { href: "/admin/mensajes",    icon: <MessageCircle size={18} strokeWidth={1.75} />, label: "Mensajes", badge: user.mensajesNoLeidos || undefined },
         { href: "/admin/comunicados", icon: <Megaphone     size={18} strokeWidth={1.75} />, label: "Comunicados" },
       ],
@@ -233,7 +230,6 @@ export default function AppShell({ children, user, pageTitle }: AppShellProps) {
       group: "Peritos",
       items: [
         { href: "/admin/peritos",              icon: <Scale      size={18} strokeWidth={1.75} />, label: "Padrón de Peritos" },
-        { href: "/admin/cuentas/sellos",       icon: <Link2      size={18} strokeWidth={1.75} />, label: "Conciliación Sellos" },
         { href: "/admin/expedientes-peritos",  icon: <Award      size={18} strokeWidth={1.75} />, label: "Expedientes" },
         { href: "/tesorero/cobranza-peritos",  icon: <Wallet     size={18} strokeWidth={1.75} />, label: "Cobranza Peritos" },
       ],
