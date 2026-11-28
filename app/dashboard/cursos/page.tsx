@@ -245,9 +245,9 @@ export default async function CursosPage() {
                     {i.calificacion && <span>· {i.calificacion.toFixed(1)} pts</span>}
                   </div>
                 </div>
-                <button className="btn sm" style={{ flexShrink: 0 }}>
-                  <Award size={13} strokeWidth={2} /> Constancia
-                </button>
+                {i.folio
+                  ? <a className="btn sm" style={{ flexShrink: 0 }} href={`/api/constancias/${i.id}`} download><Award size={13} strokeWidth={2} /> Constancia</a>
+                  : <span className="chip warn nodot" style={{ flexShrink: 0 }}>En emisión</span>}
               </div>
             ))}
           </div>

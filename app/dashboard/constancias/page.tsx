@@ -64,10 +64,9 @@ export default async function ConstanciasPage() {
                     <td className="mono">{i.curso.horas}</td>
                     <td className="mono">{i.calificacion?.toFixed(1) ?? "—"}</td>
                     <td style={{ textAlign: "right" }}>
-                      <button className="btn sm">
-                        <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
- Descargar PDF
-                      </button>
+                      {i.folio
+                        ? <a className="btn sm" href={`/api/constancias/${i.id}`} download><svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg> Descargar PDF</a>
+                        : <span className="chip warn nodot" title="El Colegio aún no asigna folio a esta constancia">En emisión</span>}
                     </td>
                   </tr>
                 ))}
