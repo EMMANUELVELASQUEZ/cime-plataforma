@@ -29,6 +29,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         })
 
         if (!usuario) return null
+        // Cuenta desactivada desde Administración → Cuentas
+        if (usuario.estado === "SUSPENDIDO") return null
 
         const valid = await bcrypt.compare(password, usuario.password)
         if (!valid) return null

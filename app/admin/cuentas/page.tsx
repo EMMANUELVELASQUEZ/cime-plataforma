@@ -1,26 +1,17 @@
 import Link from "next/link"
 import { Prisma } from "@prisma/client"
-import { Users, Scale, Landmark, ChevronRight, Search, Link2, ShieldCheck } from "lucide-react"
+import { Users, Scale, Landmark, ChevronRight, Search, Link2, ShieldCheck, Clock } from "lucide-react"
+import AccionesCuenta from "./AccionesCuenta"
 import { prisma } from "@/lib/prisma"
 import { TesHero } from "@/components/tesoreria/TesUI"
 
 export const dynamic = "force-dynamic"
 
 type Tab = "colegiados" | "peritos" | "tesoreria"
+const ROL_LABEL: Record<Tab, string> = { colegiados: "Colegiado", peritos: "Perito", tesoreria: "Tesorería" }
 const ROL: Record<Tab, "COLEGIADO" | "PERITO" | "CONTADOR_TESORERO"> = {
   colegiados: "COLEGIADO", peritos: "PERITO", tesoreria: "CONTADOR_TESORERO",
 }
-const EST: Record<string, { label: string; cls: string }> = {
-  VIGENTE:     { label: "Vigente",     cls: "ok" },
-  POR_RENOVAR: { label: "Por renovar", cls: "warn" },
-  SUSPENDIDO:  { label: "Suspendido",  cls: "bad" },
-}
-
-function initials(name: string) {
-  return name.replace(/^(Ing\.?|Lic\.?|Dr\.?|Mtro\.?|Mtra\.?)\s*/i, "")
-    .split(/\s+/).slice(0, 2).map(w => w[0] ?? "").join("").toUpperCase()
-}
-
 export default async function CuentasPage({ searchParams }: { searchParams: { tab?: string; q?: string } }) {
   const tab: Tab = (["colegiados", "peritos", "tesoreria"] as const).includes(searchParams.tab as Tab)
     ? searchParams.tab as Tab : "colegiados"
@@ -108,46 +99,42 @@ export default async function CuentasPage({ searchParams }: { searchParams: { ta
       ) : (
         <div className="acc-grid">
           {usuarios.map(u => {
-            const est = EST[u.estado] ?? EST.VIGENTE
+            const activo = u.estado !== "SUSPENDIDO"
+            const provisional = u.correo.endsWith("@cime-importado.mx")
             const href = tab === "colegiados" ? `/admin/colegiados/${u.id}` : tab === "peritos" ? `/admin/peritos/${u.id}` : null
-            const ident = tab === "colegiados" && u.numeroColegiado ? `CIME-VER-${u.numeroColegiado}`
-              : tab === "peritos" && u.numeroPerito ? `Perito No. ${u.numeroPerito}`
-              : tab === "tesoreria" ? (u.cargo ?? "Contador / Tesorero") : null
+            const num = tab === "colegiados" && u.numeroColegiado ? `CIME-VER-${u.numeroColegiado}`
+              : tab === "peritos" && u.numeroPerito ? `No. ${u.numeroPerito}` : null
+            const inicial = (u.nombre.replace(/^(Ing\.?|Lic\.?|Dr\.?|Mtro\.?|Mtra\.?)\s*/i, "")[0] ?? "?").toUpperCase()
 
             return (
-              <article key={u.id} className="acc-card">
-                <span className={`acc-badge ${est.cls === "ok" ? "ok" : "mute"}`}>{est.label}</span>
-
+              <article key={u.id} className={`acc-card${activo ? "" : " is-off"}`}>
                 <div className="acc-card__head">
-                  <div className="acc-avatar">{initials(u.nombre)}</div>
+                  <div className="acc-avatar">{inicial}</div>
                   <div style={{ minWidth: 0 }}>
                     <div className="acc-name">{u.nombre}</div>
                     <div className="acc-mail" title={u.correo}>{u.correo}</div>
-                    {ident && <span className="acc-id">{ident}</span>}
                   </div>
                 </div>
 
-                {tab !== "tesoreria" ? (
-                  <div className="acc-stats">
-                    <div className="acc-stat gold"><b>{u.horas}</b><span>Horas</span></div>
-                    <div className="acc-stat"><b>{u.horasMeta}</b><span>Meta</span></div>
-                    <div className={`acc-stat ${est.cls}`}><b style={{ fontSize: ".85rem", paddingTop: 3 }}>{u.vigencia ?? "—"}</b><span>Vigencia</span></div>
-                  </div>
-                ) : (
-                  <div className="acc-stats" style={{ gridTemplateColumns: "1fr 1fr" }}>
-                    <div className="acc-stat gold"><b>{u.alta}</b><span>Alta</span></div>
-                    <div className={`acc-stat ${est.cls}`}><b style={{ fontSize: ".85rem", paddingTop: 3 }}>{est.label}</b><span>Estado</span></div>
-                  </div>
-                )}
+                <div className="acc-sep" />
 
-                <div className="acc-foot">
-                  <span>
-                    {`Actualizado: ${u.updatedAt.toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" })}`}
-                  </span>
-                  {href
-                    ? <Link href={href} className="acc-link">Ver expediente <ChevronRight size={14} strokeWidth={2.5} /></Link>
-                    : <a href={`mailto:${u.correo}`} className="acc-link">Contactar <ChevronRight size={14} strokeWidth={2.5} /></a>}
+                <div className="acc-chips">
+                  <span className="acc-chip rol">{ROL_LABEL[tab]}</span>
+                  {activo
+                    ? <span className={`acc-chip ${u.estado === "POR_RENOVAR" ? "warn" : "ok"}`}>{u.estado === "POR_RENOVAR" ? "Por renovar" : "Activo"}</span>
+                    : <span className="acc-chip bad">Desactivado</span>}
+                  {num && <span className="acc-chip num">{num}</span>}
+                  {provisional && <span className="acc-chip warn" title="Correo provisional: esta cuenta aún no tiene acceso real">Correo provisional</span>}
                 </div>
+
+                <div className="acc-meta">
+                  <span><Clock size={12} strokeWidth={2} /> Actualizado {u.updatedAt.toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric", timeZone: "America/Mexico_City" })}</span>
+                  {href && <Link href={href} className="acc-link">Expediente <ChevronRight size={13} strokeWidth={2.5} /></Link>}
+                </div>
+
+                <div className="acc-sep push" />
+
+                <AccionesCuenta id={u.id} nombre={u.nombre} correo={u.correo} activo={activo} />
               </article>
             )
           })}
