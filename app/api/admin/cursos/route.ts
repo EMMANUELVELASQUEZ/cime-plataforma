@@ -29,7 +29,8 @@ export async function POST(req: Request) {
       },
     })
     return NextResponse.json(curso, { status: 201 })
-  } catch {
+  } catch (e: any) {
+    if (e?.code === "P2002") return NextResponse.json({ error: `Ya existe un curso con el código «${codigo}».` }, { status: 409 })
     return NextResponse.json({ error: "Error al crear curso" }, { status: 500 })
   }
 }

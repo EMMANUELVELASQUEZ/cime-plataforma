@@ -41,7 +41,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       data: updateData,
     })
     return NextResponse.json({ id: usuario.id })
-  } catch {
+  } catch (e: any) {
+    if (e?.code === "P2002") return NextResponse.json({ error: "Ese correo o número ya pertenece a otra cuenta." }, { status: 409 })
     return NextResponse.json({ error: "Error al actualizar." }, { status: 500 })
   }
 }

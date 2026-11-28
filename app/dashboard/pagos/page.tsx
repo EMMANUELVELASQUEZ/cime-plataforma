@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import ReferenciaPago from "./ReferenciaPago"
 
 export const dynamic = "force-dynamic"
 
@@ -9,15 +10,26 @@ export default async function PagosPage() {
   const session = await auth()
   const userId = (session?.user as any)?.id
 
-  const pagos = await prisma.pago.findMany({
-    where: { usuarioId: userId },
-    orderBy: { createdAt: "desc" },
-  })
+  const anio = new Date().getFullYear()
+  const inicioAnio = new Date(anio, 0, 1)
+  const [pagos, usuario, planAnual] = await Promise.all([
+    prisma.pago.findMany({ where: { usuarioId: userId }, orderBy: { createdAt: "desc" } }),
+    prisma.usuario.findUnique({ where: { id: userId }, select: { nombre: true, numeroColegiado: true, numeroPerito: true } }),
+    prisma.planPago.findFirst({ where: { activo: true, tipo: "ANUALIDAD" }, orderBy: { updatedAt: "desc" } }),
+  ])
 
-  const pendientes = pagos.filter(p => p.estado === "PENDIENTE")
+  const pendientes = pagos.filter(p => p.estado === "PENDIENTE" || p.estado === "VENCIDO")
   const totalPendiente = pendientes.reduce((s, p) => s + p.monto, 0)
-  const pagados = pagos.filter(p => p.estado === "PAGADO")
-  const totalPagado = pagados.reduce((s, p) => s + p.monto, 0)
+  const totalPagado = pagos.filter(p => p.estado === "PAGADO" && p.createdAt >= inicioAnio).reduce((s, p) => s + p.monto, 0)
+
+  // Cuota anual del año en curso, según los pagos reales del colegiado
+  const cuota = pagos.find(p => /cuota|anual|anualidad|colegiaci/i.test(p.concepto) && p.createdAt >= inicioAnio && p.estado !== "CANCELADO")
+  const cuotaImporte = cuota?.monto ?? planAnual?.monto ?? null
+  const cuotaEstado = !cuota ? { label: "Sin registro", cls: "" }
+    : cuota.estado === "PAGADO" ? { label: "Pagada", cls: "ok" }
+    : cuota.estado === "VENCIDO" ? { label: "Vencida", cls: "bad" }
+    : { label: "Pendiente", cls: "warn" }
+  const chip = (e: string) => e === "PAGADO" ? "ok" : e === "PENDIENTE" ? "warn" : e === "VENCIDO" ? "bad" : ""
 
   return (
     <>
@@ -37,10 +49,12 @@ export default async function PagosPage() {
             </div>
             <div className="muted" style={{ fontSize: ".85rem", marginTop: 4 }}>Tienes {pendientes.length} pago{pendientes.length !== 1 ? "s" : ""} pendiente{pendientes.length !== 1 ? "s" : ""}</div>
           </div>
-          <button className="btn primary">
-            <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M3 5m0 3a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v8a3 3 0 0 1 -3 3h-12a3 3 0 0 1 -3 -3z" /><path d="M3 10l18 0" /><path d="M7 15l.01 0" /><path d="M11 15l2 0" /></svg>
- Generar referencia
-          </button>
+          <ReferenciaPago
+            nombre={usuario?.nombre ?? ""}
+            numero={usuario?.numeroColegiado ?? usuario?.numeroPerito ?? null}
+            pendientes={pendientes.map(p => ({ folio: p.folio, concepto: p.concepto, monto: p.monto }))}
+            total={totalPendiente}
+          />
         </div>
       )}
 
@@ -48,7 +62,7 @@ export default async function PagosPage() {
         <div className="card card-b" style={{ display: "grid", gap: 12 }}>
           <span className="eyebrow">Resumen</span>
           <dl className="kv">
-            <dt>Total pagado 2026</dt>
+            <dt>Total pagado {anio}</dt>
             <dd className="mono" style={{ color: "var(--ok)" }}>{money(totalPagado)}</dd>
             <dt>Pendiente</dt>
             <dd className="mono" style={{ color: totalPendiente > 0 ? "var(--warn)" : "var(--ok)" }}>{money(totalPendiente)}</dd>
@@ -57,14 +71,14 @@ export default async function PagosPage() {
           </dl>
         </div>
         <div className="card card-b" style={{ display: "grid", gap: 12, alignContent: "start" }}>
-          <span className="eyebrow">Cuota anual 2026</span>
+          <span className="eyebrow">Cuota anual {anio}</span>
           <dl className="kv">
             <dt>Importe</dt>
-            <dd className="mono">{money(2400)}</dd>
+            <dd className="mono">{cuotaImporte != null ? money(cuotaImporte) : "—"}</dd>
             <dt>Vigencia</dt>
-            <dd>1 ene – 31 dic 2026</dd>
+            <dd>1 ene – 31 dic {anio}</dd>
             <dt>Estatus</dt>
-            <dd><span className="chip ok nodot">Pagada</span></dd>
+            <dd><span className={`chip nodot ${cuotaEstado.cls}`}>{cuotaEstado.label}</span></dd>
           </dl>
         </div>
       </div>
@@ -82,7 +96,7 @@ export default async function PagosPage() {
                     <td className="mono" style={{ fontSize: ".8rem" }}>{p.folio}</td>
                     <td className="num">{new Date(p.createdAt).toLocaleDateString("es-MX", { day: "numeric", month: "short", year: "numeric" })}</td>
                     <td className="mono">{money(p.monto)}</td>
-                    <td><span className={`chip nodot ${p.estado === "PAGADO" ? "ok" : p.estado === "PENDIENTE" ? "warn" : ""}`}>{p.estado}</span></td>
+                    <td><span className={`chip nodot ${chip(p.estado)}`}>{p.estado}</span></td>
                   </tr>
                 ))}
               </tbody>

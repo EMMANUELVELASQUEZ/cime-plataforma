@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { auth } from "@/lib/auth"
 import Link from "next/link"
 import { CreditCard } from "lucide-react"
 import { TesHero } from "@/components/tesoreria/TesUI"
@@ -26,6 +27,7 @@ export default async function PagosTesoreronPage({ searchParams }: { searchParam
   const concepto = searchParams.concepto ?? ""
   const page     = Math.max(1, parseInt(searchParams.page ?? "1"))
   const PER      = 20
+  const esAdmin  = ((await auth())?.user as any)?.role === "ADMIN"
 
   const where = {
     ...(estado && { estado }),
@@ -83,15 +85,17 @@ export default async function PagosTesoreronPage({ searchParams }: { searchParam
       />
       <div className="page-head" style={{ justifyContent: "flex-end", marginTop: -8, marginBottom: 14 }}>
         <div className="actions">
-          <a href={`/api/admin/pagos/export?${new URLSearchParams({ ...(q && { q }), ...(estado && { estado }) }).toString()}`}
+          <a download href={`/api/admin/pagos/export?${new URLSearchParams({ ...(q && { q }), ...(estado && { estado }), ...(concepto && { concepto }) }).toString()}`}
             className="btn">
             <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
  Exportar CSV
           </a>
-          <Link href="/admin/pagos/nuevo" className="btn gold">
+{esAdmin && (
+          <Link href="/admin/pagos" className="btn gold">
             <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
- Nuevo pago
+ Registrar pago
           </Link>
+          )}
         </div>
       </div>
 

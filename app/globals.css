@@ -1419,3 +1419,15 @@ dialog[open] { animation: dialogIn .18s cubic-bezier(.22,1,.36,1); }
 .cta-bar { gap: 6px; }
 .cta-bar .cta-btn { font-size: .76rem; gap: 5px; overflow: hidden; }
 .cta-btn.square { width: 36px; }
+
+/* ══ Impresión / Guardar como PDF ══ */
+@media print {
+  @page { size: letter landscape; margin: 12mm; }
+  html, body { background: #fff !important; color: #000 !important; }
+  aside, header, nav, .btn, button, .acc-tabs, .acc-search, .tes-toolbar form, .no-print { display: none !important; }
+  main, .view { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: none !important; }
+  .card, .tes-kpi, .acc-card { box-shadow: none !important; break-inside: avoid; border-color: #ccc !important; }
+  .tes-hero { box-shadow: none !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  table { font-size: 9pt; } thead { display: table-header-group; } tr { break-inside: avoid; }
+  a[href]::after { content: none !important; }
+}

@@ -27,7 +27,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       },
     })
     return NextResponse.json(curso)
-  } catch {
+  } catch (e: any) {
+    if (e?.code === "P2002") return NextResponse.json({ error: "Ya existe otro curso con ese código." }, { status: 409 })
     return NextResponse.json({ error: "Error al actualizar curso" }, { status: 500 })
   }
 }
