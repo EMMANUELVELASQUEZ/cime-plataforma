@@ -6,6 +6,7 @@ const nextConfig = {
     serverActions: { allowedOrigins: ["*"] },
     instrumentationHook: true,
     optimizePackageImports: ["lucide-react"],
+    serverComponentsExternalPackages: ["mysql2", "docx"],
   },
   // Recursos de marca: caché en el navegador (1 semana) para no descargarlos en cada visita
   async headers() {

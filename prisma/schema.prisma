@@ -25,6 +25,9 @@ model Usuario {
   vigencia        String?
   horas           Int             @default(0)
   horasMeta       Int             @default(60)
+  // Vinculación con el sistema de sellos (MySQL) — id de `usuarios` en sellos
+  selloUsuarioId   Int?           @unique
+  selloVinculadoAt DateTime?
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 

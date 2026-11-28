@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import ComunicadosGrid, { type Item } from "@/components/ComunicadosGrid"
+import { Megaphone } from "lucide-react"
+import { TesHero } from "@/components/tesoreria/TesUI"
 
 export const dynamic = "force-dynamic"
 
@@ -46,18 +48,15 @@ export default async function AvisosTesoreroPage() {
 
   return (
     <>
-      <div className="page-head">
-        <div>
-          <p style={{ fontSize: ".7rem", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--muted)", marginBottom: 4 }}>
- PORTAL CIME · COMUNICADOS OFICIALES
-          </p>
-          <h1>Avisos del Colegio</h1>
-          <p style={{ color: "var(--muted)" }}>Convocatorias, cuotas, eventos y comunicados emitidos por el Consejo Directivo.</p>
-        </div>
-        <span className="chip nodot" style={{ background: "#0D206018", color: "#0D2060", fontWeight: 700, alignSelf: "flex-start" }}>
-          {total} comunicado{total !== 1 ? "s" : ""}
-        </span>
-      </div>
+      <TesHero
+        eyebrow="Portal CIME · Comunicados oficiales"
+        title="Avisos del"
+        highlight="Colegio"
+        sub="Convocatorias, cuotas, eventos y comunicados emitidos por el Consejo Directivo"
+        icon={<Megaphone size={26} strokeWidth={1.6} />}
+        figure={total}
+        figureLabel={`comunicado${total !== 1 ? "s" : ""}`}
+      />
 
       <ComunicadosGrid items={items} />
     </>

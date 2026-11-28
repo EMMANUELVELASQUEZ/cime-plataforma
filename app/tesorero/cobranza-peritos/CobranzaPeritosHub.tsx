@@ -42,11 +42,11 @@ interface Props {
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const ESTADO_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
-  "PAGÓ":      { label: "PAGÓ",      color: "#059669", bg: "#ECFDF5", border: "#A7F3D0" },
-  "NO PAGÓ":   { label: "NO PAGÓ",   color: "#DC2626", bg: "#FEF2F2", border: "#FECACA" },
-  "PARCIAL":   { label: "PARCIAL",   color: "#D97706", bg: "#FFFBEB", border: "#FDE68A" },
-  "EXENTO":    { label: "EXENTO",    color: "#6B7280", bg: "#F9FAFB", border: "#E5E7EB" },
-  "PENDIENTE": { label: "PENDIENTE", color: "#1D4ED8", bg: "#EFF6FF", border: "#BFDBFE" },
+  "PAGÓ":      { label: "PAGÓ",      color: "var(--ok)", bg: "var(--ok-bg)", border: "var(--ok-ring)" },
+  "NO PAGÓ":   { label: "NO PAGÓ",   color: "var(--bad)", bg: "var(--bad-bg)", border: "var(--bad-ring)" },
+  "PARCIAL":   { label: "PARCIAL",   color: "var(--warn)", bg: "var(--warn-bg)", border: "var(--warn-ring)" },
+  "EXENTO":    { label: "EXENTO",    color: "var(--muted)", bg: "var(--surface-2)", border: "var(--line)" },
+  "PENDIENTE": { label: "PENDIENTE", color: "var(--brand)", bg: "var(--info-bg)", border: "var(--info-ring)" },
 }
 
 const MESES = [
@@ -59,10 +59,10 @@ function fmt(n: number) {
 }
 
 function getStatusChip(saldo: number, pagos: PagoCursoPerito[]) {
-  if (pagos.length === 0) return { label: "SIN REGISTROS", color: "#6B7280", bg: "#F9FAFB" }
-  if (saldo <= 0) return { label: "AL DÍA", color: "#059669", bg: "#ECFDF5" }
-  if (saldo < (pagos.reduce((s, p) => s + p.monto, 0) * 0.5)) return { label: "PENDIENTE", color: "#D97706", bg: "#FFFBEB" }
-  return { label: "CON DEUDA", color: "#DC2626", bg: "#FEF2F2" }
+  if (pagos.length === 0) return { label: "SIN REGISTROS", color: "var(--muted)", bg: "var(--surface-2)" }
+  if (saldo <= 0) return { label: "AL DÍA", color: "var(--ok)", bg: "var(--ok-bg)" }
+  if (saldo < (pagos.reduce((s, p) => s + p.monto, 0) * 0.5)) return { label: "PENDIENTE", color: "var(--warn)", bg: "var(--warn-bg)" }
+  return { label: "CON DEUDA", color: "var(--bad)", bg: "var(--bad-bg)" }
 }
 
 function getInitials(name: string) {
@@ -71,7 +71,7 @@ function getInitials(name: string) {
     .split(/\s+/).slice(0, 2).map((w: string) => w[0] ?? "").join("").toUpperCase()
 }
 
-const AVATAR_COLORS = ["#1E3A5F", "#2D4A6B", "#1A3A4A", "#2A3D5A", "#1D3557", "#2B4162"]
+const AVATAR_COLORS = ["var(--navy)", "#13306F", "#1549B8", "#1B3C7A", "#102A6B", "#1A4290"]
 function avatarColor(name: string) {
   return AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length]
 }
@@ -136,16 +136,16 @@ function AddRowForm({ peritoId, onAdded }: AddRowFormProps) {
           padding: "7px 14px",
           marginTop: 8,
           background: "none",
-          border: "1px dashed #CBD5E1",
+          border: "1px dashed var(--line-2)",
           borderRadius: 6,
-          color: "#0D2060",
+          color: "var(--ink)",
           fontSize: 13,
           fontWeight: 600,
           cursor: "pointer",
           transition: "all .15s",
         }}
-        onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#0D2060"; e.currentTarget.style.background = "#F0F4FF" }}
-        onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#CBD5E1"; e.currentTarget.style.background = "none" }}
+        onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--navy)"; e.currentTarget.style.background = "var(--surface-3)" }}
+        onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--line-2)"; e.currentTarget.style.background = "none" }}
       >
         <span style={{ fontSize: 16, lineHeight: 1 }}>+</span> Agregar concepto
       </button>
@@ -156,11 +156,11 @@ function AddRowForm({ peritoId, onAdded }: AddRowFormProps) {
     <form onSubmit={handleSubmit} style={{
       marginTop: 8,
       padding: "14px 16px",
-      background: "#F8FAFF",
-      border: "1px solid #BFDBFE",
+      background: "var(--surface-2)",
+      border: "1px solid var(--info-ring)",
       borderRadius: 8,
     }}>
-      <div style={{ fontSize: 12, fontWeight: 700, color: "#0D2060", marginBottom: 10, textTransform: "uppercase", letterSpacing: ".06em" }}>
+      <div style={{ fontSize: 12, fontWeight: 700, color: "var(--ink)", marginBottom: 10, textTransform: "uppercase", letterSpacing: ".06em" }}>
         Nuevo concepto
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "80px 100px 1fr 110px 110px 130px", gap: 8, marginBottom: 8 }}>
@@ -177,7 +177,7 @@ function AddRowForm({ peritoId, onAdded }: AddRowFormProps) {
           </select>
         </div>
         <div>
-          <label style={labelStyle}>Concepto / Curso <span style={{ color: "#DC2626" }}>*</span></label>
+          <label style={labelStyle}>Concepto / Curso <span style={{ color: "var(--bad)" }}>*</span></label>
           <input type="text" value={form.concepto} onChange={e => setForm(f => ({ ...f, concepto: e.target.value }))}
             style={inputStyle} placeholder="Nombre del curso..." required />
         </div>
@@ -206,7 +206,7 @@ function AddRowForm({ peritoId, onAdded }: AddRowFormProps) {
       <div style={{ display: "flex", gap: 8 }}>
         <button type="submit" disabled={saving} style={{
           padding: "7px 18px",
-          background: saving ? "#94A3B8" : "#0D2060",
+          background: saving ? "var(--muted-2)" : "var(--navy)",
           color: "#fff",
           border: "none",
           borderRadius: 6,
@@ -219,10 +219,10 @@ function AddRowForm({ peritoId, onAdded }: AddRowFormProps) {
         <button type="button" onClick={() => setOpen(false)} style={{
           padding: "7px 14px",
           background: "none",
-          border: "1px solid #CBD5E1",
+          border: "1px solid var(--line-2)",
           borderRadius: 6,
           fontSize: 13,
-          color: "#64748B",
+          color: "var(--muted)",
           cursor: "pointer",
         }}>
           Cancelar
@@ -236,7 +236,7 @@ const labelStyle: React.CSSProperties = {
   display: "block",
   fontSize: 10,
   fontWeight: 700,
-  color: "#64748B",
+  color: "var(--muted)",
   textTransform: "uppercase",
   letterSpacing: ".05em",
   marginBottom: 3,
@@ -245,11 +245,11 @@ const labelStyle: React.CSSProperties = {
 const inputStyle: React.CSSProperties = {
   width: "100%",
   padding: "5px 8px",
-  border: "1px solid #CBD5E1",
+  border: "1px solid var(--line-2)",
   borderRadius: 5,
   fontSize: 13,
-  color: "#0F172A",
-  background: "#fff",
+  color: "var(--fg)",
+  background: "var(--surface)",
   outline: "none",
   boxSizing: "border-box",
 }
@@ -317,7 +317,7 @@ function EditableCell({ value, type = "text", options = [], onSave, style = {}, 
         borderRadius: 3,
         minHeight: 20,
         transition: "background .1s",
-        color: saving ? "#94A3B8" : undefined,
+        color: saving ? "var(--muted-2)" : undefined,
         ...style,
       }}
       onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(13,32,96,.06)" }}
@@ -419,7 +419,7 @@ function PaymentTable({ perito, onUpdate }: PaymentTableProps) {
     fontWeight: 700,
     letterSpacing: ".07em",
     textTransform: "uppercase",
-    color: "#E0E8FF",
+    color: "var(--info-bg)",
     whiteSpace: "nowrap",
     borderBottom: "2px solid rgba(255,255,255,.12)",
   }
@@ -429,20 +429,20 @@ function PaymentTable({ perito, onUpdate }: PaymentTableProps) {
       {/* Summary cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 20 }}>
         {[
-          { label: "Total Facturado", value: fmt(totalMonto), color: "#0D2060", accent: "#1E40AF" },
-          { label: "Total Pagado", value: fmt(totalPagado), color: "#065F46", accent: "#059669" },
-          { label: "Saldo Pendiente", value: fmt(totalSaldo), color: totalSaldo > 0 ? "#991B1B" : "#065F46", accent: totalSaldo > 0 ? "#DC2626" : "#059669" },
-          { label: "Cursos Registrados", value: String(pagos.length), color: "#1E3A5F", accent: "#2563EB" },
+          { label: "Total Facturado", value: fmt(totalMonto), color: "var(--ink)", accent: "var(--brand)" },
+          { label: "Total Pagado", value: fmt(totalPagado), color: "var(--ok)", accent: "var(--ok)" },
+          { label: "Saldo Pendiente", value: fmt(totalSaldo), color: totalSaldo > 0 ? "var(--bad)" : "var(--ok)", accent: totalSaldo > 0 ? "var(--bad)" : "var(--ok)" },
+          { label: "Cursos Registrados", value: String(pagos.length), color: "var(--ink)", accent: "var(--gold)" },
         ].map((card) => (
           <div key={card.label} style={{
-            background: "#fff",
-            border: "1px solid #E2E8F0",
+            background: "var(--surface)",
+            border: "1px solid var(--line)",
             borderRadius: 8,
             padding: "14px 16px",
             borderLeft: `4px solid ${card.accent}`,
             boxShadow: "0 1px 3px rgba(0,0,0,.06)",
           }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#64748B", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 4 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 4 }}>
               {card.label}
             </div>
             <div style={{ fontSize: 20, fontWeight: 800, color: card.color, fontFamily: "monospace", letterSpacing: "-.01em" }}>
@@ -454,7 +454,7 @@ function PaymentTable({ perito, onUpdate }: PaymentTableProps) {
 
       {/* Table toolbar */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: "#0D2060", textTransform: "uppercase", letterSpacing: ".06em" }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "var(--ink)", textTransform: "uppercase", letterSpacing: ".06em" }}>
           Registro de Pagos
         </div>
         <button onClick={downloadCSV} style={{
@@ -462,7 +462,7 @@ function PaymentTable({ perito, onUpdate }: PaymentTableProps) {
           alignItems: "center",
           gap: 6,
           padding: "6px 14px",
-          background: "#0D2060",
+          background: "var(--navy)",
           color: "#fff",
           border: "none",
           borderRadius: 6,
@@ -476,10 +476,10 @@ function PaymentTable({ perito, onUpdate }: PaymentTableProps) {
       </div>
 
       {/* Table */}
-      <div style={{ overflowX: "auto", borderRadius: 8, border: "1px solid #E2E8F0", boxShadow: "0 2px 8px rgba(0,0,0,.05)" }}>
+      <div style={{ overflowX: "auto", borderRadius: 8, border: "1px solid var(--line)", boxShadow: "0 2px 8px rgba(0,0,0,.05)" }}>
         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
           <thead>
-            <tr style={{ background: "#0D2060" }}>
+            <tr style={{ background: "var(--navy)" }}>
               <th style={{ ...thStyle, width: 60 }}>Año</th>
               <th style={{ ...thStyle, width: 90 }}>Mes</th>
               <th style={{ ...thStyle }}>Concepto / Curso</th>
@@ -494,7 +494,7 @@ function PaymentTable({ perito, onUpdate }: PaymentTableProps) {
           <tbody>
             {pagos.length === 0 && (
               <tr>
-                <td colSpan={9} style={{ padding: "28px 16px", textAlign: "center", color: "#94A3B8", fontSize: 13 }}>
+                <td colSpan={9} style={{ padding: "28px 16px", textAlign: "center", color: "var(--muted-2)", fontSize: 13 }}>
                   No hay registros de pago. Use el botón para agregar el primer concepto.
                 </td>
               </tr>
@@ -524,7 +524,7 @@ function PaymentTable({ perito, onUpdate }: PaymentTableProps) {
                       }}
                     />
                   </td>
-                  <td style={{ padding: "6px 10px", fontWeight: 500, color: "#0F172A", maxWidth: 240 }}>
+                  <td style={{ padding: "6px 10px", fontWeight: 500, color: "var(--fg)", maxWidth: 240 }}>
                     <EditableCell
                       value={pago.concepto}
                       type="text"
@@ -536,7 +536,7 @@ function PaymentTable({ perito, onUpdate }: PaymentTableProps) {
                       value={pago.monto.toFixed(2)}
                       type="number"
                       align="right"
-                      style={{ color: "#1E3A5F", fontWeight: 600 }}
+                      style={{ color: "var(--ink)", fontWeight: 600 }}
                       onSave={val => saveField(pago.id, "monto", val)}
                     />
                   </td>
@@ -545,7 +545,7 @@ function PaymentTable({ perito, onUpdate }: PaymentTableProps) {
                       value={pago.pagado.toFixed(2)}
                       type="number"
                       align="right"
-                      style={{ color: "#065F46", fontWeight: 600 }}
+                      style={{ color: "var(--ok)", fontWeight: 600 }}
                       onSave={val => saveField(pago.id, "pagado", val)}
                     />
                   </td>
@@ -554,7 +554,7 @@ function PaymentTable({ perito, onUpdate }: PaymentTableProps) {
                       display: "block",
                       textAlign: "right",
                       fontWeight: 700,
-                      color: pago.saldo > 0 ? "#DC2626" : "#059669",
+                      color: pago.saldo > 0 ? "var(--bad)" : "var(--ok)",
                       padding: "2px 4px",
                     }}>
                       {fmt(pago.saldo)}
@@ -579,12 +579,12 @@ function PaymentTable({ perito, onUpdate }: PaymentTableProps) {
                       }}
                     />
                   </td>
-                  <td style={{ padding: "6px 10px", color: "#64748B" }}>
+                  <td style={{ padding: "6px 10px", color: "var(--muted)" }}>
                     <EditableCell
                       value={pago.notas ?? ""}
                       type="text"
                       onSave={val => saveField(pago.id, "notas", val)}
-                      style={{ color: "#64748B", fontSize: 12 }}
+                      style={{ color: "var(--muted)", fontSize: 12 }}
                     />
                   </td>
                   <td style={{ padding: "6px 8px", textAlign: "center" }}>
@@ -596,14 +596,14 @@ function PaymentTable({ perito, onUpdate }: PaymentTableProps) {
                         background: "none",
                         border: "none",
                         cursor: deleting === pago.id ? "not-allowed" : "pointer",
-                        color: deleting === pago.id ? "#CBD5E1" : "#F87171",
+                        color: deleting === pago.id ? "var(--line-2)" : "var(--bad)",
                         fontSize: 15,
                         lineHeight: 1,
                         padding: "2px 4px",
                         borderRadius: 4,
                         transition: "color .15s, background .15s",
                       }}
-                      onMouseEnter={e => { if (deleting !== pago.id) (e.currentTarget as HTMLElement).style.background = "#FEE2E2" }}
+                      onMouseEnter={e => { if (deleting !== pago.id) (e.currentTarget as HTMLElement).style.background = "var(--bad-bg)" }}
                       onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = "none" }}
                     >
                       {deleting === pago.id ? "..." : "×"}
@@ -615,13 +615,13 @@ function PaymentTable({ perito, onUpdate }: PaymentTableProps) {
           </tbody>
           {pagos.length > 0 && (
             <tfoot>
-              <tr style={{ background: "#0D2060", borderTop: "2px solid rgba(255,255,255,.2)" }}>
-                <td colSpan={3} style={{ padding: "9px 10px", color: "#E0E8FF", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em" }}>
+              <tr style={{ background: "var(--navy)", borderTop: "2px solid rgba(255,255,255,.2)" }}>
+                <td colSpan={3} style={{ padding: "9px 10px", color: "var(--info-bg)", fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: ".06em" }}>
                   TOTALES
                 </td>
-                <td style={{ padding: "9px 10px", textAlign: "right", fontFamily: "monospace", fontWeight: 700, color: "#E0E8FF" }}>{fmt(totalMonto)}</td>
-                <td style={{ padding: "9px 10px", textAlign: "right", fontFamily: "monospace", fontWeight: 700, color: "#6EE7B7" }}>{fmt(totalPagado)}</td>
-                <td style={{ padding: "9px 10px", textAlign: "right", fontFamily: "monospace", fontWeight: 700, color: totalSaldo > 0 ? "#FCA5A5" : "#6EE7B7" }}>{fmt(totalSaldo)}</td>
+                <td style={{ padding: "9px 10px", textAlign: "right", fontFamily: "monospace", fontWeight: 700, color: "var(--info-bg)" }}>{fmt(totalMonto)}</td>
+                <td style={{ padding: "9px 10px", textAlign: "right", fontFamily: "monospace", fontWeight: 700, color: "var(--ok-ring)" }}>{fmt(totalPagado)}</td>
+                <td style={{ padding: "9px 10px", textAlign: "right", fontFamily: "monospace", fontWeight: 700, color: totalSaldo > 0 ? "var(--bad-ring)" : "var(--ok-ring)" }}>{fmt(totalSaldo)}</td>
                 <td colSpan={3}></td>
               </tr>
             </tfoot>
@@ -824,7 +824,7 @@ export default function CobranzaPeritosHub({ initialData }: Props) {
   }
 
   return (
-    <div style={{ display: "flex", height: "calc(100vh - 60px)", overflow: "hidden", background: "#F1F5F9" }}>
+    <div style={{ display: "flex", height: "calc(100vh - 60px)", overflow: "hidden", background: "var(--surface-2)" }}>
 
       {/* LEFT PANEL */}
       <div style={{
@@ -832,14 +832,14 @@ export default function CobranzaPeritosHub({ initialData }: Props) {
         flexShrink: 0,
         display: "flex",
         flexDirection: "column",
-        background: "#fff",
-        borderRight: "1px solid #E2E8F0",
+        background: "var(--surface)",
+        borderRight: "1px solid var(--line)",
         overflow: "hidden",
       }}>
         {/* Panel header */}
-        <div style={{ padding: "16px 14px 12px", borderBottom: "1px solid #E2E8F0", background: "#0D2060" }}>
+        <div style={{ padding: "16px 14px 12px", borderBottom: "1px solid var(--line)", background: "var(--navy)" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: "#93C5FD", textTransform: "uppercase", letterSpacing: ".08em" }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: "var(--info-ring)", textTransform: "uppercase", letterSpacing: ".08em" }}>
               Cobranza de Peritos
             </div>
             <button
@@ -851,7 +851,7 @@ export default function CobranzaPeritosHub({ initialData }: Props) {
                 alignItems: "center",
                 gap: 5,
                 padding: "5px 11px",
-                background: exporting ? "rgba(255,255,255,.1)" : "#16A34A",
+                background: exporting ? "rgba(255,255,255,.1)" : "var(--ok)",
                 color: "#fff",
                 border: "none",
                 borderRadius: 5,
@@ -862,8 +862,8 @@ export default function CobranzaPeritosHub({ initialData }: Props) {
                 whiteSpace: "nowrap",
                 transition: "background .15s",
               }}
-              onMouseEnter={e => { if (!exporting) e.currentTarget.style.background = "#15803D" }}
-              onMouseLeave={e => { if (!exporting) e.currentTarget.style.background = "#16A34A" }}
+              onMouseEnter={e => { if (!exporting) e.currentTarget.style.background = "var(--ok)" }}
+              onMouseLeave={e => { if (!exporting) e.currentTarget.style.background = "var(--ok)" }}
             >
               {exporting ? "Generando..." : "Exportar Excel"}
             </button>
@@ -893,7 +893,7 @@ export default function CobranzaPeritosHub({ initialData }: Props) {
         {/* List */}
         <div style={{ flex: 1, overflowY: "auto" }}>
           {filtered.length === 0 && (
-            <div style={{ padding: "24px 14px", textAlign: "center", color: "#94A3B8", fontSize: 13 }}>
+            <div style={{ padding: "24px 14px", textAlign: "center", color: "var(--muted-2)", fontSize: 13 }}>
               No se encontraron peritos
             </div>
           )}
@@ -911,14 +911,14 @@ export default function CobranzaPeritosHub({ initialData }: Props) {
                   display: "block",
                   textAlign: "left",
                   padding: "12px 14px",
-                  background: isSelected ? "#EFF6FF" : "transparent",
-                  borderBottom: "1px solid #F1F5F9",
+                  background: isSelected ? "var(--info-bg)" : "transparent",
+                  borderBottom: "1px solid var(--surface-2)",
                   border: "none",
-                  borderLeft: isSelected ? "3px solid #0D2060" : "3px solid transparent",
+                  borderLeft: isSelected ? "3px solid var(--navy)" : "3px solid transparent",
                   cursor: "pointer",
                   transition: "background .1s",
                 }}
-                onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = "#F8FAFC" }}
+                onMouseEnter={e => { if (!isSelected) e.currentTarget.style.background = "var(--surface-2)" }}
                 onMouseLeave={e => { if (!isSelected) e.currentTarget.style.background = "transparent" }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -939,24 +939,24 @@ export default function CobranzaPeritosHub({ initialData }: Props) {
                     {getInitials(p.nombre)}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: "#0F172A", lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: "var(--fg)", lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                       {p.nombre}
                     </div>
-                    <div style={{ fontSize: 10, color: "#64748B", fontFamily: "monospace", marginTop: 1 }}>
+                    <div style={{ fontSize: 10, color: "var(--muted)", fontFamily: "monospace", marginTop: 1 }}>
                       {p.numeroPerito ? `CIME-PER-${p.numeroPerito}` : "Sin número"}
                     </div>
                     {p.total > 0 && (
                       <div style={{ marginTop: 5 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "#94A3B8", marginBottom: 2 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "var(--muted-2)", marginBottom: 2 }}>
                           <span>{fmt(p.pagado)}</span>
                           <span>{fmt(p.total)}</span>
                         </div>
-                        <div style={{ height: 4, background: "#E2E8F0", borderRadius: 2, overflow: "hidden" }}>
+                        <div style={{ height: 4, background: "var(--line)", borderRadius: 2, overflow: "hidden" }}>
                           <div style={{
                             height: "100%",
                             borderRadius: 2,
                             width: `${pct}%`,
-                            background: pct === 100 ? "#059669" : pct > 50 ? "#D97706" : "#DC2626",
+                            background: pct === 100 ? "var(--ok)" : pct > 50 ? "var(--warn)" : "var(--bad)",
                             transition: "width .3s",
                           }} />
                         </div>
@@ -985,7 +985,7 @@ export default function CobranzaPeritosHub({ initialData }: Props) {
       {/* RIGHT PANEL */}
       <div style={{ flex: 1, overflow: "auto", padding: "20px 24px" }}>
         {!selected ? (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", color: "#94A3B8", fontSize: 15 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", color: "var(--muted-2)", fontSize: 15 }}>
             Selecciona un perito para ver su estado de cuenta
           </div>
         ) : (
@@ -997,9 +997,9 @@ export default function CobranzaPeritosHub({ initialData }: Props) {
               gap: 16,
               marginBottom: 20,
               padding: "16px 20px",
-              background: "#fff",
+              background: "var(--surface)",
               borderRadius: 10,
-              border: "1px solid #E2E8F0",
+              border: "1px solid var(--line)",
               boxShadow: "0 1px 4px rgba(0,0,0,.05)",
             }}>
               <div style={{
@@ -1018,25 +1018,25 @@ export default function CobranzaPeritosHub({ initialData }: Props) {
                 {getInitials(selected.nombre)}
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 18, fontWeight: 800, color: "#0D2060", lineHeight: 1.2 }}>
+                <div style={{ fontSize: 18, fontWeight: 800, color: "var(--ink)", lineHeight: 1.2 }}>
                   {selected.nombre}
                 </div>
                 <div style={{ display: "flex", gap: 12, marginTop: 4, flexWrap: "wrap" }}>
                   {selected.numeroPerito && (
-                    <span style={{ fontSize: 11, fontFamily: "monospace", color: "#64748B", fontWeight: 600 }}>
+                    <span style={{ fontSize: 11, fontFamily: "monospace", color: "var(--muted)", fontWeight: 600 }}>
                       CIME-PER-{selected.numeroPerito}
                     </span>
                   )}
                   {selected.especialidad && (
-                    <span style={{ fontSize: 11, color: "#64748B" }}>{selected.especialidad}</span>
+                    <span style={{ fontSize: 11, color: "var(--muted)" }}>{selected.especialidad}</span>
                   )}
                   <span style={{
                     fontSize: 10,
                     fontWeight: 700,
                     padding: "2px 7px",
                     borderRadius: 4,
-                    background: selected.estado === "VIGENTE" ? "#ECFDF5" : selected.estado === "SUSPENDIDO" ? "#FEF2F2" : "#FFFBEB",
-                    color: selected.estado === "VIGENTE" ? "#059669" : selected.estado === "SUSPENDIDO" ? "#DC2626" : "#D97706",
+                    background: selected.estado === "VIGENTE" ? "var(--ok-bg)" : selected.estado === "SUSPENDIDO" ? "var(--bad-bg)" : "var(--warn-bg)",
+                    color: selected.estado === "VIGENTE" ? "var(--ok)" : selected.estado === "SUSPENDIDO" ? "var(--bad)" : "var(--warn)",
                     letterSpacing: ".05em",
                   }}>
                     {selected.estado}

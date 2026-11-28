@@ -2,6 +2,11 @@ import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import {
+  Landmark, TrendingUp, Wallet, Hourglass, Users, CalendarClock,
+  CreditCard, PieChart, Receipt, MessageCircle,
+} from "lucide-react"
+import { TesHero, TesKpi, TesTile } from "@/components/tesoreria/TesUI"
 
 export const dynamic = "force-dynamic"
 
@@ -55,74 +60,44 @@ export default async function TesoreronPage() {
  CANCELADO: "",
   }
 
+  const hour   = Number(new Intl.DateTimeFormat("es-MX", { hour: "numeric", hourCycle: "h23", timeZone: "America/Mexico_City" }).format(hoy))
+  const saludo = hour < 12 ? "Buenos días" : hour < 19 ? "Buenas tardes" : "Buenas noches"
+  const nombre = (session.user?.name ?? "").split(" ").slice(0, 2).join(" ")
+  const ico = { size: 17, strokeWidth: 1.9 } as const
+
   return (
     <>
-      {/* Header */}
-      <div style={{
-        background: "linear-gradient(135deg, #0D2060 0%, #1a3a8a 100%)",
-        borderRadius: 14, padding: "28px 32px", marginBottom: 24, color: "#fff",
-        position: "relative", overflow: "hidden",
-      }}>
-        <div style={{ position: "absolute", right: 32, top: 0, bottom: 0, display: "flex", alignItems: "center", opacity: .07 }}>
-          <svg style={{ width: 160, height: 160 }} fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/></svg>
-        </div>
-        <div style={{ position: "relative" }}>
-          <div style={{ fontSize: ".8rem", opacity: .7, marginBottom: 4, letterSpacing: ".08em", textTransform: "uppercase" }}>Panel Financiero</div>
-          <h1 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 700 }}>Tesorería CIME Veracruz</h1>
-          <p style={{ margin: "6px 0 0", opacity: .75, fontSize: ".9rem" }}>
-            {hoy.toLocaleDateString("es-MX", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-          </p>
-        </div>
+      <TesHero
+        eyebrow="Tesorería · CIME Veracruz"
+        title={`${saludo},`}
+        highlight={nombre || "Tesorería"}
+        sub={hoy.toLocaleDateString("es-MX", { weekday: "long", year: "numeric", month: "long", day: "numeric", timeZone: "America/Mexico_City" })}
+        icon={<Landmark size={26} strokeWidth={1.6} />}
+        figure={fmt(ingresosMes._sum.monto ?? 0)}
+        figureLabel="Ingresos del mes"
+      />
+
+      <div className="tes-kpis">
+        <TesKpi label="Ingresos del mes" value={fmt(ingresosMes._sum.monto ?? 0)} sub="Pagos confirmados" tone="ok" icon={<TrendingUp {...ico} />} />
+        <TesKpi label="Total recaudado" value={fmt(ingresoTotal._sum.monto ?? 0)} sub="Histórico acumulado" tone="gold" icon={<Wallet {...ico} />} />
+        <TesKpi label="Pagos pendientes" value={pagosPendientes} sub={`${pctPagados}% cobrado`} tone={pagosPendientes > 10 ? "bad" : "warn"} icon={<Hourglass {...ico} />} />
+        <TesKpi label="Miembros" value={totalColegiados + totalPeritos} sub={`${totalColegiados} colegiados · ${totalPeritos} peritos`} tone="info" icon={<Users {...ico} />} />
+        <TesKpi label="Por renovar" value={porVencer} sub="Vigencia próxima a vencer" tone={porVencer > 0 ? "warn" : "mute"} icon={<CalendarClock {...ico} />} />
       </div>
 
-      {/* KPI Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 14, marginBottom: 24 }}>
-        {[
-          { label: "Ingresos del mes",    value: fmt(ingresosMes._sum.monto ?? 0),      sub: "Pagos confirmados",        icon: "", accent: "#10b981" },
-          { label: "Total recaudado",     value: fmt(ingresoTotal._sum.monto ?? 0),     sub: "Histórico acumulado",      icon: "", accent: "#0D2060" },
-          { label: "Pagos pendientes",    value: String(pagosPendientes),               sub: `${pctPagados}% cobrado`,   icon: "", accent: pagosPendientes > 10 ? "#ef4444" : "#f59e0b" },
-          { label: "Miembros vigentes",   value: String(totalColegiados + totalPeritos), sub: `${totalColegiados} col. · ${totalPeritos} per.`, icon: "", accent: "#3b82f6" },
-          { label: "Por renovar",         value: String(porVencer),                      sub: "Vigencia próxima a vencer", icon: "", accent: porVencer > 0 ? "#f59e0b" : "#6b7280" },
-        ].map(k => (
-          <div key={k.label} className="card" style={{ padding: "18px 20px" }}>
-            <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-              <div>
-                <div style={{ fontSize: ".75rem", color: "var(--muted)", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 6 }}>{k.label}</div>
-                <div style={{ fontSize: "1.5rem", fontWeight: 800, color: k.accent }}>{k.value}</div>
-                <div style={{ fontSize: ".75rem", color: "var(--muted)", marginTop: 2 }}>{k.sub}</div>
-              </div>
-              <span style={{ fontSize: 24 }}>{k.icon}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Quick access */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 28 }}>
-        {[
-          { href: "/tesorero/pagos",     label: "Registro de Pagos",    desc: "Tabla completa de pagos",          bg: "#0D2060", icon: "" },
-          { href: "/tesorero/cobranza",  label: "Cobranza Pendiente",   desc: "Miembros con saldo abierto",       bg: "#b45309", icon: "" },
-          { href: "/tesorero/reportes",  label: "Reportes",             desc: "Resumen financiero y análisis",    bg: "#059669", icon: "" },
-          { href: "/tesorero/facturas",  label: "Facturas",             desc: "Comprobantes y facturas emitidas", bg: "#7c3aed", icon: "" },
-          { href: "/tesorero/mensajes",  label: "Mensajes",             desc: "Comunicación con miembros",        bg: "#0369a1", icon: "" },
-        ].map(item => (
-          <Link key={item.href} href={item.href} style={{ textDecoration: "none" }}>
-            <div className="card" style={{
-              padding: "18px 20px", cursor: "pointer",
-              borderLeft: `4px solid ${item.bg}`,
-            }}>
-              <div style={{ fontSize: 24, marginBottom: 8 }}>{item.icon}</div>
-              <div style={{ fontWeight: 700, fontSize: ".95rem", color: item.bg }}>{item.label}</div>
-              <div style={{ fontSize: ".8rem", color: "var(--muted)", marginTop: 2 }}>{item.desc}</div>
-            </div>
-          </Link>
-        ))}
+      <div className="tes-tiles">
+        <TesTile href="/tesorero/pagos"            label="Registro de pagos"  desc="Tabla completa de pagos"          icon={<CreditCard {...ico} />} />
+        <TesTile href="/tesorero/cobranza"         label="Cobranza pendiente" desc="Miembros con saldo abierto"       icon={<TrendingUp {...ico} />} />
+        <TesTile href="/tesorero/cobranza-peritos" label="Cobranza peritos"   desc="Cursos y cuotas de peritos"       icon={<Wallet {...ico} />} />
+        <TesTile href="/tesorero/reportes"         label="Reportes"           desc="Resumen financiero y análisis"    icon={<PieChart {...ico} />} />
+        <TesTile href="/tesorero/facturas"         label="Facturas"           desc="Comprobantes y facturas emitidas" icon={<Receipt {...ico} />} />
+        <TesTile href="/tesorero/mensajes"         label="Mensajes"           desc="Comunicación con miembros"        icon={<MessageCircle {...ico} />} />
       </div>
 
       {/* Recent payments */}
       <div className="card">
         <div style={{ padding: "16px 24px 0", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <h2 style={{ margin: 0, fontSize: "1rem" }}>Pagos recientes</h2>
+          <h2 className="font-montserrat" style={{ margin: 0, fontSize: "1rem", fontWeight: 700, color: "var(--fg)" }}>Pagos recientes</h2>
           <Link href="/tesorero/pagos" className="btn sm">Ver todos →</Link>
         </div>
         <div className="table-wrap" style={{ marginTop: 8 }}>
@@ -143,7 +118,7 @@ export default async function TesoreronPage() {
                   <td className="mono" style={{ fontSize: ".78rem" }}>{p.folio}</td>
                   <td style={{ fontSize: ".87rem" }}>{p.usuario.nombre}</td>
                   <td style={{ fontSize: ".87rem", color: "var(--muted)" }}>{p.concepto}</td>
-                  <td style={{ textAlign: "right", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}>
+                  <td className="tes-money" style={{ textAlign: "right" }}>
                     {fmt(p.monto)}
                   </td>
                   <td><span className={`chip nodot ${ESTADO_COLOR[p.estado] ?? ""}`}>{p.estado}</span></td>
