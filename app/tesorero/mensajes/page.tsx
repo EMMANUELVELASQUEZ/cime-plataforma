@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import { Send } from "lucide-react"
+import { MessageCircle } from "lucide-react"
+import { TesHero } from "@/components/tesoreria/TesUI"
 
 interface Mensaje {
   id:        string
@@ -76,15 +78,13 @@ export default function ColegiadoMensajesPage() {
 
   return (
     <div style={{ padding: "24px 28px", display: "flex", flexDirection: "column" }}>
-      {/* Header */}
-      <div style={{ marginBottom: 16, flexShrink: 0 }}>
-        <h1 style={{ fontSize: "1.35rem", fontWeight: 700, color: "var(--fg)", margin: 0 }}>
- Chat con Administracion
-        </h1>
-        <p style={{ fontSize: ".8rem", color: "var(--muted)", marginTop: 4 }}>
- Las respuestas pueden tardar unos minutos
-        </p>
-      </div>
+      <TesHero
+        eyebrow="Tesorería · Mensajes"
+        title="Chat con"
+        highlight="Administración"
+        sub="Las respuestas pueden tardar unos minutos"
+        icon={<MessageCircle size={26} strokeWidth={1.6} />}
+      />
 
       {/* Chat container */}
       <div
@@ -134,7 +134,7 @@ export default function ColegiadoMensajesPage() {
                       style={{
                         padding: "9px 13px",
                         borderRadius: isMine ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
-                        background: isMine ? "var(--brand)" : "var(--surface-2)",
+                        background: isMine ? "linear-gradient(135deg, var(--navy-2), var(--navy))" : "var(--surface-2)",
                         color: isMine ? "#fff" : "var(--fg)",
                         fontSize: ".85rem",
                         lineHeight: 1.5,

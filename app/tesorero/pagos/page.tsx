@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import Link from "next/link"
+import { CreditCard } from "lucide-react"
+import { TesHero } from "@/components/tesoreria/TesUI"
 
 export const dynamic = "force-dynamic"
 
@@ -8,10 +10,10 @@ interface SearchParams {
 }
 
 const ESTADO_CHIP: Record<string, { label: string; cls: string; dot: string }> = {
- PAGADO:    { label: "Pagado",    cls: "ok",   dot: "#10b981" },
- PENDIENTE: { label: "Pendiente", cls: "warn", dot: "#f59e0b" },
- VENCIDO:   { label: "Vencido",  cls: "bad",  dot: "#ef4444" },
- CANCELADO: { label: "Cancelado", cls: "",     dot: "#9ca3af" },
+ PAGADO:    { label: "Pagado",    cls: "ok",   dot: "var(--ok)" },
+ PENDIENTE: { label: "Pendiente", cls: "warn", dot: "var(--warn)" },
+ VENCIDO:   { label: "Vencido",  cls: "bad",  dot: "var(--bad)" },
+ CANCELADO: { label: "Cancelado", cls: "",     dot: "var(--muted-2)" },
 }
 
 function fmt(n: number) {
@@ -70,18 +72,23 @@ export default async function PagosTesoreronPage({ searchParams }: { searchParam
 
   return (
     <>
-      <div className="page-head">
-        <div>
-          <h1>Registro de Pagos</h1>
-          <p>{total} pago{total !== 1 ? "s" : ""} en el sistema.</p>
-        </div>
+      <TesHero
+        eyebrow="Tesorería · Pagos"
+        title="Registro de"
+        highlight="pagos"
+        sub={`${total} pago${total !== 1 ? "s" : ""} en el sistema`}
+        icon={<CreditCard size={26} strokeWidth={1.6} />}
+        figure={fmt(sumTotal._sum.monto ?? 0)}
+        figureLabel={q || estado || concepto ? "Total filtrado" : "Monto total registrado"}
+      />
+      <div className="page-head" style={{ justifyContent: "flex-end", marginTop: -8, marginBottom: 14 }}>
         <div className="actions">
           <a href={`/api/admin/pagos/export?${new URLSearchParams({ ...(q && { q }), ...(estado && { estado }) }).toString()}`}
             className="btn">
             <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
  Exportar CSV
           </a>
-          <Link href="/admin/pagos/nuevo" className="btn primary">
+          <Link href="/admin/pagos/nuevo" className="btn gold">
             <svg className="ico sm" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
  Nuevo pago
           </Link>
@@ -115,8 +122,7 @@ export default async function PagosTesoreronPage({ searchParams }: { searchParam
       {/* Excel-style table */}
       <div className="card" style={{ padding: 0, overflow: "hidden" }}>
         {/* Toolbar */}
-        <div style={{
-          background: "#0D2060",
+        <div className="tes-toolbar" style={{
           padding: "12px 16px",
           display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center",
         }}>
@@ -152,7 +158,7 @@ export default async function PagosTesoreronPage({ searchParams }: { searchParam
               <option value="">Todos los conceptos</option>
               {concepciones.map(c => <option key={c.concepto} value={c.concepto}>{c.concepto}</option>)}
             </select>
-            <button className="btn sm" type="submit" style={{ background: "#E8C060", color: "#0D2060", border: "none", fontWeight: 700 }}>
+            <button className="btn sm gold" type="submit">
  Filtrar
             </button>
             {(q || estado || concepto) && (
@@ -170,13 +176,13 @@ export default async function PagosTesoreronPage({ searchParams }: { searchParam
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: ".87rem" }}>
             <thead>
-              <tr style={{ background: "#0D206018", position: "sticky", top: 0, zIndex: 1 }}>
+              <tr style={{ background: "color-mix(in srgb, var(--navy) 8%, var(--surface))", position: "sticky", top: 0, zIndex: 1 }}>
                 {["#", "Folio", "Miembro", "Concepto", "Monto", "Estado", "Vencimiento", "Fecha"].map((h, i) => (
                   <th key={h} style={{
                     padding: "10px 14px", textAlign: i >= 4 ? (i === 4 ? "right" : "center") : "left",
                     fontSize: ".75rem", fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase",
-                    color: "#0D2060", borderBottom: "2px solid #0D206030", whiteSpace: "nowrap",
-                    background: "#0D206010",
+                    color: "var(--ink)", borderBottom: "2px solid color-mix(in srgb, var(--gold) 55%, transparent)", whiteSpace: "nowrap",
+                    background: "transparent",
                   }}>
                     {h}
                   </th>
@@ -193,7 +199,7 @@ export default async function PagosTesoreronPage({ searchParams }: { searchParam
                 return (
                   <tr key={p.id} style={{
                     background: idx % 2 === 0 ? "transparent" : "var(--surface-raised)",
-                    borderLeft: isVencido ? "3px solid #ef4444" : isPendiente ? "3px solid #f59e0b" : "3px solid transparent",
+                    borderLeft: isVencido ? "3px solid var(--bad)" : isPendiente ? "3px solid var(--warn)" : "3px solid transparent",
                   }}>
                     <td style={{ padding: "9px 14px", color: "var(--muted)", fontSize: ".75rem", textAlign: "center" }}>{rowN}</td>
                     <td style={{ padding: "9px 14px" }}>
@@ -219,7 +225,7 @@ export default async function PagosTesoreronPage({ searchParams }: { searchParam
                       <span style={{
                         display: "inline-flex", alignItems: "center", gap: 5,
                         padding: "3px 10px", borderRadius: 20, fontSize: ".75rem", fontWeight: 600,
-                        background: `${info.dot}18`, color: info.dot,
+                        background: `color-mix(in srgb, ${info.dot} 12%, transparent)`, color: info.dot,
                       }}>
                         <span style={{ width: 6, height: 6, borderRadius: "50%", background: info.dot, flexShrink: 0 }} />
                         {info.label}
@@ -227,7 +233,7 @@ export default async function PagosTesoreronPage({ searchParams }: { searchParam
                     </td>
                     <td style={{ padding: "9px 14px", textAlign: "center", fontSize: ".8rem" }}>
                       {p.vencimiento
-                        ? <span style={{ color: isVencido ? "#ef4444" : "inherit" }}>
+                        ? <span style={{ color: isVencido ? "var(--bad)" : "inherit" }}>
                             {new Date(p.vencimiento).toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "2-digit" })}
                           </span>
                         : <span style={{ color: "var(--muted)" }}>—</span>}
@@ -254,11 +260,11 @@ export default async function PagosTesoreronPage({ searchParams }: { searchParam
             {/* Totals footer */}
             {pagos.length > 0 && (
               <tfoot>
-                <tr style={{ background: "#0D206008", borderTop: "2px solid #0D206030" }}>
+                <tr style={{ background: "color-mix(in srgb, var(--navy) 6%, var(--surface))", borderTop: "2px solid color-mix(in srgb, var(--gold) 55%, transparent)" }}>
                   <td colSpan={4} style={{ padding: "10px 14px", fontSize: ".8rem", color: "var(--muted)", fontWeight: 600, textTransform: "uppercase", letterSpacing: ".06em" }}>
  Total ({total} registros en filtro actual)
                   </td>
-                  <td style={{ padding: "10px 14px", textAlign: "right", fontWeight: 800, fontSize: "1rem", color: "#0D2060", fontVariantNumeric: "tabular-nums" }}>
+                  <td style={{ padding: "10px 14px", textAlign: "right", fontWeight: 800, fontSize: "1rem", color: "var(--ink)", fontVariantNumeric: "tabular-nums" }}>
                     {fmt(sumTotal._sum.monto ?? 0)}
                   </td>
                   <td colSpan={3} />
